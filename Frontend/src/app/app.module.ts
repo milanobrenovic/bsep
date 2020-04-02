@@ -7,8 +7,8 @@ import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatDialogModule } from "@angular/material";
-import { MatCardModule } from "@angular/material";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatCardModule } from "@angular/material/card";
 
 import { UnauthenticatedErrorComponent } from './components/unauthenticated-error/unauthenticated-error.component';
 import { UnauthorizedErrorComponent } from './components/unauthorized-error/unauthorized-error.component';
