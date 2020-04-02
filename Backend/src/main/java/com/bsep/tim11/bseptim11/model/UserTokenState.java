@@ -2,25 +2,25 @@ package com.bsep.tim11.bseptim11.model;
 
 public class UserTokenState {
 
-    private String accessToken;
+    private String jwtAccessToken;
     private Long expiresIn;
 
     public UserTokenState() {
-        this.accessToken = null;
+        this.jwtAccessToken = null;
         this.expiresIn = null;
     }
 
-    public UserTokenState(String accessToken, long expiresIn) {
-        this.accessToken = accessToken;
+    public UserTokenState(String jwtAccessToken, long expiresIn) {
+        this.jwtAccessToken = jwtAccessToken;
         this.expiresIn = expiresIn;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setJwtAccessToken(String jwtAccessToken) {
+        this.jwtAccessToken = jwtAccessToken;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public String getJwtAccessToken() {
+        return jwtAccessToken;
     }
 
     public void setExpiresIn(Long expiresIn) {
