@@ -23,10 +23,10 @@ export class ErrorInterceptor implements HttpInterceptor {
       if (e.status === 401) {
         this.dialogRef.closeAll();
         localStorage.removeItem('LoggedInUser');
-        this.router.navigate(['/error/unauthenticated']);
+        this.router.navigate(['/errors/unauthenticated']);
       } else if (e.status === 403) {
         this.dialogRef.closeAll();
-        this.router.navigate(['/error/unauthorized']);
+        this.router.navigate(['/errors/unauthorized']);
       }
       return throwError(e);
     }));

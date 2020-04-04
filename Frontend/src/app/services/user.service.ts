@@ -31,7 +31,7 @@ export class UserService {
   }
 
   login(user: UserLoginRequest) {
-    return this.httpClient.post(this.url + "/login", user).pipe(map((res: UserTokenState) => {
+    return this.httpClient.post(this.url, user).pipe(map((res: UserTokenState) => {
       this.jwt_access_token = res.jwtAccessToken;
       localStorage.setItem('LoggedInUser', JSON.stringify(res));
       this.loggedInUserSubject.next(res);
@@ -45,7 +45,7 @@ export class UserService {
   logout() {
     this.jwt_access_token = null;
     localStorage.removeItem('LoggedInUser');
-    this.router.navigate(['/']);
+    this.router.navigate(['/pages/login']);
   }
 
   isLoggedIn() {

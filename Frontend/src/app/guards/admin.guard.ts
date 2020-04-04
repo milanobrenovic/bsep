@@ -26,12 +26,12 @@ export class AdminGuard implements CanActivate {
       if (this.loggedInUser) {
         return true;
       } else {
-        this.router.navigate(['/error/non-authorized']);
+        this.router.navigate(['/errors/unauthorized']);
         return false;
       }
     }
 
-    this.router.navigate(['/error/non-authenticated']);
+    this.router.navigate(['/errors/unauthenticated']);
     return false;
   }
   
