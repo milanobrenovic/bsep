@@ -30,52 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AdminGuard } from './guards/admin.guard';
-
-const appRoutes: Routes = [
-
-
-    //==============================================================================//
-    // HOME
-    //==============================================================================//
-    {
-        path        : '',
-        component   : HomeComponent,
-    },
-
-
-    //==============================================================================//
-    // PAGES
-    //==============================================================================//
-    {
-        path        : 'pages/login',
-        component   : LoginComponent,
-    },
-
-
-    //==============================================================================//
-    // ERRORS
-    //==============================================================================//
-    {
-        path        : 'errors/unauthenticated',
-        component   : ErrorUnauthenticatedComponent,
-    },
-    {
-        path        : 'errors/unauthorized',
-        component   : ErrorUnauthorizedComponent,
-    },
-    {
-        path        : 'errors/page-not-found',
-        component   : ErrorNotFoundComponent,
-    },
-    {
-        path        : 'errors/internal-server',
-        component   : ErrorInternalServerComponent,
-    },
-    {
-        path        : '**',
-        component   : ErrorComponent,
-    }
-];
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
     declarations: [
@@ -93,7 +48,6 @@ const appRoutes: Routes = [
         BrowserAnimationsModule,
         HttpClientModule,
 
-        RouterModule.forRoot(appRoutes),
         TranslateModule.forRoot(),
 
         // Material
@@ -113,6 +67,7 @@ const appRoutes: Routes = [
 
         // App modules
         LayoutModule,
+        AppRoutingModule,
     ],
     providers: [
         {
