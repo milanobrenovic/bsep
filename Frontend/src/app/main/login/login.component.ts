@@ -2,6 +2,10 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { fuseAnimations } from '@fuse/animations';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { FuseConfigService } from '@fuse/services/config.service';
+import { UserService } from 'app/services/user.service';
+import { Router } from '@angular/router';
+import { UserLoginRequest } from 'app/models/userLoginRequest';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'login',
@@ -22,9 +26,11 @@ export class LoginComponent implements OnInit {
    */
   constructor(
       private _fuseConfigService: FuseConfigService,
-      private _formBuilder: FormBuilder
-  )
-  {
+      private _formBuilder: FormBuilder,
+			private _userService: UserService,
+			private _toastrService: ToastrService,
+      private _router: Router,
+  ) {
       // Configure the layout
       this._fuseConfigService.config = {
           layout: {
@@ -51,11 +57,36 @@ export class LoginComponent implements OnInit {
   /**
    * On init
    */
-  ngOnInit(): void
-  {
+  ngOnInit() : void {
       this.loginForm = this._formBuilder.group({
-          email   : ['', [Validators.required, Validators.email]],
-          password: ['', Validators.required]
-      });
+          username  : ['', Validators.required],
+          password  : ['', Validators.required]
+			});
+			
+			this.redirectToHomePage();
   }
+
+  login() : void {
+		const userLoginRequest = new UserLoginRequest(
+			this.loginForm.value.username,
+			this.loginForm.value.password,
+		);
+
+		this._userService.login(userLoginRequest).subscribe(
+			() => {
+				this._toastrService.success("Login successful.", "Success");
+				this.redirectToHomePage();
+			},
+			(e) => {
+				this._toastrService.error("Login failed, invalid credentials.", "Error");
+				// console.log(e);
+			}
+		);
+	}
+	
+	redirectToHomePage() : void {
+		if (this._userService.isLoggedIn()) {
+			this._router.navigate(['/']);
+		}
+	}
 }

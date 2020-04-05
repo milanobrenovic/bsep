@@ -13,13 +13,6 @@ export const navigation: FuseNavigation[] = [
                 icon     : 'home',
                 url      : '/',
             },
-            {
-                id       : 'login',
-                title    : 'Login',
-                type     : 'item',
-                icon     : 'lock',
-                url      : '/pages/login',
-            }
         ]
     },
 ];
