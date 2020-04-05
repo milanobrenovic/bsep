@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule, Routes } from '@angular/router';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -27,6 +27,9 @@ import { ErrorInternalServerComponent } from './main/error-internal-server/error
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TokenInterceptor } from './interceptors/token.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { AdminGuard } from './guards/admin.guard';
 
 const appRoutes: Routes = [
 
@@ -111,10 +114,21 @@ const appRoutes: Routes = [
         // App modules
         LayoutModule,
     ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: TokenInterceptor,
+            multi: true,
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: ErrorInterceptor,
+            multi: true,
+        },
+        AdminGuard,
+    ],
     bootstrap   : [
         AppComponent
     ]
 })
-export class AppModule
-{
-}
+export class AppModule { }
