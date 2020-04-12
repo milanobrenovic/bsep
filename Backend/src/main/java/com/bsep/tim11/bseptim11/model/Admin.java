@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
-@Entity
+@javax.persistence.Entity
 public class Admin implements UserDetails {
 
     @Id

@@ -30,8 +30,56 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AdminGuard } from './guards/admin.guard';
 import { AppRoutingModule } from './app-routing.module';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ToastrModule } from 'ngx-toastr';
+import { AddSubjectComponent } from './main/add-subject/add-subject.component';
+import { MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule } from '@angular/material/radio';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CreateSelfSignedCertificateComponent } from './main/create-self-signed-certificate/create-self-signed-certificate.component';
+import { A11yModule } from '@angular/cdk/a11y';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatNativeDateModule, MatRippleModule } from '@angular/material/core';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { PortalModule } from '@angular/cdk/portal';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
+
+
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkStepperModule } from '@angular/cdk/stepper';
+import { CdkTableModule } from '@angular/cdk/table';
+import { CdkTreeModule } from '@angular/cdk/tree';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTreeModule } from '@angular/material/tree';
+import { CreateCertificateComponent } from './main/create-certificate/create-certificate.component';
+import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
+import { CertificateDetailsComponent } from './main/certificate-details/certificate-details.component';
+import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
+
+
 
 @NgModule({
     declarations: [
@@ -43,16 +91,25 @@ import { ToastrModule } from 'ngx-toastr';
         ErrorUnauthorizedComponent,
         ErrorNotFoundComponent,
         ErrorInternalServerComponent,
+        AddSubjectComponent,
+        CreateSelfSignedCertificateComponent,
+        CreateCertificateComponent,
+        ListCertificatesComponent,
+        CertificateDetailsComponent,
+        ChooseTemplateComponent,
     ],
     imports     : [
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
+        ReactiveFormsModule,
+        FormsModule,
+        LayoutModule,
 
         ToastrModule.forRoot({
-					timeOut: 5000,
-					positionClass: 'toast-top-right',
-					preventDuplicates: true,
+            timeOut: 5000,
+            positionClass: 'toast-bottom-right',
+            preventDuplicates: true,
         }),
         TranslateModule.forRoot(),
 
@@ -64,6 +121,49 @@ import { ToastrModule } from 'ngx-toastr';
         MatFormFieldModule,
         MatInputModule,
         MatDialogModule,
+        MatRadioModule,
+        A11yModule,
+        CdkStepperModule,
+        CdkTableModule,
+        CdkTreeModule,
+        DragDropModule,
+        MatAutocompleteModule,
+        MatBadgeModule,
+        MatBottomSheetModule,
+        MatButtonModule,
+        MatButtonToggleModule,
+        MatCardModule,
+        MatCheckboxModule,
+        MatChipsModule,
+        MatStepperModule,
+        MatDatepickerModule,
+        MatDialogModule,
+        MatDividerModule,
+        MatExpansionModule,
+        MatGridListModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        MatMenuModule,
+        MatNativeDateModule,
+        MatPaginatorModule,
+        MatProgressBarModule,
+        MatProgressSpinnerModule,
+        MatRadioModule,
+        MatRippleModule,
+        MatSelectModule,
+        MatSidenavModule,
+        MatSliderModule,
+        MatSlideToggleModule,
+        MatSnackBarModule,
+        MatSortModule,
+        MatTableModule,
+        MatTabsModule,
+        MatToolbarModule,
+        MatTooltipModule,
+        MatTreeModule,
+        PortalModule,
+        ScrollingModule,
 
         // Fuse modules
         FuseModule.forRoot(fuseConfig),
@@ -88,6 +188,14 @@ import { ToastrModule } from 'ngx-toastr';
             multi: true,
         },
         AdminGuard,
+        {
+            provide: MatDialogRef,
+            useValue: {}
+        },
+        {
+            provide: MAT_RADIO_DEFAULT_OPTIONS,
+            useValue: { color: 'accent' },
+        },
     ],
     bootstrap   : [
         AppComponent

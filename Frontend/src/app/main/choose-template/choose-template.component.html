@@ -1,0 +1,46 @@
+<div class="dialog-content-wrapper">
+	<h1 mat-dialog-title>Choose Certificate Type</h1>
+	<mat-divider></mat-divider>
+	
+	<div mat-dialog-content fxLayout="column" fxLayout="100%" class="p-24 pt-0 m-0" fusePerfectScrollbar>
+
+		<form fxLayout="column" [formGroup]="chooseTemplateForm" class="form-full-width">
+			<mat-radio-group aria-label="Select an option">
+				<mat-list role="list">
+					<mat-list-item role="listitem">
+						<mat-radio-button id="blank" formControlName="template" [value]="blank" checked>Blank</mat-radio-button>
+					</mat-list-item>
+					<mat-list-item role="listitem">
+						<mat-radio-button id="ca" formControlName="template" [value]="ca">CA</mat-radio-button>
+					</mat-list-item>
+					<mat-list-item role="listitem">
+						<mat-radio-button id="sslServer" formControlName="template" [value]="sslServer">SSL Server</mat-radio-button>
+					</mat-list-item>
+					<mat-list-item role="listitem">
+						<mat-radio-button id="sslClient" formControlName="template" [value]="sslClient">SSL Client</mat-radio-button>
+					</mat-list-item>
+					<mat-list-item role="listitem">
+						<mat-radio-button id="codeSigning" formControlName="template" [value]="codeSigning">Code Signing</mat-radio-button>
+					</mat-list-item>
+				</mat-list>
+			</mat-radio-group>
+
+			<br>
+
+			<div fxLayout="column" fxLayoutAlign="center center" fxFlex="100%">
+				<mat-checkbox formControlName="selfSigned">
+					Is this a self-signed certificate?
+				</mat-checkbox>
+			</div>
+
+			<br>
+
+			<div class="column" fxLayoutAlign="center center" fxFlex="100%">
+				<button mat-raised-button color="primary" (click)="chooseTemplate()">
+					Next
+				</button>
+			</div>
+		</form>
+
+	</div>
+</div>

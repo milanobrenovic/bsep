@@ -1,0 +1,133 @@
+<div class="page-layout blank p-24" fusePerfectScrollbar>
+
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>List of certificates</mat-card-title>
+		</mat-card-header>
+		<mat-divider></mat-divider>
+		<br>
+		<mat-card-content>
+			<form fxLayout="column" [formGroup]="keyStoreForm">
+
+				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
+						<mat-label>Select certificate role</mat-label>
+						<mat-select formControlName="certRole" required>
+							<mat-option value="root">Root</mat-option>
+							<mat-option value="intermediate">Intermediate</mat-option>
+							<mat-option value="end-entity">End-entity</mat-option>
+						</mat-select>
+						<mat-error
+							*ngIf="keyStoreForm.get('certRole').errors && keyStoreForm.get('certRole').errors['required']">
+							Please select a certificate role to continue.
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
+						<mat-label>Key store password</mat-label>
+						<input matInput type="password" formControlName="keyStorePassword" required>
+						<mat-error
+							*ngIf="keyStoreForm.get('keyStorePassword').errors && keyStoreForm.get('keyStorePassword').errors['required']">
+							Key store password is required.
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div fxLayout="row" fxFlex="100%">
+					<button
+						mat-raised-button
+						color="primary"
+						style="margin-right: 8px"
+						[disabled]="!keyStoreForm.valid"
+						(click)="fetchCertificates()">
+						Show certificates
+					</button>
+					<button
+						mat-raised-button
+						color="primary"
+						(click)="openTemplatesDialog()">
+						Create a new certificate
+					</button>
+				</div>
+
+				<br>
+
+				<div class="example-container">
+					<mat-table #table [dataSource]="certificatesDataSource">
+						
+						<ng-container matColumnDef="serialNumber">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Serial number</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								{{element.serialNumber}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="subjectCN">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Subject CN</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								{{element.subject.commonName}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="issuerCN">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Issuer CN</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								{{element.issuer.commonName}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="validFrom">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Valid From</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								{{element.validFrom | date: 'd.M.yyyy.'}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="validTo">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Valid To</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								{{element.validTo | date: 'd.M.yyyy.'}}
+							</mat-cell>
+						</ng-container>
+
+						<ng-container matColumnDef="buttons">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Available actions</mat-header-cell>
+							<mat-cell fxFlex="100%" *matCellDef="let element">
+								<div class="px-4">
+									<button
+										mat-raised-button
+										color="primary"
+										(click)="viewDetails(element)">
+										Details
+									</button>
+								</div>
+								<div class="px-4">
+									<button
+										mat-raised-button
+										class="accent ml-2 mr-2"
+										(click)="download(element)">
+										Download
+									</button>
+								</div>
+								<div class="px-4">
+									<button
+										mat-raised-button
+										color="warn"
+										(click)="revoke(element)">
+										Revoke
+									</button>
+								</div>
+							</mat-cell>
+						</ng-container>
+	
+						<mat-header-row *matHeaderRowDef="displayedColumns sticky: true"></mat-header-row>
+						<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+					</mat-table>
+				</div>
+			</form>
+		</mat-card-content>
+	</mat-card>
+
+</div>
