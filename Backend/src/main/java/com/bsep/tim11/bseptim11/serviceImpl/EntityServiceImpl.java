@@ -2,6 +2,7 @@ package com.bsep.tim11.bseptim11.serviceImpl;
 
 import com.bsep.tim11.bseptim11.dto.EntityDTO;
 import com.bsep.tim11.bseptim11.enumeration.EntityType;
+import com.bsep.tim11.bseptim11.exceptions.InvalidEntityDataException;
 import com.bsep.tim11.bseptim11.model.Entity;
 import com.bsep.tim11.bseptim11.repository.EntityRepository;
 import com.bsep.tim11.bseptim11.service.EntityService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class EntityServiceImpl implements EntityService {
     private EntityRepository entityRepository;
 
     @Override
-    public EntityDTO createSubject(EntityDTO entityDTO) throws IllegalArgumentException, BadCredentialsException {
+    public EntityDTO createSubject(EntityDTO entityDTO) throws InvalidEntityDataException {
         isSubjectValid(entityDTO);
 
         EntityType entityType = EntityType.valueOf(entityDTO.getType().toUpperCase());
@@ -48,23 +50,23 @@ public class EntityServiceImpl implements EntityService {
         return entityDTOS;
     }
 
-    private boolean isSubjectValid(EntityDTO entityDTO) throws IllegalArgumentException, BadCredentialsException {
+    private boolean isSubjectValid(EntityDTO entityDTO) throws InvalidEntityDataException {
         EntityType entityType = EntityType.valueOf(entityDTO.getType().toUpperCase());
 
         if (entityRepository.findByCommonName(entityDTO.getCommonName()) != null) {
-            throw new BadCredentialsException("Subject with the same common name already exists.");
+            throw new InvalidEntityDataException("Subject with the same common name already exists.");
         }
 
         if (entityType.toString().equals("USER")) {
             if (entityDTO.getEmail().isEmpty() || entityDTO.getSurname().isEmpty() || entityDTO.getGivename().isEmpty()) {
-                throw new BadCredentialsException("Email, surname or givename is missing.");
+                throw new InvalidEntityDataException("Email, surname or givename is missing.");
             }
             if (entityRepository.findByEmail(entityDTO.getEmail()) != null) {
-                throw  new BadCredentialsException("Subject with the same email address already exists.");
+                throw  new InvalidEntityDataException("Subject with the same email address already exists.");
             }
         } else {
             if (entityDTO.getOrganizationUnit().isEmpty()) {
-                throw new BadCredentialsException("Organization unit is missing.");
+                throw new InvalidEntityDataException("Organization unit is missing.");
             }
         }
 

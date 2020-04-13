@@ -78,6 +78,7 @@ import { CreateCertificateComponent } from './main/create-certificate/create-cer
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
 import { CertificateDetailsComponent } from './main/certificate-details/certificate-details.component';
 import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
+import { CertificateStatusComponent } from './main/certificate-status/certificate-status.component';
 
 
 
@@ -97,6 +98,7 @@ import { ChooseTemplateComponent } from './main/choose-template/choose-template.
         ListCertificatesComponent,
         CertificateDetailsComponent,
         ChooseTemplateComponent,
+        CertificateStatusComponent,
     ],
     imports     : [
         BrowserModule,

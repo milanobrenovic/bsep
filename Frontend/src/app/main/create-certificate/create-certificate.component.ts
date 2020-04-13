@@ -14,6 +14,7 @@ import { KeyUsage } from 'app/models/keyUsage';
 import { ExtendedKeyUsage } from 'app/models/extendedKeyUsage';
 import { formatDate } from '@angular/common';
 import { AddSubjectComponent } from '../add-subject/add-subject.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
   const from = formGroup.get("validFrom").value;
@@ -56,8 +57,14 @@ export class CreateCertificateComponent implements OnInit {
   createdNewSubject: Subscription;
   selectedTemplate: Template;
 
-  constructor(private toastr: ToastrService, private formBuilder: FormBuilder, public dialog: MatDialog, private subjectService: SubjectService,
-    private certificateService: CertificateService, private router: Router) { }
+  constructor(
+    private toastr: ToastrService,
+    private formBuilder: FormBuilder,
+    public dialog: MatDialog,
+    private subjectService: SubjectService,
+    private certificateService: CertificateService,
+    private router: Router,
+  ) { }
 
   ngOnInit() {
     this.createCertificateFormSubject = this.formBuilder.group({
@@ -91,9 +98,7 @@ export class CreateCertificateComponent implements OnInit {
       localStorage.removeItem('selectedTemplate');
       this.setExtensions();
     }
-
   }
-
 
   getSubjects(): void {
     this.subjectService.getAllWithoutRootEntities().subscribe((subjects: Entity[]) => {
@@ -112,31 +117,24 @@ export class CreateCertificateComponent implements OnInit {
     if (issuerCertificate.keyUsage.crlSign) {
       keyUsages += 'crlS, ';
     }
-
     if (issuerCertificate.keyUsage.dataEncipherment) {
       keyUsages += 'dataE, ';
     }
-
     if (issuerCertificate.keyUsage.decipherOnly) {
       keyUsages += 'decO, ';
     }
-
     if (issuerCertificate.keyUsage.digitalSignature) {
       keyUsages += 'digS, ';
     }
-
     if (issuerCertificate.keyUsage.encipherOnly) {
       keyUsages += 'encO, ';
     }
-
     if (issuerCertificate.keyUsage.keyAgreement) {
       keyUsages += 'keyAgr, ';
     }
-
     if (issuerCertificate.keyUsage.keyEncipherment) {
       keyUsages += 'keyE, ';
     }
-
     if (issuerCertificate.keyUsage.nonRepudiation) {
       keyUsages += 'nonRep, ';
     }
@@ -199,17 +197,32 @@ export class CreateCertificateComponent implements OnInit {
     return this.createCertificateFormIssuer.get('selectedIssuerCertificate').value;
   }
 
+  getSelectedIssuerCertificateValidTo() {
+    if (this.getSelectedIssuerCertificate()) {
+      return this.getSelectedIssuerCertificate().validTo;
+    }
+    return new Date();
+  }
+
   createCertificate() {
     if (this.createCertificateFormSubject.invalid) {
-      this.toastr.error("Please choose subject", 'Create certificate');
+      this.toastr.error("Please choose a subject.", 'Failed to create a certificate');
       return;
     }
     if (this.createCertificateFormIssuer.invalid) {
-      this.toastr.error("Please choose issuer", 'Create certificate');
+      this.toastr.error("Please choose an issuer.", 'Failed to create a certificate');
       return;
     }
     if (this.createCertificateFormOtherData.invalid) {
-      this.toastr.error("Please set valid period", 'Create certificate');
+      this.toastr.error("Please set a valid period.", 'Failed to create a certificate');
+      return;
+    }
+    if (!this.checkKeyUsage()) {
+      this.toastr.error("Please select at least one key usage.", "Failed to create a certificate");
+      return;
+    }
+    if (!this.checkExtendedKeyUsage()) {
+      this.toastr.error("Please select at least one extended key usage.", "Failed to create a certificate");
       return;
     }
 
@@ -237,11 +250,39 @@ export class CreateCertificateComponent implements OnInit {
         this.toastr.success('Successfully created a new certificate.', 'Create certificate');
         this.router.navigate(['/pages/list-certificates']);
       },
-      (e) => {
-        console.log(e);
-        this.toastr.error('Please enter valid data ', 'Create certificate');
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, 'Failed to create a certificate');
       }
     );
+  }
+
+  checkKeyUsage(): boolean {
+    if (!this.createCertificateFormOtherData.value.subjectIsCa) {
+      return true;
+    }
+    let keyUsage = this.createCertificateFormOtherData.value.keyUsage;
+    return  keyUsage.certificateSigning ||
+            keyUsage.crlSign ||
+            keyUsage.dataEncipherment ||
+            keyUsage.decipherOnly ||
+            keyUsage.digitalSignature ||
+            keyUsage.encipherOnly ||
+            keyUsage.keyAgreement ||
+            keyUsage.keyEncipherment ||
+            keyUsage.nonRepudiation;
+  }
+
+  checkExtendedKeyUsage(): boolean {
+    if (!this.createCertificateFormOtherData.value.subjectIsCa) {
+      return true;
+    }
+    let extendedKeyUsage = this.createCertificateFormOtherData.value.extendedKeyUsage;
+    return  extendedKeyUsage.serverAuth ||
+            extendedKeyUsage.clientAuth ||
+            extendedKeyUsage.codeSigning ||
+            extendedKeyUsage.emailProtection ||
+            extendedKeyUsage.timeStamping ||
+            extendedKeyUsage.ocspSigning;
   }
 
   createKeyUsage(): KeyUsage {
@@ -293,6 +334,10 @@ export class CreateCertificateComponent implements OnInit {
     if (!this.getSelectedIssuerCertificate().keyUsage) {
       return;
     }
+    if (!this.selectedTemplate) {
+      return;
+    }
+    this.functionForCreatingFormCertificateFormOtherData();
     this.createCertificateFormOtherData.patchValue(
       {
         'keyUsage': {
@@ -309,18 +354,30 @@ export class CreateCertificateComponent implements OnInit {
       }
     );
   }
+
   openAddSubject() {
     this.dialog.open(AddSubjectComponent);
   }
 
   getCACertificates() {
-    this.certificateService.getCACertificates(this.createCertificateKeyStoragePasswords.value.rootKeyStoragePassword,
-      this.createCertificateKeyStoragePasswords.value.intermediateKeyStoragePassword).
-      subscribe((issuers: Certificate[]) => {
+    this.createCertificateFormIssuer.patchValue(
+      {
+        "selectedIssuerCertificate": null,
+      }
+    );
+
+    this.certificateService.getCACertificates(
+      this.createCertificateFormSubject.value.selectedSubject.id,
+      this.createCertificateKeyStoragePasswords.value.rootKeyStoragePassword,
+      this.createCertificateKeyStoragePasswords.value.intermediateKeyStoragePassword,
+    ).subscribe(
+      (issuers: Certificate[]) => {
         this.issuerCertificates = issuers;
-      }, () => {
-        this.toastr.error('At least one password is incorrect. Please try again', 'Get CA Certificates');
-      })
+      },
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, "Failed to get CA certificates");
+      }
+    );
   }
 
   checkIfIssuerCertificateExtendedKeyUsageExists() {

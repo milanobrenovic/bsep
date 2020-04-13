@@ -18,7 +18,7 @@ public class Entity {
     @Column(columnDefinition = "VARCHAR(64)", nullable = false, unique = true)
     private String commonName;
 
-    @Email
+    @Column
     private String email;
 
     @Column(columnDefinition = "VARCHAR(64)")

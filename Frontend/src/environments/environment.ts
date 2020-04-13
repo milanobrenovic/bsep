@@ -9,7 +9,8 @@ export const environment = {
     baseUrl         : "http://localhost:8080/api",
     auth            : "/auth/login",
     entity          : '/entity',
-    certificate     : '/certificate'
+    certificate     : '/certificate',
+    ocsp            : '/ocsp',
 };
 
 /*

@@ -60,6 +60,11 @@ const appRoutes: Routes = [
         component   : ListCertificatesComponent,
         canActivate : [AdminGuard],
     },
+    {
+        path        : 'pages/list-certificates',
+        component   : ListCertificatesComponent,
+        canActivate : [AdminGuard],
+    },
 
 
     //==============================================================================//

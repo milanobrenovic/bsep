@@ -279,7 +279,8 @@
 											[matDatepicker]="pickerFrom"
 											formControlName="validFrom"
 											readonly
-											[min]="minDate">
+											[min]="minDate"
+											[max]="getSelectedIssuerCertificateValidTo()">
 										<mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
 										<mat-datepicker #pickerFrom disabled="false"></mat-datepicker>
 									</mat-form-field>
@@ -293,7 +294,8 @@
 											[matDatepicker]="pickerTo"
 											formControlName="validTo"
 											readonly
-											[min]="minDate">
+											[min]="minDate"
+											[max]="getSelectedIssuerCertificateValidTo()">
 										<mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
 										<mat-datepicker #pickerTo disabled="false"></mat-datepicker>
 									</mat-form-field>

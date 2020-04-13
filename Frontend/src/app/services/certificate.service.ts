@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { CreateCertificate } from 'app/models/createCertificate';
 
 @Injectable({
@@ -13,20 +12,17 @@ export class CertificateService {
 
   constructor(
     private httpClient: HttpClient,
-    private router: Router,
   ) { }
 
   public addNewCertificate(certificate: CreateCertificate) {
-    console.log(certificate);
     return this.httpClient.post(this.url + "/new", certificate);
   }
 
   public addNewSelfSignedCertificate(certificate: CreateCertificate) {
-    console.log(certificate);
     return this.httpClient.post(this.url + "/self-signed", certificate);
   }
 
-  public getCACertificates(rootKeyStoragePassword, intermediateKeyStoragePassword): any {
+  public getCACertificates(id: number, rootKeyStoragePassword: string, intermediateKeyStoragePassword: string): any {
     let params = new HttpParams();
 
     if (rootKeyStoragePassword != null) {
@@ -37,7 +33,7 @@ export class CertificateService {
       params = params.append('intermediateKeyStoragePassword', intermediateKeyStoragePassword);
     }
     
-    return this.httpClient.get(this.url, {
+    return this.httpClient.get(this.url + "/" + id, {
       params: params
     });
   }
@@ -55,5 +51,5 @@ export class CertificateService {
   public download(certRole: string, keyStorePassword: string, alias: string) {
     return this.httpClient.post(this.url + "/download", { certRole, keyStorePassword, alias });
   }
-  
+
 }

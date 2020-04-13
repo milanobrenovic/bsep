@@ -2,27 +2,32 @@ package com.bsep.tim11.bseptim11.serviceImpl;
 
 import com.bsep.tim11.bseptim11.dto.*;
 import com.bsep.tim11.bseptim11.enumeration.CertificateRole;
+import com.bsep.tim11.bseptim11.exceptions.InvalidCertificateDataException;
 import com.bsep.tim11.bseptim11.model.Entity;
 import com.bsep.tim11.bseptim11.model.IssuerData;
 import com.bsep.tim11.bseptim11.model.SubjectData;
 import com.bsep.tim11.bseptim11.repository.EntityRepository;
 import com.bsep.tim11.bseptim11.service.CertificateService;
 import com.bsep.tim11.bseptim11.service.KeyStoreService;
+import com.bsep.tim11.bseptim11.service.ValidationService;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.*;
+import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.ietf.jgss.GSSException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -34,13 +39,16 @@ import java.security.spec.ECGenParameterSpec;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
+
+    private static final String SECURITY_FILES_PATH =
+            "src" + File.separator +
+            "main" + File.separator +
+            "resources" + File.separator +
+            "data" + File.separator;
 
     @Autowired
     private EntityRepository entityRepository;
@@ -48,72 +56,94 @@ public class CertificateServiceImpl implements CertificateService {
     @Autowired
     private KeyStoreService keyStoreService;
 
-    @Override
-    public ExistingCertificateDTO create(NewCertificateDTO newCertificateDTO) throws Exception {
-        CertificateDTO certificateDTO = newCertificateDTO.getCertificateData();
-        Entity subject = entityRepository.findByCommonName(certificateDTO.getSubject().getCommonName());
-
-        CertificateDTO issuerCertificate = newCertificateDTO.getIssuerCertificate();
-        Entity issuer = entityRepository.findByCommonName(issuerCertificate.getIssuer().getCommonName());
-
-        if (subject.getCommonName().equals(issuer.getCommonName())) {
-            throw new IllegalArgumentException("Issuer and subject cannot be the same entity.");
-        }
-
-        Date validFrom = getDate(certificateDTO.getValidFrom());
-        Date validTo = getDate(certificateDTO.getValidTo());
-
-        if (validFrom.before(new Date()) || validFrom.after(validTo)) {
-            throw new IllegalArgumentException("Certificate validity period is out of date.");
-        }
-
-        if (!certificateDataIsValid(certificateDTO, issuerCertificate, validFrom, validTo)) {
-            throw new IllegalArgumentException("Certificate is invalid.");
-        }
-
-        SubjectData subjectData = getSubject(subject);
-        IssuerData issuerData = getIssuer(
-            issuer,
-            issuerCertificate,
-            newCertificateDTO.getIssuerKeyStorePassword(),
-            newCertificateDTO.getIssuerPrivateKeyPassword()
-        );
-
-        X509Certificate x509Certificate = generateCertificate(
-            subjectData,
-            issuerData,
-            validFrom,
-            validTo,
-            certificateDTO
-        );
-
-        keyStoreService.store(
-            newCertificateDTO.getKeyStorePassword(),
-            newCertificateDTO.getAlias(),
-            subjectData.getPrivateKey(),
-            newCertificateDTO.getPrivateKeyPassword(),
-            x509Certificate
-        );
-
-        return new ExistingCertificateDTO(x509Certificate);
-    }
+    @Autowired
+    private ValidationService validationService;
 
     @Override
-    public ExistingCertificateDTO createSelfSigned(NewCertificateDTO newCertificateDTO) throws Exception {
+    public ResponseCertificateDTO createSelfSigned(NewCertificateDTO newCertificateDTO) throws
+            ParseException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException,
+            IOException, CertificateException, OperatorCreationException, GSSException, KeyStoreException {
+
         CertificateDTO certificateDTO = newCertificateDTO.getCertificateData();
         Entity subject = entityRepository.findByCommonName(certificateDTO.getSubject().getCommonName());
 
         Date validFrom = getDate(certificateDTO.getValidFrom());
         Date validTo = getDate(certificateDTO.getValidTo());
+        Date today = getToday();
 
-        if (validFrom.before(new Date()) || validFrom.after(validTo)) {
-            throw new BadCredentialsException("The certificate validity period is out of date.");
+        if (validFrom.before(today) || validFrom.after(validTo)) {
+            throw new InvalidCertificateDataException("The certificate validity period is out of date.");
+        }
+        if (!certificateDTO.getKeyUsage().isEnabled()) {
+            throw new InvalidCertificateDataException(("You have to select at least one key usage."));
+        }
+        if (!certificateDTO.getExtendedKeyUsage().isEnabled()) {
+            throw new InvalidCertificateDataException("You have to select at least one extended key usage.");
         }
 
         SubjectData subjectData = getSubject(subject);
         IssuerData issuerData = getIssuerForSelfSigned(subjectData);
 
         X509Certificate x509Certificate = generateCertificate(
+                subjectData,
+                issuerData,
+                validFrom,
+                validTo,
+                certificateDTO
+        );
+
+        keyStoreService.store(
+                newCertificateDTO.getKeyStorePassword(),
+                newCertificateDTO.getAlias(),
+                subjectData.getPrivateKey(),
+                newCertificateDTO.getPrivateKeyPassword(),
+                new Certificate[]{x509Certificate}
+        );
+
+        subject.setNumberOfRootCertificates(subject.getNumberOfRootCertificates() + 1);
+        entityRepository.save(subject);
+
+        return new ResponseCertificateDTO(x509Certificate);
+    }
+
+    @Override
+    public ResponseCertificateDTO create(NewCertificateDTO newCertificateDTO) throws
+            ParseException, InvalidAlgorithmParameterException, NoSuchProviderException, NoSuchAlgorithmException,
+            UnrecoverableKeyException, CertificateException, IOException, KeyStoreException, GSSException,
+            OperatorCreationException {
+
+        CertificateDTO certificateDTO = newCertificateDTO.getCertificateData();
+        Entity subject = entityRepository.findByCommonName(certificateDTO.getSubject().getCommonName());
+
+        CertificateDTO issuerCertificate = newCertificateDTO.getIssuerCertificate();
+        Entity issuer = entityRepository.findByCommonName(issuerCertificate.getSubject().getCommonName());
+
+        if (subject.getCommonName().equals(issuer.getCommonName())) {
+            throw new InvalidCertificateDataException("Issuer and subject cannot be the same entity.");
+        }
+
+        Date validFrom = getDate(certificateDTO.getValidFrom());
+        Date validTo = getDate(certificateDTO.getValidTo());
+
+        if (validFrom.before(getToday()) || validFrom.after(validTo)) {
+            throw new InvalidCertificateDataException("Certificate validity period is out of date.");
+        }
+        if (!certificateDataIsValid(certificateDTO, issuerCertificate, validFrom, validTo)) {
+            throw new InvalidCertificateDataException("Certificate is invalid.");
+        }
+
+        SubjectData subjectData = getSubject(subject);
+        String issuerKeyStorePassword = newCertificateDTO.getIssuerKeyStorePassword();
+        IssuerData issuerData = getIssuer(
+            issuer,
+            issuerCertificate,
+            issuerKeyStorePassword,
+            newCertificateDTO.getIssuerPrivateKeyPassword()
+        );
+
+        CertificateRole certificateRole = getCertificateRole(issuerCertificate);
+
+        X509Certificate x509Certificate = generateCertificate(
             subjectData,
             issuerData,
             validFrom,
@@ -121,21 +151,27 @@ public class CertificateServiceImpl implements CertificateService {
             certificateDTO
         );
 
+        Certificate[] certificates = getCertificateChain(
+            certificateRole,
+            issuerKeyStorePassword,
+            issuerCertificate.getAlias(),
+            x509Certificate
+        );
+
         keyStoreService.store(
             newCertificateDTO.getKeyStorePassword(),
             newCertificateDTO.getAlias(),
             subjectData.getPrivateKey(),
             newCertificateDTO.getPrivateKeyPassword(),
-            x509Certificate
+            certificates
         );
-        entityRepository.save(subject);
 
-        return new ExistingCertificateDTO(x509Certificate);
+        return new ResponseCertificateDTO(x509Certificate);
     }
 
     @Override
-    public void download(DownloadCertificateDTO downloadCertificateDTO)
-            throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
+    public void download(DownloadCertificateDTO downloadCertificateDTO) throws
+            CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
 
         String certificateRoleStr = downloadCertificateDTO.getCertRole().toLowerCase();
         String alias = downloadCertificateDTO.getAlias();
@@ -151,11 +187,36 @@ public class CertificateServiceImpl implements CertificateService {
             alias
         );
 
-        FileOutputStream fos = new FileOutputStream(certificateRoleStr + "_" + alias + ".cer");
+        FileOutputStream fos = new FileOutputStream(SECURITY_FILES_PATH + certificateRoleStr + "_" + alias + ".cer");
         fos.write("-----BEGIN CERTIFICATE-----\n".getBytes("US-ASCII"));
         fos.write(Base64.encodeBase64(certificate.getEncoded(), true));
         fos.write("-----END CERTIFICATE-----\n".getBytes("US-ASCII"));
         fos.close();
+    }
+
+    private Certificate[] getCertificateChain(CertificateRole certificateRole, String issuerKeyStorePassword,
+                                              String alias, Certificate certificate) throws
+            CertificateException, NoSuchAlgorithmException, IOException, KeyStoreException, NoSuchProviderException {
+
+        Certificate[] certificates = keyStoreService.getCertificateChain(
+            certificateRole,
+            issuerKeyStorePassword,
+            alias
+        );
+
+        if (!validationService.validate(certificates)) {
+            throw new CertificateException("Issuer's certificate is invalid.");
+        }
+
+        List<Certificate> certificateList = new ArrayList<>(Arrays.asList(certificates));
+        certificateList.add(0, certificate);
+
+        Certificate[] newCertificates = new Certificate[certificateList.size()];
+        for (int i = 0; i < certificateList.size(); i++) {
+            newCertificates[i] = certificateList.get(i);
+        }
+
+        return newCertificates;
     }
 
     private Date getDate(String date) throws ParseException {
@@ -168,7 +229,9 @@ public class CertificateServiceImpl implements CertificateService {
         }
     }
 
-    private SubjectData getSubject(Entity entity) {
+    private SubjectData getSubject(Entity entity) throws
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException {
+
         KeyPair keyPairSubject = generateKeyPair();
         if (keyPairSubject == null) {
             return null;
@@ -182,17 +245,12 @@ public class CertificateServiceImpl implements CertificateService {
         );
     }
 
-    private KeyPair generateKeyPair() {
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "SunEC");
-            ECGenParameterSpec ecsp;
-            ecsp = new ECGenParameterSpec("secp256k1");
-            keyPairGenerator.initialize(ecsp);
-            return keyPairGenerator.generateKeyPair();
-        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
-            e.printStackTrace();
-        }
-        return null;
+    private KeyPair generateKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "SunEC");
+        ECGenParameterSpec ecsp;
+        ecsp = new ECGenParameterSpec("secp256k1");
+        keyPairGenerator.initialize(ecsp);
+        return keyPairGenerator.generateKeyPair();
     }
 
     private X500Name getX500Name(Entity entity) {
@@ -226,8 +284,8 @@ public class CertificateServiceImpl implements CertificateService {
         IssuerData issuerData,
         Date validFrom,
         Date validTo,
-        CertificateDTO certificateDTO)
-        throws Exception {
+        CertificateDTO certificateDTO
+    ) throws CertIOException, OperatorCreationException, GSSException, CertificateException {
 
         JcaContentSignerBuilder builder = new JcaContentSignerBuilder("SHA256withECDSA");
         builder = builder.setProvider("BC");
@@ -247,14 +305,14 @@ public class CertificateServiceImpl implements CertificateService {
         if (certificateDTO.getAuthorityKeyIdentifier()) {
             x509v3CertificateBuilder.addExtension(
                     Extension.authorityKeyIdentifier,
-                    true,
+                    false,
                     new AuthorityKeyIdentifier(issuerData.getPublicKey().getEncoded())
             );
         }
         if (certificateDTO.getSubjectKeyIdentifier()) {
             x509v3CertificateBuilder.addExtension(
                     Extension.subjectKeyIdentifier,
-                    true,
+                    false,
                     new SubjectKeyIdentifier(subjectData.getPublicKey().getEncoded())
             );
         }
@@ -278,16 +336,28 @@ public class CertificateServiceImpl implements CertificateService {
                 keyUsageDTO.getEncipherOnlyInt() |
                 keyUsageDTO.getDecipherOnlyInt()
             );
-            x509v3CertificateBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+            x509v3CertificateBuilder.addExtension(Extension.keyUsage, false, keyUsage);
         }
         if (certificateDTO.getExtendedKeyUsage().isEnabled()) {
             ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(
                 certificateDTO.getExtendedKeyUsage().keyPurposeIds()
             );
-            x509v3CertificateBuilder.addExtension(Extension.extendedKeyUsage, true, extendedKeyUsage);
+            x509v3CertificateBuilder.addExtension(Extension.extendedKeyUsage, false, extendedKeyUsage);
         }
 
-        return new JcaX509CertificateConverter().setProvider(new BouncyCastleProvider())
+        String url = "http://localhost:8080/api/ocsp?sn=" + serialNumber.toString();
+        GeneralName generalName = new GeneralName(GeneralName.uniformResourceIdentifier, url);
+
+        AuthorityInformationAccess authorityInformationAccess = new AuthorityInformationAccess(
+            new ASN1ObjectIdentifier("1.3.6.1.5.5.7.48.1"), generalName
+        );
+        x509v3CertificateBuilder.addExtension(
+            Extension.authorityInfoAccess,
+            false,
+            authorityInformationAccess
+        );
+
+        return new JcaX509CertificateConverter().setProvider("BC")
                 .getCertificate(x509v3CertificateBuilder.build(contentSigner));
     }
 
@@ -335,7 +405,17 @@ public class CertificateServiceImpl implements CertificateService {
 
         if (validFrom.before(getDate(issuerCertificate.getValidFrom()))
             || validTo.after(getDate(issuerCertificate.getValidTo()))) {
-            return false;
+            throw new InvalidCertificateDataException("Validity period of the certificate must be within validity" +
+                    "period of the issuer's certificate, which is from " + formatDate(validFrom) + " to " +
+                    formatDate(validTo));
+        }
+
+        if (newCertificateDTO.getSubjectIsCa() && !newCertificateDTO.getKeyUsage().isEnabled()) {
+            throw new InvalidCertificateDataException("You have to select at least one key usage.");
+        }
+
+        if (newCertificateDTO.getSubjectIsCa() && !newCertificateDTO.getExtendedKeyUsage().isEnabled()) {
+            throw new InvalidCertificateDataException("You have to select at least one extended key usage.");
         }
 
         if (issuerCertificate.getKeyUsage() != null && newCertificateDTO.getKeyUsage() != null) {
@@ -343,7 +423,8 @@ public class CertificateServiceImpl implements CertificateService {
             List<Integer> issuerFalseKeyUsages = issuerCertificate.getKeyUsage().falseKeyUsageIdentifiers();
             for (Integer identifier : issuerFalseKeyUsages) {
                 if (!subjectFalseKeyUsages.contains(identifier)) {
-                    return false;
+                    throw new InvalidCertificateDataException("Some of the selected key usages cannot be set" +
+                            "because the issuer's certificate cannot sign them.");
                 }
             }
         }
@@ -353,7 +434,8 @@ public class CertificateServiceImpl implements CertificateService {
             List<KeyPurposeId> issuerFalseExtendedKeyUsages = issuerCertificate.getExtendedKeyUsage().falseExtendedKeyUsageIdentifiers();
             for (KeyPurposeId identifier : issuerFalseExtendedKeyUsages) {
                 if (!subjectFalseExtendedKeyUsages.contains(identifier)) {
-                    return false;
+                    throw new InvalidCertificateDataException("Some of the selected extended key usages cannot be " +
+                            "set because the issuer's certificate cannot sign them.");
                 }
             }
         }
@@ -369,11 +451,7 @@ public class CertificateServiceImpl implements CertificateService {
         throws UnrecoverableKeyException, NoSuchAlgorithmException, CertificateException, IOException, KeyStoreException {
 
         X500Name x500Name = getX500Name(issuer);
-        CertificateRole certificateRole = CertificateRole.INTERMEDIATE;
-
-        if (issuerCertificate.getSubject().getCommonName().equals(issuerCertificate.getIssuer().getCommonName())) {
-            certificateRole = CertificateRole.ROOT;
-        }
+        CertificateRole certificateRole = getCertificateRole(issuerCertificate);
 
         PrivateKey privateKey = keyStoreService.getPrivateKey(
                 certificateRole,
@@ -388,6 +466,28 @@ public class CertificateServiceImpl implements CertificateService {
         );
 
         return new IssuerData(privateKey, x500Name, publicKey, issuer.getId());
+    }
+
+    private String formatDate(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d.M.yyyy.");
+        return simpleDateFormat.format(date);
+    }
+
+    private CertificateRole getCertificateRole(CertificateDTO certificateDTO) {
+        CertificateRole certificateRole = CertificateRole.INTERMEDIATE;
+        if (certificateDTO.getSubject().getCommonName().equals(certificateDTO.getIssuer().getCommonName())) {
+            certificateRole = CertificateRole.ROOT;
+        }
+        return certificateRole;
+    }
+
+    public static Date getToday() {
+        Calendar date = new GregorianCalendar();
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        return date.getTime();
     }
 
 }

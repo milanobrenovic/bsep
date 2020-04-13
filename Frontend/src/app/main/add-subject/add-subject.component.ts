@@ -3,6 +3,7 @@ import { ValidatorFn, FormGroup, FormBuilder, FormControl, Validators } from '@a
 import { ToastrService } from 'ngx-toastr';
 import { SubjectService } from 'app/services/subject.service';
 import { Entity } from 'app/models/entity';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const ValidForm: ValidatorFn = (formGroup: FormGroup) => {
   const type = formGroup.get("type").value;
@@ -86,8 +87,8 @@ export class AddSubjectComponent implements OnInit {
         this.toastrService.success("New subject added successfully.", "Subject created");
         this.subjectService.createSuccessEmitter.next(subject);
       },
-      (e) => {
-        this.toastrService.error("Subject with the same email or common name already exists.", "Could not create new subject");
+      (e: HttpErrorResponse) => {
+        this.toastrService.error(e.error.message, "Could not create new subject");
       }
     );
   }

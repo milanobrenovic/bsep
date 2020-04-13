@@ -7,6 +7,10 @@ import { ToastrService } from 'ngx-toastr';
 import { ChooseTemplateComponent } from '../choose-template/choose-template.component';
 import { CertificateDetailsComponent } from '../certificate-details/certificate-details.component';
 import { Certificate } from 'app/models/certificate';
+import { OCSPService } from 'app/services/ocsp.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CertificateItem } from 'app/models/certificateItem';
+import { CertificateStatusComponent } from '../certificate-status/certificate-status.component';
 
 @Component({
   selector: 'app-list-certificates',
@@ -17,13 +21,14 @@ export class ListCertificatesComponent implements OnInit {
 
   keyStoreForm: FormGroup;
   displayedColumns: string[] = ['serialNumber', 'subjectCN', 'issuerCN', 'validFrom', 'validTo', 'buttons'];
-  certificatesDataSource: MatTableDataSource<Certificate>;
+  certificatesDataSource: MatTableDataSource<CertificateItem>;
 
   constructor(
     public dialog: MatDialog,
     private formBuilder: FormBuilder,
     private certificateService: CertificateService,
-    private toastr: ToastrService
+    private ocspService: OCSPService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -35,44 +40,47 @@ export class ListCertificatesComponent implements OnInit {
 
   fetchCertificates() {
     this.certificateService.getCertificates(this.keyStoreForm.value.certRole, this.keyStoreForm.value.keyStorePassword).subscribe(
-      (data: Certificate[]) => {
+      (data: CertificateItem[]) => {
         this.certificatesDataSource = new MatTableDataSource(data)
         if (data.length == 0) {
-          this.toastr.info('No certificates the in specified KeyStore.', 'Show certificates');
+          this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
         }
-
       },
-      () => {
-        const data: Certificate[] = []
+      (e: HttpErrorResponse) => {
+        const data: CertificateItem[] = []
         this.certificatesDataSource = new MatTableDataSource(data)
-        this.toastr.error('Wrong password. Please try again.', 'Show certificates');
-      });
-
-    // const subject = new Entity("USER", "Perica", "pera@mail.com", null, "Firma doo", "RS", "Peric", "Petar", null, null, 1);
-    // const issuer = new Entity("SOFTWARE", "izdavac.com", null, "Izdavaci sertifikata", "Izdavac doo", "RS", null, null, "Novi Sad", "Vojvodina", 2);
-    // const keyUsage = new KeyUsage(true, true, false, true, false, true, true, false, false);
-    // const extKeyUsg = new ExtendedKeyUsage(true, false, false, true, false, false);
-    // const cert = new Certificate(subject, issuer, "7/5/2020", "7/30/2021", true, true, false, keyUsage, extKeyUsg, 156489);
-    // this.certificatesDataSource = new MatTableDataSource([cert]);
+        this.toastr.error(e.error.message, 'Failed to show certificates');
+      }
+    );
   }
 
-  viewDetails(cert: Certificate) {
+  viewDetails(cert: CertificateItem) {
     this.dialog.open(CertificateDetailsComponent, { data: cert });
   }
 
-  download(element: Certificate) {
-    this.certificateService.download(this.keyStoreForm.value.certRole, this.keyStoreForm.value.keyStorePassword, element.alias).subscribe(
+  download(cert: CertificateItem) {
+    this.certificateService.download(
+      this.keyStoreForm.value.certRole,
+      this.keyStoreForm.value.keyStorePassword,
+      cert.alias,
+    ).subscribe(
       () => {
         this.toastr.success('Success!', 'Download certificate');
       },
-      () => {
-        this.toastr.error('Error while downloading.', 'Download certificate');
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, 'Failed to download selected certificate');
       }
-    )
+    );
   }
 
-  revoke(cert: Certificate) {
-
+  checkStatus(cert: CertificateItem) {
+    console.log("LIST-CERTIFICATES: " + cert.certificateIdentifier);
+    this.dialog.open(CertificateStatusComponent, {
+      data: {
+        "cert": cert,
+        "certRole": this.keyStoreForm.value.certRole,
+      }
+    });
   }
 
   openTemplatesDialog() {
