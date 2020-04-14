@@ -1,6 +1,69 @@
-<div class="page-layout blank p-24" fusePerfectScrollbar>
+<div fxLayout="column" class="page-layout blank p-24" fusePerfectScrollbar>
 
-    <h2>Home works!</h2>
-    <a routerLink="/login">Here</a>
-
+	<h1>Welcome to the Home Page.</h1>
+	<mat-divider></mat-divider>
+	<br>
+	
+	<div fxLayout="row">
+		<mat-card fxLayout="column" fxFlex="25" class="mr-8">
+			<mat-card-header>
+				<mat-card-title>1. Create a new subject</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<p>
+					To create a new certificate, you first have to create a new subject followed by a root
+					certificate. Click continue to create a new subject.
+				</p>
+				<button mat-button mat-raised-button color="primary" routerLink="/pages/add-subject">
+					Continue
+				</button>
+			</mat-card-content>
+		</mat-card>
+		<mat-card fxLayout="column" fxFlex="25" class="ml-8 mr-8">
+			<mat-card-header>
+				<mat-card-title>2. Create a new root certificate</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<p>
+					After you have created at least one subject, you have to create a root
+					(self-signed) certificate. You can have multiple root certificates.
+					Click continue to create a root (self-signed) certificate.
+				</p>
+				<button mat-button mat-raised-button color="primary" routerLink="/pages/create-self-signed-certificate">
+					Continue
+				</button>
+			</mat-card-content>
+		</mat-card>
+		<mat-card fxLayout="column" fxFlex="25" class="ml-8 mr-8">
+			<mat-card-header>
+				<mat-card-title>3. Create a new certificate</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<p>
+					Once you have at least one root certificate, you can create multiple
+					new non-root certificates. Click the continue button to create a new
+					certificate.
+				</p>
+				<button mat-button mat-raised-button color="primary" routerLink="/pages/create-certificate">
+					Continue
+				</button>
+			</mat-card-content>
+		</mat-card>
+		<mat-card fxLayout="column" fxFlex="25" class="ml-8">
+			<mat-card-header>
+				<mat-card-title>4. View all certificates</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<p>
+					You can view the list of all certificates that you had created
+					including root certificates. You will have ability to view their details,
+					download them or revoke them. Click continue to view all existing certificates.
+				</p>
+				<button mat-button mat-raised-button color="primary" routerLink="/pages/list-certificates">
+					Continue
+				</button>
+			</mat-card-content>
+		</mat-card>
+	</div>
+	
 </div>

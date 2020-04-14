@@ -19,7 +19,17 @@ const appRoutes: Routes = [
 
 
     //==============================================================================//
-    // HOME
+    // REDIRECTIONS
+    //==============================================================================//
+    {
+        path        : '',
+        redirectTo  : 'pages/home',
+        pathMatch   : 'full',
+    },
+
+
+    //==============================================================================//
+    // INITIAL
     //==============================================================================//
     {
         path        : 'pages/login',
@@ -31,7 +41,7 @@ const appRoutes: Routes = [
     // PAGES
     //==============================================================================//
     {
-        path        : '',
+        path        : 'pages/home',
         component   : HomeComponent,
         canActivate : [AdminGuard],
     },
@@ -94,7 +104,7 @@ const appRoutes: Routes = [
         // Unrecognized endpoint
         path        : '**',
         component   : ErrorComponent,
-    }
+    },
 ];
 
 @NgModule({
