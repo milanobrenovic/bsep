@@ -32,7 +32,7 @@ export class CertificateService {
     if (intermediateKeyStoragePassword != null) {
       params = params.append('intermediateKeyStoragePassword', intermediateKeyStoragePassword);
     }
-    
+    console.log(this.url + "/" + id);
     return this.httpClient.get(this.url + "/" + id, {
       params: params
     });

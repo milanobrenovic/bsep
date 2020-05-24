@@ -176,7 +176,7 @@ export class CreateCertificateComponent implements OnInit {
         keyEncipherment: new FormControl(false),
         nonRepudiation: new FormControl(false),
       }),
-      extentendedKeyUsage: this.formBuilder.group({
+      extendedKeyUsage: this.formBuilder.group({
         serverAuth: new FormControl(false),
         clientAuth: new FormControl(false),
         codeSigning: new FormControl(false),
@@ -300,12 +300,12 @@ export class CreateCertificateComponent implements OnInit {
 
   createExtendedKeyUsage(): ExtendedKeyUsage {
     return new ExtendedKeyUsage(
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.serverAuth,
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.clientAuth,
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.codeSigning,
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.emailProtection,
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.timeStamping,
-      this.createCertificateFormOtherData.value.extentendedKeyUsage.ocspSigning
+      this.createCertificateFormOtherData.value.extendedKeyUsage.serverAuth,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.clientAuth,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.codeSigning,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.emailProtection,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.timeStamping,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.ocspSigning
     )
   }
 
@@ -321,7 +321,7 @@ export class CreateCertificateComponent implements OnInit {
           'certificateSigning': this.selectedTemplate.certSigning,
           'crlSign': this.selectedTemplate.CRLSign,
         },
-        'extentendedKeyUsage': {
+        'extendedKeyUsage': {
           'serverAuth': this.selectedTemplate.TLSWebServerAuth,
           'clientAuth': this.selectedTemplate.TLSWebClientAuth,
           'codeSigning': this.selectedTemplate.codeSigning
@@ -346,7 +346,7 @@ export class CreateCertificateComponent implements OnInit {
           'certificateSigning': this.selectedTemplate.certSigning && this.getSelectedIssuerCertificate().keyUsage.certificateSigning,
           'crlSign': this.selectedTemplate.CRLSign && this.getSelectedIssuerCertificate().keyUsage.crlSign,
         },
-        'extentendedKeyUsage': {
+        'extendedKeyUsage': {
           'serverAuth': this.selectedTemplate.TLSWebServerAuth && this.getSelectedIssuerCertificate().extendedKeyUsage.serverAuth,
           'clientAuth': this.selectedTemplate.TLSWebClientAuth && this.getSelectedIssuerCertificate().extendedKeyUsage.clientAuth,
           'codeSigning': this.selectedTemplate.codeSigning && this.getSelectedIssuerCertificate().extendedKeyUsage.codeSigning,

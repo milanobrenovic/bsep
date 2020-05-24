@@ -50,8 +50,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-
-
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -80,8 +78,6 @@ import { CertificateDetailsComponent } from './main/certificate-details/certific
 import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
 import { CertificateStatusComponent } from './main/certificate-status/certificate-status.component';
 
-
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -107,7 +103,6 @@ import { CertificateStatusComponent } from './main/certificate-status/certificat
         ReactiveFormsModule,
         FormsModule,
         LayoutModule,
-
         ToastrModule.forRoot({
             timeOut: 5000,
             positionClass: 'toast-bottom-right',
@@ -173,7 +168,7 @@ import { CertificateStatusComponent } from './main/certificate-status/certificat
         FuseSharedModule,
         FuseSidebarModule,
         FuseThemeOptionsModule,
-
+        
         // App modules
         LayoutModule,
         AppRoutingModule,
