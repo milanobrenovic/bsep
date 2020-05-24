@@ -7,10 +7,15 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
-@javax.persistence.Entity
+@Entity
 public class Admin implements UserDetails {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3534212541199599323L;
+
+	@Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

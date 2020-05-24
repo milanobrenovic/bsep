@@ -1,204 +1,194 @@
 package com.bsep.tim11.bseptim11.dto;
 
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.bouncycastle.asn1.x509.KeyPurposeId;
 
 public class ExtendedKeyUsageDTO {
 
-    @NotNull(message = "Server auth cannot be empty.")
-    private Boolean serverAuth;
+	private boolean serverAuth;
+	
+	private boolean clientAuth;
+	
+	private boolean codeSigning;
+	
+	private boolean emailProtection;
+	
+	private boolean timeStamping;
+	
+	private boolean OCSPSigning;
+	
+	private boolean dvcs;
+	
+	public ExtendedKeyUsageDTO() {}
+	
+	public ExtendedKeyUsageDTO(boolean serverAuth, boolean clientAuth, boolean codeSigning, boolean emailProtection,
+			boolean timeStamping, boolean oCSPSigning, boolean dvcs) {
+		super();
+		this.serverAuth = serverAuth;
+		this.clientAuth = clientAuth;
+		this.codeSigning = codeSigning;
+		this.emailProtection = emailProtection;
+		this.timeStamping = timeStamping;
+		OCSPSigning = oCSPSigning;
+		this.dvcs = dvcs;
+	}
 
-    @NotNull(message = "Client auth cannot be empty.")
-    private Boolean clientAuth;
+	public ExtendedKeyUsageDTO(ExtendedKeyUsageDTO extendedKeyUsage) {
+		this.serverAuth = extendedKeyUsage.serverAuth;
+		this.clientAuth = extendedKeyUsage.clientAuth;
+		this.codeSigning = extendedKeyUsage.codeSigning;
+		this.emailProtection = extendedKeyUsage.emailProtection;
+		this.timeStamping = extendedKeyUsage.timeStamping;
+		this.OCSPSigning = extendedKeyUsage.OCSPSigning;
+		this.dvcs = extendedKeyUsage.dvcs;
+	}
+	
+	public boolean isServerAuth() {
+		return serverAuth;
+	}
 
-    @NotNull(message = "Code signing cannot be empty.")
-    private Boolean codeSigning;
+	public void setServerAuth(boolean serverAuth) {
+		this.serverAuth = serverAuth;
+	}
+	
+	public KeyPurposeId getServerAuth() {
+		if(this.serverAuth)
+			return KeyPurposeId.id_kp_serverAuth;
+		else
+			return null;
+	}
 
-    @NotNull(message = "Email protection cannot be empty.")
-    private Boolean emailProtection;
+	public boolean isClientAuth() {
+		return clientAuth;
+	}
 
-    @NotNull(message = "Time stamping cannot be empty.")
-    private Boolean timeStamping;
+	public void setClientAuth(boolean clientAuth) {
+		this.clientAuth = clientAuth;
+	}
 
-    @NotNull(message = "OCSP signing cannot be empty.")
-    private Boolean ocspSigning;
+	public KeyPurposeId getClientAuth() {
+		if(this.clientAuth)
+			return KeyPurposeId.id_kp_clientAuth;
+		else
+			return null;
+	}
+	
+	public boolean isCodeSigning() {
+		return codeSigning;
+	}
 
-    public ExtendedKeyUsageDTO() {
+	public void setCodeSigning(boolean codeSigning) {
+		this.codeSigning = codeSigning;
+	}
 
-    }
+	public KeyPurposeId getCodeSigning() {
+		if(this.codeSigning)
+			return KeyPurposeId.id_kp_codeSigning;
+		else
+			return null;
+	}
+	
+	public boolean isEmailProtection() {
+		return emailProtection;
+	}
 
-    public ExtendedKeyUsageDTO(List<String> extendedKeyUsage) {
-        String idkp = "1.3.6.1.5.5.7.3";
-        this.serverAuth = false;
-        this.clientAuth = false;
-        this.codeSigning = false;
-        this.emailProtection = false;
-        this.ocspSigning = false;
-        this.timeStamping = false;
+	public void setEmailProtection(boolean emailProtection) {
+		this.emailProtection = emailProtection;
+	}
 
-        if (extendedKeyUsage.contains(idkp + ".1")) {
-            this.serverAuth = true;
-        }
-        if (extendedKeyUsage.contains(idkp + ".2")) {
-            this.clientAuth = true;
-        }
-        if (extendedKeyUsage.contains(idkp + ".3")) {
-            this.codeSigning = true;
-        }
-        if (extendedKeyUsage.contains(idkp + ".8")) {
-            this.timeStamping = true;
-        }
-        if (extendedKeyUsage.contains(idkp + ".4")) {
-            this.emailProtection = true;
-        }
-        if (extendedKeyUsage.contains(idkp + ".9")) {
-            this.ocspSigning = true;
-        }
-    }
+	public KeyPurposeId getEmailProtection() {
+		if(this.emailProtection)
+			return KeyPurposeId.id_kp_emailProtection;
+		else
+			return null;
+	}
+	
+	public boolean isTimeStamping() {
+		return timeStamping;
+	}
 
-    public Boolean getServerAuth() {
-        return serverAuth;
-    }
+	public void setTimeStamping(boolean timeStamping) {
+		this.timeStamping = timeStamping;
+	}
 
-    public void setServerAuth(Boolean serverAuth) {
-        this.serverAuth = serverAuth;
-    }
+	public KeyPurposeId getTimeStamping() {
+		if(this.timeStamping)
+			return KeyPurposeId.id_kp_timeStamping;
+		else
+			return null;
+	}
+	
+	public boolean isOCSPSigning() {
+		return OCSPSigning;
+	}
 
-    public Boolean getClientAuth() {
-        return clientAuth;
-    }
+	public void setOCSPSigning(boolean oCSPSigning) {
+		OCSPSigning = oCSPSigning;
+	}
 
-    public void setClientAuth(Boolean clientAuth) {
-        this.clientAuth = clientAuth;
-    }
+	public KeyPurposeId getOCSPSigning() {
+		if(this.OCSPSigning)
+			return KeyPurposeId.id_kp_OCSPSigning;
+		else
+			return null;
+	}
+	
+	public boolean isDvcs() {
+		return dvcs;
+	}
 
-    public Boolean getCodeSigning() {
-        return codeSigning;
-    }
+	public void setDvcs(boolean dvcs) {
+		this.dvcs = dvcs;
+	}
+	
+	public KeyPurposeId getDvcs() {
+		if(this.dvcs)
+			return KeyPurposeId.id_kp_dvcs;
+		else
+			return null;
+	}
+	
+	// Metoda koja pravi KeyPurposeId niz potreban za konstruktor by Nikola
+	public KeyPurposeId[] makeArray() {
 
-    public void setCodeSigning(Boolean codeSigning) {
-        this.codeSigning = codeSigning;
-    }
-
-    public Boolean getEmailProtection() {
-        return emailProtection;
-    }
-
-    public void setEmailProtection(Boolean emailProtection) {
-        this.emailProtection = emailProtection;
-    }
-
-    public Boolean getTimeStamping() {
-        return timeStamping;
-    }
-
-    public void setTimeStamping(Boolean timeStamping) {
-        this.timeStamping = timeStamping;
-    }
-
-    public Boolean getOcspSigning() {
-        return ocspSigning;
-    }
-
-    public void setOcspSigning(Boolean ocspSigning) {
-        this.ocspSigning = ocspSigning;
-    }
-
-    public boolean isEnabled() {
-        return serverAuth || clientAuth || codeSigning || emailProtection || timeStamping || ocspSigning;
-    }
-
-    public KeyPurposeId[] keyPurposeIds() {
-        Boolean[] bools = {
-            serverAuth,
-            clientAuth,
-            codeSigning,
-            emailProtection,
-            timeStamping,
-            ocspSigning
-        };
-        /*
-
-    public static final KeyPurposeId id_kp_serverAuth;
-    public static final KeyPurposeId id_kp_clientAuth;
-    public static final KeyPurposeId id_kp_codeSigning;
-    public static final KeyPurposeId id_kp_emailProtection;
-
-    public static final KeyPurposeId id_kp_ipsecEndSystem;
-    public static final KeyPurposeId id_kp_ipsecTunnel;
-    public static final KeyPurposeId id_kp_ipsecUser;
-
-    public static final KeyPurposeId id_kp_timeStamping;
-    public static final KeyPurposeId id_kp_OCSPSigning;
-
-    public static final KeyPurposeId id_kp_dvcs;
-    public static final KeyPurposeId id_kp_sbgpCertAAServerAuth;
-    public static final KeyPurposeId id_kp_scvp_responder;
-    public static final KeyPurposeId id_kp_eapOverPPP;
-    public static final KeyPurposeId id_kp_eapOverLAN;
-    public static final KeyPurposeId id_kp_scvpServer;
-    public static final KeyPurposeId id_kp_scvpClient;
-    public static final KeyPurposeId id_kp_ipsecIKE;
-    public static final KeyPurposeId id_kp_capwapAC;
-    public static final KeyPurposeId id_kp_capwapWTP;
-    public static final KeyPurposeId id_kp_smartcardlogon;
-    public static final KeyPurposeId id_kp_macAddress;
-    public static final KeyPurposeId id_kp_msSGC;
-    public static final KeyPurposeId id_kp_nsSGC;
-         */
-        KeyPurposeId[] keyPurposeIds = {
-            KeyPurposeId.id_kp_serverAuth,
-            KeyPurposeId.id_kp_clientAuth,
-            KeyPurposeId.id_kp_codeSigning,
-            KeyPurposeId.id_kp_emailProtection,
-            KeyPurposeId.id_kp_timeStamping,
-            KeyPurposeId.id_kp_OCSPSigning
-        };
-        List<KeyPurposeId> setPurposes = new ArrayList<>();
-
-        for (int i = 0; i < bools.length; i++) {
-            if (bools[i]) {
-                setPurposes.add(keyPurposeIds[i]);
-            }
-        }
-
-        KeyPurposeId[] newKeyPurposeIds = new KeyPurposeId[setPurposes.size()];
-        for (int i = 0; i < setPurposes.size(); i++) {
-            newKeyPurposeIds[i] = setPurposes.get(i);
-        }
-
-        return newKeyPurposeIds;
-    }
-
-    public List<KeyPurposeId> falseExtendedKeyUsageIdentifiers() {
-        Boolean[] bools = {
-                serverAuth,
-                clientAuth,
-                codeSigning,
-                emailProtection,
-                timeStamping,
-                ocspSigning
-        };
-        KeyPurposeId[] keyPurposeIds = {
-                KeyPurposeId.id_kp_serverAuth,
-                KeyPurposeId.id_kp_clientAuth,
-                KeyPurposeId.id_kp_codeSigning,
-                KeyPurposeId.id_kp_emailProtection,
-                KeyPurposeId.id_kp_timeStamping,
-                KeyPurposeId.id_kp_OCSPSigning
-        };
-        List<KeyPurposeId> setPurposes = new ArrayList<>();
-
-        for (int i = 0; i < bools.length; i++) {
-            if (!bools[i]) {
-                setPurposes.add(keyPurposeIds[i]);
-            }
-        }
-
-        return setPurposes;
-    }
-
+ 		List<KeyPurposeId> list = new ArrayList<>(Arrays.asList());
+ 		int counter = 0;
+ 		if(this.clientAuth) {
+ 			list.add(getClientAuth());
+ 			counter++;
+ 		} 
+ 		if(this.codeSigning) {
+ 			list.add(getCodeSigning());
+ 			counter++; 			
+ 		} 
+ 		if(this.dvcs) {
+ 			list.add(getDvcs());
+ 			counter++; 			
+ 		} 
+ 		if(this.emailProtection) {
+ 			list.add(getEmailProtection());
+ 			counter++;
+ 		} 
+ 		if(this.OCSPSigning) {
+ 			list.add(getOCSPSigning());
+ 			counter++;
+ 		} 
+ 		if(this.serverAuth) {
+ 			list.add(getServerAuth());
+ 			counter++;
+ 		} 
+ 		if(this.timeStamping) {
+ 			list.add(getTimeStamping());
+ 			counter++;
+ 		}
+		
+ 		KeyPurposeId array[] = new KeyPurposeId[counter];
+ 		array = list.toArray(array);
+ 		
+ 		return array;
+	}
+	
 }

@@ -2,192 +2,189 @@ package com.bsep.tim11.bseptim11.dto;
 
 import org.bouncycastle.asn1.x509.KeyUsage;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-
 public class KeyUsageDTO {
 
-    @NotNull
-    private Boolean certificateSigning;
+	private boolean cRLSign;
+	
+	private boolean dataEncipherment;
+	
+	private boolean decipherOnly;
+	
+	private boolean digitalSignature;
+	
+	private boolean encipherOnly;
+	
+	private boolean keyAgreement;
+	
+	private boolean keyCertSign;
+	
+	private boolean keyEncipherment;
+	
+	private boolean nonRepudiation;
+	
+	public KeyUsageDTO() {}
 
-    @NotNull
-    private Boolean crlSign;
+	public KeyUsageDTO(boolean cRLSign, boolean dataEncipherment, boolean decipherOnly, boolean digitalSignature,
+			boolean encipherOnly, boolean keyAgreement, boolean keyCertSign, boolean keyEncipherment,
+			boolean nonRepudiation) {
+		super();
+		this.cRLSign = cRLSign;
+		this.dataEncipherment = dataEncipherment;
+		this.decipherOnly = decipherOnly;
+		this.digitalSignature = digitalSignature;
+		this.encipherOnly = encipherOnly;
+		this.keyAgreement = keyAgreement;
+		this.keyCertSign = keyCertSign;
+		this.keyEncipherment = keyEncipherment;
+		this.nonRepudiation = nonRepudiation;
+	}
 
-    @NotNull
-    private Boolean dataEncipherment;
+	public KeyUsageDTO(KeyUsageDTO ku) {
+		this.cRLSign = ku.iscRLSign();
+		this.dataEncipherment = ku.isDataEncipherment();
+		this.decipherOnly = ku.isDecipherOnly();
+		this.digitalSignature = ku.isDigitalSignature();
+		this.encipherOnly = ku.isEncipherOnly();
+		this.keyAgreement = ku.isKeyAgreement();
+		this.keyCertSign = ku.isKeyCertSign();
+		this.keyEncipherment = ku.isKeyEncipherment();
+		this.nonRepudiation = ku.isNonRepudiation();
+	}
+	
+	public boolean iscRLSign() {
+		return cRLSign;
+	}
 
-    @NotNull
-    private Boolean decipherOnly;
+	public void setcRLSign(boolean cRLSign) {
+		this.cRLSign = cRLSign;
+	}
 
-    @NotNull
-    private Boolean digitalSignature;
+	public int getcRLSign() {
+		if(this.cRLSign) 
+			return KeyUsage.cRLSign;
+		else
+			return 0;
+	}
+	
+	public boolean isDataEncipherment() {
+		return dataEncipherment;
+	}
 
-    @NotNull
-    private Boolean encipherOnly;
+	public void setDataEncipherment(boolean dataEncipherment) {
+		this.dataEncipherment = dataEncipherment;
+	}
 
-    @NotNull
-    private Boolean keyAgreement;
+	public int getDataEncipherment() {
+		if(this.dataEncipherment)
+			return KeyUsage.dataEncipherment;
+		else
+			return 0;
+	}
+	
+	public boolean isDecipherOnly() {
+		return decipherOnly;
+	}
 
-    @NotNull
-    private Boolean keyEncipherment;
+	public void setDecipherOnly(boolean decipherOnly) {
+		this.decipherOnly = decipherOnly;
+	}
 
-    @NotNull
-    private Boolean nonRepudiation;
+	public int getDecipherOnly() {
+		if(this.decipherOnly)
+			return KeyUsage.decipherOnly;
+		else
+			return 0;
+	}
+		
+	public boolean isDigitalSignature() {
+		return digitalSignature;
+	}
 
-    public KeyUsageDTO() {
+	public void setDigitalSignature(boolean digitalSignature) {
+		this.digitalSignature = digitalSignature;
+	}
 
-    }
+	public int getDigitalSignature() {
+		if(this.digitalSignature)
+			return KeyUsage.digitalSignature;
+		else
+			return 0;
+	}
+	
+	public boolean isEncipherOnly() {
+		return encipherOnly;
+	}
 
-    public KeyUsageDTO(boolean[] key) {
-        this.digitalSignature = key[0];
-        this.nonRepudiation = key[1];
-        this.keyEncipherment = key[2];
-        this.dataEncipherment = key[3];
-        this.keyAgreement = key[4];
-        this.certificateSigning = key[5];
-        this.crlSign = key[6];
-        this.encipherOnly = key[7];
-        this.decipherOnly = key[8];
-    }
+	public void setEncipherOnly(boolean encipherOnly) {
+		this.encipherOnly = encipherOnly;
+	}
+	
+	public int getEncipherOnly() {
+		if(this.encipherOnly)
+			return KeyUsage.encipherOnly;
+		else
+			return 0;
+	}
 
-    public Boolean getCertificateSigning() {
-        return certificateSigning;
-    }
+	public boolean isKeyAgreement() {
+		return keyAgreement;
+	}
 
-    public int getCertificateSigningInt() {
-        return certificateSigning ? KeyUsage.keyCertSign : 0;
-    }
+	public void setKeyAgreement(boolean keyAgreement) {
+		this.keyAgreement = keyAgreement;
+	}
 
-    public void setCertificateSigning(Boolean certificateSigning) {
-        this.certificateSigning = certificateSigning;
-    }
+	public int getKeyAgreement() {
+		if(this.keyAgreement)
+			return KeyUsage.keyAgreement;
+		else
+			return 0;
+	}
+	
+	public boolean isKeyCertSign() {
+		return keyCertSign;
+	}
 
-    public Boolean getCrlSign() {
-        return crlSign;
-    }
+	public void setKeyCertSign(boolean keyCertSign) {
+		this.keyCertSign = keyCertSign;
+	}
 
-    public int getCrlSignInt() {
-        return crlSign ? KeyUsage.cRLSign : 0;
-    }
+	public int getKeyCertSign() {
+		if(this.keyCertSign)
+			return KeyUsage.keyCertSign;
+		else
+			return 0;
+	}
+	
+	public boolean isKeyEncipherment() {
+		return keyEncipherment;
+	}
+	
+	public void setKeyEncipherment(boolean keyEncipherment) {
+		this.keyEncipherment = keyEncipherment;
+	}
 
-    public void setCrlSign(Boolean crlSign) {
-        this.crlSign = crlSign;
-    }
+	public int getKeyEncipherment() {
+		if(this.keyEncipherment)
+			return KeyUsage.keyEncipherment;
+		else
+			return 0;
+	}
+	
+	public boolean isNonRepudiation() {
+		return nonRepudiation;
+	}
 
-    public Boolean getDataEncipherment() {
-        return dataEncipherment;
-    }
-
-    public int getDataEnciphermentInt() {
-        return dataEncipherment ? KeyUsage.dataEncipherment : 0;
-    }
-
-    public void setDataEncipherment(Boolean dataEncipherment) {
-        this.dataEncipherment = dataEncipherment;
-    }
-
-    public Boolean getDecipherOnly() {
-        return decipherOnly;
-    }
-
-    public int getDecipherOnlyInt() {
-        return decipherOnly ? KeyUsage.decipherOnly : 0;
-    }
-
-    public void setDecipherOnly(Boolean decipherOnly) {
-        this.decipherOnly = decipherOnly;
-    }
-
-    public Boolean getDigitalSignature() {
-        return digitalSignature;
-    }
-
-    public int getDigitalSignatureInt() {
-        return digitalSignature ? KeyUsage.digitalSignature : 0;
-    }
-
-    public void setDigitalSignature(Boolean digitalSignature) {
-        this.digitalSignature = digitalSignature;
-    }
-
-    public Boolean getEncipherOnly() {
-        return encipherOnly;
-    }
-
-    public int getEncipherOnlyInt() {
-        return encipherOnly ? KeyUsage.encipherOnly : 0;
-    }
-
-    public void setEncipherOnly(Boolean encipherOnly) {
-        this.encipherOnly = encipherOnly;
-    }
-
-    public Boolean getKeyAgreement() {
-        return keyAgreement;
-    }
-
-    public int getKeyAgreementInt() {
-        return keyAgreement ? KeyUsage.keyAgreement : 0;
-    }
-
-    public void setKeyAgreement(Boolean keyAgreement) {
-        this.keyAgreement = keyAgreement;
-    }
-
-    public Boolean getKeyEncipherment() {
-        return keyEncipherment;
-    }
-
-    public int getKeyEnciphermentInt() {
-        return keyEncipherment ? KeyUsage.keyEncipherment : 0;
-    }
-
-    public void setKeyEncipherment(Boolean keyEncipherment) {
-        this.keyEncipherment = keyEncipherment;
-    }
-
-    public Boolean getNonRepudiation() {
-        return nonRepudiation;
-    }
-
-    public int getNonRepudiationInt() {
-        return nonRepudiation ? KeyUsage.nonRepudiation : 0;
-    }
-
-    public void setNonRepudiation(Boolean nonRepudiation) {
-        this.nonRepudiation = nonRepudiation;
-    }
-
-    public boolean isEnabled() {
-        return certificateSigning || crlSign || dataEncipherment || decipherOnly || digitalSignature || encipherOnly ||
-                keyAgreement || keyEncipherment || nonRepudiation;
-    }
-
-    public List<Integer> falseKeyUsageIdentifiers() {
-        Boolean[] bools = {
-            digitalSignature,
-            nonRepudiation,
-            keyEncipherment,
-            dataEncipherment,
-            keyAgreement,
-            certificateSigning,
-            crlSign,
-            encipherOnly,
-            decipherOnly
-        };
-        Integer[] keyUsages = {
-            0,1,2,3,4,5,6,7,8
-        };
-        List<Integer> falseValues = new ArrayList<>();
-
-        for (int i = 0; i < bools.length; i++) {
-            if (!bools[i]) {
-                falseValues.add(keyUsages[i]);
-            }
-        }
-
-        return falseValues;
-    }
+	public void setNonRepudiation(boolean nonRepudiation) {
+		this.nonRepudiation = nonRepudiation;
+	}
+	
+	public int getNonRepudiation() {
+		if(this.nonRepudiation)
+			return KeyUsage.nonRepudiation;
+		else
+			return 0;
+	}
+	
 
 }

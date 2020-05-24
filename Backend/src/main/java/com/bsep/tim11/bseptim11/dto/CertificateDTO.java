@@ -1,130 +1,95 @@
 package com.bsep.tim11.bseptim11.dto;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class CertificateDTO {
 
-    private String serialNumber;
+	private Long subjectId;
+	private Long issuerId;
+	private Date startDate;
+	private Date endDate;
+	private String alias;
+	private String password;
+	private KeyUsageDTO keyUsageDTO;
+	private ExtendedKeyUsageDTO extendedKeyUsageDTO;
+	
+	public CertificateDTO() {}
 
-    @NotNull(message = "Subject must not be empty.")
-    private EntityDTO subject;
+	public CertificateDTO(Long subjectId, Long issuerId, Date startDate, Date endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO) {
+		super();
+		this.subjectId = subjectId;
+		this.issuerId = issuerId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.alias = alias;
+		this.password = password;
+		this.keyUsageDTO = new KeyUsageDTO(keyUsageDTO);
+		this.extendedKeyUsageDTO = new ExtendedKeyUsageDTO(extendedKeyUsageDTO);
+	}
 
-    @NotNull(message = "Issuer must not be empty.")
-    private EntityDTO issuer;
+	public Long getSubjectId() {
+		return subjectId;
+	}
 
-    @NotNull(message = "Authority key identifier must not be empty.")
-    private boolean authorityKeyIdentifier;
+	public void setSubjectId(Long subjectId) {
+		this.subjectId = subjectId;
+	}
 
-    @NotNull(message = "Subject key identifier must not be empty.")
-    private boolean subjectKeyIdentifier;
+	public Long getIssuerId() {
+		return issuerId;
+	}
 
-    @NotNull(message = "Subject is certificate authority must not be empty.")
-    private Boolean subjectIsCa;
+	public void setIssuerId(Long issuerId) {
+		this.issuerId = issuerId;
+	}
 
-    @NotEmpty(message = "Valid from cannot be empty.")
-    private String validFrom;
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    @NotEmpty(message = "Valid to cannot be empty.")
-    private String validTo;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
 
-    @NotNull(message = "Key usage cannot be empty.")
-    private KeyUsageDTO keyUsage;
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    @NotNull(message = "Extended key usage cannot be empty.")
-    private ExtendedKeyUsageDTO extendedKeyUsage;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
-    private String alias;
+	public String getAlias() {
+		return alias;
+	}
 
-    public CertificateDTO() {
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
 
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+	public KeyUsageDTO getKeyUsageDTO() {
+		return keyUsageDTO;
+	}
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
+	public void setKeyUsageDTO(KeyUsageDTO keyUsageDTO) {
+		this.keyUsageDTO = keyUsageDTO;
+	}
 
-    public EntityDTO getSubject() {
-        return subject;
-    }
+	public ExtendedKeyUsageDTO getExtendedKeyUsageDTO() {
+		return extendedKeyUsageDTO;
+	}
 
-    public void setSubject(EntityDTO subject) {
-        this.subject = subject;
-    }
+	public void setExtendedKeyUsageDTO(ExtendedKeyUsageDTO extendedKeyUsageDTO) {
+		this.extendedKeyUsageDTO = extendedKeyUsageDTO;
+	}
 
-    public EntityDTO getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(EntityDTO issuer) {
-        this.issuer = issuer;
-    }
-
-    public boolean getAuthorityKeyIdentifier() {
-        return authorityKeyIdentifier;
-    }
-
-    public void setAuthorityKeyIdentifier(boolean authorityKeyIdentifier) {
-        this.authorityKeyIdentifier = authorityKeyIdentifier;
-    }
-
-    public boolean getSubjectKeyIdentifier() {
-        return subjectKeyIdentifier;
-    }
-
-    public void setSubjectKeyIdentifier(boolean subjectKeyIdentifier) {
-        this.subjectKeyIdentifier = subjectKeyIdentifier;
-    }
-
-    public Boolean getSubjectIsCa() {
-        return subjectIsCa;
-    }
-
-    public void setSubjectIsCa(Boolean subjectIsCa) {
-        this.subjectIsCa = subjectIsCa;
-    }
-
-    public String getValidFrom() {
-        return validFrom;
-    }
-
-    public void setValidFrom(String validFrom) {
-        this.validFrom = validFrom;
-    }
-
-    public String getValidTo() {
-        return validTo;
-    }
-
-    public void setValidTo(String validTo) {
-        this.validTo = validTo;
-    }
-
-    public KeyUsageDTO getKeyUsage() {
-        return keyUsage;
-    }
-
-    public void setKeyUsage(KeyUsageDTO keyUsage) {
-        this.keyUsage = keyUsage;
-    }
-
-    public ExtendedKeyUsageDTO getExtendedKeyUsage() {
-        return extendedKeyUsage;
-    }
-
-    public void setExtendedKeyUsage(ExtendedKeyUsageDTO extendedKeyUsage) {
-        this.extendedKeyUsage = extendedKeyUsage;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+	
 }

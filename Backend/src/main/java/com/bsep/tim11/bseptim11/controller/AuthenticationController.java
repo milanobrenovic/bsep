@@ -3,7 +3,6 @@ package com.bsep.tim11.bseptim11.controller;
 import com.bsep.tim11.bseptim11.model.UserTokenState;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
-import com.bsep.tim11.bseptim11.serviceImpl.AdminServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

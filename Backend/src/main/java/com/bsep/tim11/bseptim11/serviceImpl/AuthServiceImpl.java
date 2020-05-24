@@ -48,8 +48,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserTokenState login(JwtAuthenticationRequest jwtAuthenticationRequest) {
         final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-            jwtAuthenticationRequest.getUsername(),
-            jwtAuthenticationRequest.getPassword()
+                jwtAuthenticationRequest.getUsername(),
+                jwtAuthenticationRequest.getPassword()
         );
         final Authentication authentication = authManager.authenticate(token);
 
@@ -60,8 +60,8 @@ public class AuthServiceImpl implements AuthService {
         int expiresIn = tokenUtils.getExpiredIn();
 
         return new UserTokenState(
-            jwtAccessToken,
-            expiresIn
+                jwtAccessToken,
+                expiresIn
         );
     }
 

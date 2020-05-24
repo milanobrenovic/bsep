@@ -8,9 +8,8 @@ export const environment = {
     itemsPerPage    : 5,
     baseUrl         : "http://localhost:8080/api",
     auth            : "/auth/login",
-    entity          : '/entity',
+    entity          : '/subject',
     certificate     : '/certificate',
-    ocsp            : '/ocsp',
 };
 
 /*

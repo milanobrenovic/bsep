@@ -6,10 +6,15 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.Objects;
 
-@javax.persistence.Entity
+@Entity
 public class Authority implements GrantedAuthority {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 252878329724723588L;
+
+	@Id
     @Column()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

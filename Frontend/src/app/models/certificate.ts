@@ -1,34 +1,27 @@
 import { ExtendedKeyUsage } from './extendedKeyUsage';
 import { KeyUsage } from './keyUsage';
-import { Entity } from './entity';
 import { DateTime } from 'luxon';
 
 export class Certificate {
 
-  public serialNumber: string;
-  public subject: Entity;
-  public issuer: Entity;
-  public validFrom: DateTime;
-  public validTo: DateTime;
-  public authorityKeyIdentifier: boolean;
-  public subjectKeyIdentifier: boolean;
-  public subjectIsCa: boolean;
+	public subjectId: number;
+	public issuerId: number;
+  public startDate: Date;
+  public endDate: Date;
+	public alias: string;
+	public password: string;
   public keyUsage: KeyUsage;
   public extendedKeyUsage: ExtendedKeyUsage;
-  public alias: string;
 
-	constructor(subject: Entity, issuer: Entity, validFrom: DateTime, validTo: DateTime, authorityKeyIdentifier: boolean, subjectKeyIdentifier: boolean, subjectIsCa: boolean, keyUsage: KeyUsage, extendedKeyUsage: ExtendedKeyUsage, alias?: string, serialNumber?: string) {
-		this.serialNumber = serialNumber;
-		this.subject = subject;
-		this.issuer = issuer;
-		this.validFrom = validFrom;
-		this.validTo = validTo;
-		this.authorityKeyIdentifier = authorityKeyIdentifier;
-		this.subjectKeyIdentifier = subjectKeyIdentifier;
-		this.subjectIsCa = subjectIsCa;
+	constructor(subjectId: number, issuerId: number, startDate: Date, endDate: Date, alias: string, password: string, keyUsage: KeyUsage, extendedKeyUsage: ExtendedKeyUsage) {
+		this.subjectId = subjectId;
+		this.issuerId = issuerId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.alias = alias;
+		this.password = password;
 		this.keyUsage = keyUsage;
 		this.extendedKeyUsage = extendedKeyUsage;
-		this.alias = alias;
 	}
 
 }
