@@ -6,17 +6,17 @@ import { Entity } from 'app/models/entity';
 import { HttpErrorResponse } from '@angular/common/http';
 
 const ValidForm: ValidatorFn = (formGroup: FormGroup) => {
-  const type = formGroup.get("type").value;
+  // const type = formGroup.get("type").value;
 
-  if (type == "user") {
-    if (!formGroup.get("email").value || !formGroup.get("surname").value || !formGroup.get("givename").value) {
-      return { formIsInvalid: true };
-    }
-  } else {
-    if (!formGroup.get("organizationUnit").value) {
-      return { formIsInvalid: true };
-    }
+  // if (type == "user") {
+  if (!formGroup.get("email").value || !formGroup.get("surname").value || !formGroup.get("givename").value) {
+    return { formIsInvalid: true };
   }
+  // } else {
+  //   if (!formGroup.get("organizationUnit").value) {
+  //     return { formIsInvalid: true };
+  //   }
+  // }
 
   return null;
 }
@@ -39,14 +39,14 @@ export class AddSubjectComponent implements OnInit {
   ngOnInit(): void {
     
     this.createSubjectForm = this.formBuilder.group({
-      type: new FormControl("user", [Validators.required]),
+      // type: new FormControl("user", [Validators.required]),
       commonName: new FormControl("", [Validators.required]),
-      email: new FormControl("", [Validators.email]),
-      organizationUnit: new FormControl(""),
-      organization: new FormControl("", [Validators.required, Validators.maxLength(64)]),
-      countryCode: new FormControl("", [Validators.required, Validators.maxLength(2), Validators.minLength(2)]),
       surname: new FormControl(""),
       givename: new FormControl(""),
+      organization: new FormControl("", [Validators.required, Validators.maxLength(64)]),
+      organizationUnit: new FormControl(""),
+      countryCode: new FormControl("", [Validators.required, Validators.maxLength(2), Validators.minLength(2)]),
+      email: new FormControl("", [Validators.email]),
     }, {
       validator: [ValidForm],
     });
@@ -55,12 +55,12 @@ export class AddSubjectComponent implements OnInit {
   onChange() {
     this.createSubjectForm.patchValue({
       "commonName": "",
-      "email": "",
-      "organizationUnit": "",
-      "organization": "",
-      "countryCode": "",
       "surname": "",
       "givename": "",
+      "organization": "",
+      "organizationUnit": "",
+      "countryCode": "",
+      "email": "",
     });
   }
 
@@ -71,17 +71,19 @@ export class AddSubjectComponent implements OnInit {
     }
 
     const subject = new Entity(
-      this.createSubjectForm.value.type,
+      // this.createSubjectForm.value.type,
       this.createSubjectForm.value.commonName,
-      this.createSubjectForm.value.email,
-      this.createSubjectForm.value.organizationUnit,
-      this.createSubjectForm.value.organization,
-      this.createSubjectForm.value.countryCode,
       this.createSubjectForm.value.surname,
       this.createSubjectForm.value.givename,
+      this.createSubjectForm.value.organization,
+      this.createSubjectForm.value.organizationUnit,
+      this.createSubjectForm.value.countryCode,
+      this.createSubjectForm.value.email,
+      false,
+      false,
     );
     
-    this.subjectService.add(subject).subscribe(
+    this.subjectService.createSubject(subject).subscribe(
       () => {
         this.createSubjectForm.reset();
         this.toastrService.success("New subject added successfully.", "Subject created");

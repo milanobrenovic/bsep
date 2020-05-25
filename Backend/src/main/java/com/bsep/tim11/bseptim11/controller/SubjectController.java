@@ -54,7 +54,10 @@ public class SubjectController {
 		return new ResponseEntity<>(new SubjectDTO(subject), HttpStatus.OK);
 	}
 	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(
+			value = "/create-subject",
+			consumes = MediaType.APPLICATION_JSON_VALUE
+	)
 	public ResponseEntity<SubjectDTO> addSubject(@RequestBody SubjectDTO subjectDTO){
 		
 		if (subjectDTO.getClass() == null)

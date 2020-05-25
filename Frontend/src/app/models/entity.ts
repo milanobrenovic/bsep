@@ -1,25 +1,38 @@
 export class Entity {
   
   public id: number;
-  public type: string;
-  public commonName: string;
-  public email: string;
-  public organizationUnit: string;
-  public organization: string;
-  public countryCode: string;
+	public commonName: string;
   public surname: string;
-  public givename: string;
-
-	constructor(type: string, commonName: string, email: string, organizationUnit: string, organization: string, countryCode: string, surname: string, givename: string, id?: number) {
+	public givenName: string;
+  public organization: string;
+  public organizationUnit: string;
+  public country: string;
+	public email: string;
+	public isCA: boolean;
+	public hasCertificate: boolean;
+	
+	constructor(
+			commonName: string,
+			surname: string,
+			givenName: string,
+			organization: string,
+			organizationUnit: string,
+			country: string,
+			email: string,
+			isCA: boolean,
+			hasCertificate: boolean,
+			id?: number
+	) {
 		this.id = id;
-		this.type = type;
 		this.commonName = commonName;
-		this.email = email;
-		this.organizationUnit = organizationUnit;
-		this.organization = organization;
-		this.countryCode = countryCode;
 		this.surname = surname;
-		this.givename = givename;
+		this.givenName = givenName;
+		this.organization = organization;
+		this.organizationUnit = organizationUnit;
+		this.country = country;
+		this.email = email;
+		this.isCA = isCA;
+		this.hasCertificate = hasCertificate;
 	}
   
 }

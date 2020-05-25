@@ -5,151 +5,92 @@
 			<mat-card-title>Add a new subject</mat-card-title>
 		</mat-card-header>
 		<mat-divider></mat-divider>
+		<br>
 		<mat-card-content>
 			<mat-dialog-content class="dialog-class">
 				<form [formGroup]="createSubjectForm" class="form-full-width">
-					<table class="form-full-width">
+					<table class="form-full-width" cellspacing="0">
 						<tr>
 							<td>
-								<label id="type-radio-group" class="ml-2">Type:</label>
-								<mat-radio-group aria-labelledby="type-radio-group" class="form-full-width-td example-radio-group" formControlName="type">
-									<mat-radio-button class="ml-2 example-radio-button" (change)="onChange()" value="user" checked="checked">
-										User
-									</mat-radio-button>
-									<mat-radio-button class="ml-2 example-radio-button" (change)="onChange()" value="company">
-										Company
-									</mat-radio-button>
-								</mat-radio-group>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Common Name *</mat-label>
+									<input matInput formControlName="commonName">
+									<mat-error *ngIf="createSubjectForm.get('commonName').errors && createSubjectForm.get('commonName').errors['required']">
+										Common name is required.
+									</mat-error>
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Surname *</mat-label>
+									<input matInput formControlName="surname">
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Givename *</mat-label>
+									<input matInput formControlName="givename">
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Organization *</mat-label>
+									<input matInput formControlName="organization">
+									<mat-error *ngIf="createSubjectForm.get('organization').errors && createSubjectForm.get('organization').errors['required']">
+										Organization's name is required.
+									</mat-error>
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Organization unit *</mat-label>
+									<input matInput formControlName="organizationUnit">
+									<mat-error *ngIf="createSubjectForm.get('organizationUnit').errors && createSubjectForm.get('organizationUnit').errors['required']">
+										Organization unit's name is required.
+									</mat-error>
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Country code *</mat-label>
+									<input matInput formControlName="countryCode" minlength="2" maxlength="2">
+									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['required']">
+										Country code is required.
+									</mat-error>
+									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['maxlength']">
+										Country code length has to be exactly 2 characters.
+									</mat-error>
+									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['minlength']">
+										Country code length has to be exactly 2 characters.
+									</mat-error>
+								</mat-form-field>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
+									<mat-label>Email address *</mat-label>
+									<input matInput formControlName="email">
+									<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['required']">
+										An email address is required.
+									</mat-error>
+									<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['email']">
+										A valid email address is required.
+									</mat-error>
+								</mat-form-field>
 							</td>
 						</tr>
 					</table>
-					<div *ngIf="createSubjectForm.get('type').value && createSubjectForm.get('type').value=='user'">
-						<table class="form-full-width" cellspacing="0">
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Common Name *</mat-label>
-										<input matInput formControlName="commonName">
-										<mat-error *ngIf="createSubjectForm.get('commonName').errors && createSubjectForm.get('commonName').errors['required']">
-											Common name is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Organization *</mat-label>
-										<input matInput formControlName="organization">
-										<mat-error *ngIf="createSubjectForm.get('organization').errors && createSubjectForm.get('organization').errors['required']">
-											Organization's name is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Surname *</mat-label>
-										<input matInput formControlName="surname">
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Givename *</mat-label>
-										<input matInput formControlName="givename">
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Email address *</mat-label>
-										<input matInput formControlName="email">
-										<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['required']">
-											An email address is required.
-										</mat-error>
-										<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['email']">
-											A valid email address is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Country code *</mat-label>
-										<input matInput formControlName="countryCode" minlength="2" maxlength="2">
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['required']">
-											Country code is required.
-										</mat-error>
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['maxlength']">
-											Country code length has to be exactly 2 characters.
-										</mat-error>
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['minlength']">
-											Country code length has to be exactly 2 characters.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-						</table>
-					</div>
-					<div *ngIf="createSubjectForm.get('type').value && createSubjectForm.get('type').value == 'company'">
-						<table class="form-full-width" cellspacing="0">
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Common Name *</mat-label>
-										<input matInput formControlName="commonName">
-										<mat-error *ngIf="createSubjectForm.get('commonName').errors && createSubjectForm.get('commonName').errors['required']">
-											Common name is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Organization *</mat-label>
-										<input matInput formControlName="organization">
-										<mat-error *ngIf="createSubjectForm.get('organization').errors && createSubjectForm.get('organization').errors['required']">
-											Organization's name is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Organization unit *</mat-label>
-										<input matInput formControlName="organizationUnit">
-										<mat-error *ngIf="createSubjectForm.get('organizationUnit').errors && createSubjectForm.get('organizationUnit').errors['required']">
-											Organization's name is required.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<mat-form-field class="full-width-field" appearance="outline" fxFlex="100" class="pr-4">
-										<mat-label>Country code *</mat-label>
-										<input matInput formControlName="countryCode" minlength="2" maxlength="2">
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['required']">
-											Country code is required.
-										</mat-error>
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['maxlength']">
-											Country code length has to be exactly 2 characters.
-										</mat-error>
-										<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['minlength']">
-											Country code length has to be exactly 2 characters.
-										</mat-error>
-									</mat-form-field>
-								</td>
-							</tr>
-						</table>
-					</div>
 				</form>
 			</mat-dialog-content>
 			<mat-dialog-actions class="mt-3 mb-1">
