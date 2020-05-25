@@ -1,5 +1,6 @@
 package com.bsep.tim11.bseptim11.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -14,6 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.bsep.tim11.bseptim11.dto.CertificateDTO;
 import com.bsep.tim11.bseptim11.enums.CertificateType;
 import com.bsep.tim11.bseptim11.keystores.KeyStoreReader;
@@ -23,10 +29,6 @@ import com.bsep.tim11.bseptim11.model.IssuerData;
 import com.bsep.tim11.bseptim11.model.Subject;
 import com.bsep.tim11.bseptim11.model.SubjectData;
 import com.bsep.tim11.bseptim11.repository.CertificateRepository;
-import org.bouncycastle.asn1.x500.X500NameBuilder;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class CertificateService {
@@ -130,20 +132,36 @@ public class CertificateService {
 		//BufferedInputStream in = new BufferedInputStream(new FileInputStream("/data/keystore.p12"));
 		char[] password = "123".toCharArray();
 		
-		// Ovu liniju pisemo u if-u kada prvi put pravimo keystore (kada jos ne postoje)
-		//keyStoreWriter.loadKeyStore(null, password);
-		
 		if(ct.equals(CertificateType.ROOT)) {
-			keyStoreWriter.loadKeyStore("keystoreroot.p12", password);
-			keyStoreWriter.saveKeyStore("keystoreroot.p12", password);
+			File f = new File("keystoreroot.p12");
+			if(!f.isFile()) {
+				// U if ulazi kada prvi put pravimo keystore odnosno kada on jos ne postoji
+				keyStoreWriter.loadKeyStore(null, password);
+			} else {
+				// U else ulazi svaki sledeci put
+				keyStoreWriter.loadKeyStore("keystoreroot.p12", password);
+			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
 			keyStoreWriter.saveKeyStore("keystoreroot.p12", password);
-			// Za sad sve trpam u ovaj dok ne razdvojimo intermediate i end-entity
-		} else {
-			keyStoreWriter.loadKeyStore("keystorenijeroot.p12", password);
-			keyStoreWriter.saveKeyStore("keystorenijeroot.p12", password);
+			// Intermediate keyStore
+		} else if(ct.equals(CertificateType.INTERMEDIATE)){
+			File f = new File("keystoreintermediate.p12");
+			if(!f.isFile()) {
+				keyStoreWriter.loadKeyStore(null, password);
+			} else {
+				keyStoreWriter.loadKeyStore("keystoreintermediate.p12", password);
+			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
-			keyStoreWriter.saveKeyStore("keystorenijeroot.p12", password);
+			keyStoreWriter.saveKeyStore("keystoreintermediate.p12", password);
+		} else if(ct.equals(CertificateType.ENDENTITY)) {
+			File f = new File("keystoreendentity.p12");
+			if(!f.isFile()) {
+				keyStoreWriter.loadKeyStore(null, password);
+			} else {
+				keyStoreWriter.loadKeyStore("keystoreendentity.p12", password);
+			}
+			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
+			keyStoreWriter.saveKeyStore("keystoreendentity.p12", password);
 		}
 		
 
@@ -156,7 +174,6 @@ public class CertificateService {
 		}else {
 			System.out.println("NKEMA GAAAAAAAAAAAAA+++++++++++++++++++++");
 		}
-	
 		
 		return cert;
 	}

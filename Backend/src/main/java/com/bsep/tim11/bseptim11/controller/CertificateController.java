@@ -142,7 +142,7 @@ public class CertificateController {
 		
 		Security.addProvider(new BouncyCastleProvider());
 		
-		//Da znamo u koji keystore da ga bacimo
+		// Za sad hardkovano da su svi intermediate
 		CertificateType ct = CertificateType.INTERMEDIATE;
 		
 		if(certificateDTO.getClass() == null)
