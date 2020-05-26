@@ -37,7 +37,7 @@
 									</mat-card-title>
 								</mat-card-header>
 								<mat-card-content>
-									<div *ngIf="getSelectedSubject().type == 'USER'">
+									<!-- <div *ngIf="getSelectedSubject().type == 'USER'"> -->
 										<table class="table table-font">
 											<tbody>
 												<tr>
@@ -50,7 +50,7 @@
 												</tr>
 												<tr>
 													<th class="first">Givename:</th>
-													<td>{{getSelectedSubject().givename}}</td>
+													<td>{{getSelectedSubject().givenName}}</td>
 												</tr>
 												<tr>
 													<th class="first">Organization:</th>
@@ -62,12 +62,12 @@
 												</tr>
 												<tr>
 													<th class="first">Country code:</th>
-													<td>{{getSelectedSubject().countryCode}}</td>
+													<td>{{getSelectedSubject().country}}</td>
 												</tr>
 											</tbody>
 										</table>
-									</div>
-									<div *ngIf="getSelectedSubject().type == 'SOFTWARE'">
+									<!-- </div> -->
+									<!-- <div *ngIf="getSelectedSubject().type == 'SOFTWARE'">
 										<table class="table table-font">
 											<tbody>
 												<tr>
@@ -88,7 +88,7 @@
 												</tr>
 											</tbody>
 										</table>
-									</div>
+									</div> -->
 								</mat-card-content>
 							</mat-card>
 						</div>
@@ -305,6 +305,13 @@
 															</mat-checkbox>
 														</td>
 													</tr>
+													<tr>
+														<td>
+															<mat-checkbox formControlName="dvcs">
+																DVCS
+															</mat-checkbox>
+														</td>
+													</tr>
 												</table>
 											</mat-card-content>
 										</mat-card>
@@ -381,7 +388,7 @@
 											mat-raised-button
 											matStepperNext
 											color="primary"
-											(click)="createCertificate()"
+											(click)="createRootCertificate()"
 											[disabled]="!createCertificateFromOtherData.valid">
 											Next
 										</button>

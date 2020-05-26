@@ -90,8 +90,8 @@ public class CertificateDTO {
 		return keyUsageDTO;
 	}
 
-	public void setKeyUsageDTO(KeyUsageDTO keyUsageDTO) {
-		this.keyUsageDTO = keyUsageDTO;
+	public void setKeyUsageDTO(KeyUsageDTO keyUsage) {
+		this.keyUsageDTO = keyUsage;
 	}
 
 	public ExtendedKeyUsageDTO getExtendedKeyUsageDTO() {
@@ -102,5 +102,17 @@ public class CertificateDTO {
 		this.extendedKeyUsageDTO = extendedKeyUsageDTO;
 	}
 
-	
+	@Override
+	public String toString() {
+		return "CertificateDTO{" +
+				"subjectId=" + subjectId +
+				", issuerId=" + issuerId +
+				", startDate=" + startDate +
+				", endDate=" + endDate +
+				", alias='" + alias + '\'' +
+				", password='" + password + '\'' +
+				", keyUsage=" + keyUsageDTO.toString() +
+				", extendedKeyUsage=" + extendedKeyUsageDTO.toString() +
+				'}';
+	}
 }

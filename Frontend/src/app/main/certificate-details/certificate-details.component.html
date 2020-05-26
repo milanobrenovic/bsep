@@ -23,7 +23,7 @@
 		</table>
 		<mat-tab-group dynamicHeight class="mb-2">
 			<mat-tab label="Subject">
-				<div *ngIf="getSubject().type == 'USER'">
+				<!-- <div *ngIf="getSubject().type == 'USER'"> -->
 					<table class="table">
 						<tbody>
 							<tr>
@@ -36,7 +36,7 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Givename:</th>
-								<td>{{getSubject().givename}}</td>
+								<td>{{getSubject().givenName}}</td>
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Organization:</th>
@@ -48,12 +48,12 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Country code:</th>
-								<td>{{getSubject().countryCode}}</td>
+								<td>{{getSubject().country}}</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
-				<div *ngIf="getSubject().type == 'COMPANY'">
+				<!-- </div> -->
+				<!-- <div *ngIf="getSubject().type == 'COMPANY'">
 					<table class="table">
 						<tbody>
 							<tr>
@@ -70,14 +70,14 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Country code:</th>
-								<td>{{getSubject().countryCode}}</td>
+								<td>{{getSubject().country}}</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
+				</div> -->
 			</mat-tab>
 			<mat-tab label="Issuer">
-				<div *ngIf="getIssuer().type == 'USER'">
+				<!-- <div *ngIf="getIssuer().type == 'USER'"> -->
 					<table class="table">
 						<tbody>
 							<tr>
@@ -90,7 +90,7 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Givename:</th>
-								<td>{{getIssuer().givename}}</td>
+								<td>{{getIssuer().givenName}}</td>
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Organization:</th>
@@ -102,12 +102,12 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Country code:</th>
-								<td>{{getIssuer().countryCode}}</td>
+								<td>{{getIssuer().country}}</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
-				<div *ngIf="getIssuer().type == 'COMPANY'">
+				<!-- </div> -->
+				<!-- <div *ngIf="getIssuer().type == 'COMPANY'">
 					<table class="table">
 						<tbody>
 							<tr>
@@ -124,11 +124,11 @@
 							</tr>
 							<tr>
 								<th class="table-header-alignment">Country code:</th>
-								<td>{{getIssuer().countryCode}}</td>
+								<td>{{getIssuer().country}}</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
+				</div> -->
 			</mat-tab>
 		</mat-tab-group>
 		<mat-tab-group dynamicHeight>

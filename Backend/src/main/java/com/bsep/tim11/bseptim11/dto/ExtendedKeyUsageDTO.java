@@ -190,5 +190,17 @@ public class ExtendedKeyUsageDTO {
  		
  		return array;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "ExtendedKeyUsageDTO{" +
+				"serverAuth=" + serverAuth +
+				", clientAuth=" + clientAuth +
+				", codeSigning=" + codeSigning +
+				", emailProtection=" + emailProtection +
+				", timeStamping=" + timeStamping +
+				", OCSPSigning=" + OCSPSigning +
+				", dvcs=" + dvcs +
+				'}';
+	}
 }

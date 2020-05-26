@@ -12,7 +12,6 @@ import { KeyUsage } from 'app/models/keyUsage';
 import { ExtendedKeyUsage } from 'app/models/extendedKeyUsage';
 import { formatDate } from '@angular/common';
 import { Certificate } from 'app/models/certificate';
-import { CreateCertificate } from 'app/models/createCertificate';
 import { AddSubjectComponent } from '../add-subject/add-subject.component';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -100,6 +99,7 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
         emailProtection: new FormControl(false),
         timeStamping: new FormControl(false),
         ocspSigning: new FormControl(false),
+        dvcs: new FormControl(false),
       }),
     }, {
       validator: [TimeValidator],
@@ -115,7 +115,7 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
   }
   
   getSubjects(): void {
-    this.subjectService.getAll().subscribe(
+    this.subjectService.getAllSubjects().subscribe(
       (subjects: Entity[]) => {
         this.subjects = subjects;
       },
@@ -149,18 +149,21 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
     return this.createCertificateFromSubject.get("selectedSubject").value;
   }
 
-  createCertificate() {
+  createRootCertificate() {
     if (this.createCertificateFromSubject.invalid) {
       this.toastrService.error("Please choose a subject.", "Could not create certificate");
       return;
     }
+
     if (this.createCertificateFromOtherData.invalid) {
       this.toastrService.error("Please set a valid period.", "Could not create certificate");
       return;
     }
+
     if (!this.checkKeyUsage()) {
       this.toastrService.error("Please select at least one key usage.", "Could not create certificate");
     }
+    
     if (!this.checkExtendedKeyUsage()) {
       this.toastrService.error("Please select at least one extended key usage.", "Could not create certificate");
     }
@@ -171,26 +174,20 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
     const validFrom = formatDate(this.createCertificateFromOtherData.value.validFrom, "yyyy-MM-dd", "en-US");
     const validTo = formatDate(this.createCertificateFromOtherData.value.validTo, "yyyy-MM-dd", "en-US");
 
+    console.log(new Date(validFrom));
+
     const certificate = new Certificate(
-      this.createCertificateFromSubject.value.selectedSubject,
-      this.createCertificateFromSubject.value.selectedSubject,
-      validFrom,
-      validTo,
-      this.createCertificateFromSubject.value.authorityKeyIdentifier,
-      this.createCertificateFromSubject.value.subjectKeyIdentifier,
-      true,
+      this.createCertificateFromSubject.value.selectedSubject.id,
+      this.createCertificateFromSubject.value.selectedSubject.id,
+      new Date(validFrom),
+      new Date(validTo),
+      "alias-temp",
+      "123",
       keyUsage,
       extendedKeyUsage,
     );
-    const createCertificate = new CreateCertificate(
-      certificate,
-      certificate,
-      this.createCertificateInfoAboutKeyStorage.value.alias,
-      this.createCertificateInfoAboutKeyStorage.value.password,
-      this.createCertificateInfoAboutKeyStorage.value.privateKeyPassword,
-    );
 
-    this.certificateService.addNewSelfSignedCertificate(createCertificate).subscribe(
+    this.certificateService.createNewRootCertificate(certificate).subscribe(
       () => {
         this.createCertificateFromOtherData.reset();
         this.createCertificateFromSubject.reset();
@@ -249,6 +246,7 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
       this.createCertificateFromOtherData.value.extendedKeyUsage.emailProtection,
       this.createCertificateFromOtherData.value.extendedKeyUsage.timeStamping,
       this.createCertificateFromOtherData.value.extendedKeyUsage.ocspSigning,
+      this.createCertificateFromOtherData.value.extendedKeyUsage.dvcs,
     );
   }
 

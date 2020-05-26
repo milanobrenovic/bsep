@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CreateCertificate } from 'app/models/createCertificate';
+import { Certificate } from 'app/models/certificate';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,9 @@ export class CertificateService {
     return this.httpClient.post(this.url + "/new", certificate);
   }
 
-  public addNewSelfSignedCertificate(certificate: CreateCertificate) {
-    return this.httpClient.post(this.url + "/self-signed", certificate);
+  public createNewRootCertificate(certificate: Certificate) {
+    console.log(certificate);
+    return this.httpClient.post(this.url + "/createRoot", certificate);
   }
 
   public getCACertificates(id: number, rootKeyStoragePassword: string, intermediateKeyStoragePassword: string): any {

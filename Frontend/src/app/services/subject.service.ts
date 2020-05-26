@@ -30,7 +30,7 @@ export class SubjectService {
       params: params
     });
   }
-
+  
   public getAllSubjects(): any {
     return this.httpClient.get(this.url + "/all");
   }

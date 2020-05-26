@@ -113,6 +113,11 @@ public class CertificateController {
 		IssuerData issuerData = certificateService.generateIssuerData(keyPair.getPrivate(), issuer);
 		
 		CertificateGenerator cg = new CertificateGenerator();
+		try {
+			System.out.println(certificateDTO.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO);
 
 		try {

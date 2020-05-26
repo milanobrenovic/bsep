@@ -101,41 +101,41 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   getSubjects(): void {
-    this.subjectService.getAllWithoutRootEntities().subscribe((subjects: Entity[]) => {
-      this.subjects = subjects;
-    })
+    // this.subjectService.getAllWithoutRootEntities().subscribe((subjects: Entity[]) => {
+    //   this.subjects = subjects;
+    // })
   }
 
   getKeyUsages(issuerCertificate: Certificate): string {
-    if (!issuerCertificate.keyUsage) {
+    if (!issuerCertificate.keyUsageDTO) {
       return " (certS, crlS, dataE, decO, digS, encO, keyAgr, keyE, nonRep)";
     }
     var keyUsages = '(';
-    if (issuerCertificate.keyUsage.certificateSigning) {
+    if (issuerCertificate.keyUsageDTO.certificateSigning) {
       keyUsages += 'certS, ';
     }
-    if (issuerCertificate.keyUsage.crlSign) {
+    if (issuerCertificate.keyUsageDTO.crlSign) {
       keyUsages += 'crlS, ';
     }
-    if (issuerCertificate.keyUsage.dataEncipherment) {
+    if (issuerCertificate.keyUsageDTO.dataEncipherment) {
       keyUsages += 'dataE, ';
     }
-    if (issuerCertificate.keyUsage.decipherOnly) {
+    if (issuerCertificate.keyUsageDTO.decipherOnly) {
       keyUsages += 'decO, ';
     }
-    if (issuerCertificate.keyUsage.digitalSignature) {
+    if (issuerCertificate.keyUsageDTO.digitalSignature) {
       keyUsages += 'digS, ';
     }
-    if (issuerCertificate.keyUsage.encipherOnly) {
+    if (issuerCertificate.keyUsageDTO.encipherOnly) {
       keyUsages += 'encO, ';
     }
-    if (issuerCertificate.keyUsage.keyAgreement) {
+    if (issuerCertificate.keyUsageDTO.keyAgreement) {
       keyUsages += 'keyAgr, ';
     }
-    if (issuerCertificate.keyUsage.keyEncipherment) {
+    if (issuerCertificate.keyUsageDTO.keyEncipherment) {
       keyUsages += 'keyE, ';
     }
-    if (issuerCertificate.keyUsage.nonRepudiation) {
+    if (issuerCertificate.keyUsageDTO.nonRepudiation) {
       keyUsages += 'nonRep, ';
     }
     if (keyUsages.length == 1) {
@@ -205,55 +205,55 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   createCertificate() {
-    if (this.createCertificateFormSubject.invalid) {
-      this.toastr.error("Please choose a subject.", 'Failed to create a certificate');
-      return;
-    }
-    if (this.createCertificateFormIssuer.invalid) {
-      this.toastr.error("Please choose an issuer.", 'Failed to create a certificate');
-      return;
-    }
-    if (this.createCertificateFormOtherData.invalid) {
-      this.toastr.error("Please set a valid period.", 'Failed to create a certificate');
-      return;
-    }
-    if (!this.checkKeyUsage()) {
-      this.toastr.error("Please select at least one key usage.", "Failed to create a certificate");
-      return;
-    }
-    if (!this.checkExtendedKeyUsage()) {
-      this.toastr.error("Please select at least one extended key usage.", "Failed to create a certificate");
-      return;
-    }
+    // if (this.createCertificateFormSubject.invalid) {
+    //   this.toastr.error("Please choose a subject.", 'Failed to create a certificate');
+    //   return;
+    // }
+    // if (this.createCertificateFormIssuer.invalid) {
+    //   this.toastr.error("Please choose an issuer.", 'Failed to create a certificate');
+    //   return;
+    // }
+    // if (this.createCertificateFormOtherData.invalid) {
+    //   this.toastr.error("Please set a valid period.", 'Failed to create a certificate');
+    //   return;
+    // }
+    // if (!this.checkKeyUsage()) {
+    //   this.toastr.error("Please select at least one key usage.", "Failed to create a certificate");
+    //   return;
+    // }
+    // if (!this.checkExtendedKeyUsage()) {
+    //   this.toastr.error("Please select at least one extended key usage.", "Failed to create a certificate");
+    //   return;
+    // }
 
-    const keyUsage = this.createKeyUsage();
-    const extendedKeyUsage = this.createExtendedKeyUsage();
-    const validFrom = formatDate(this.createCertificateFormOtherData.value.validFrom, 'yyyy-MM-dd', 'en-US')
-    const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US')
+    // const keyUsage = this.createKeyUsage();
+    // const extendedKeyUsage = this.createExtendedKeyUsage();
+    // const validFrom = formatDate(this.createCertificateFormOtherData.value.validFrom, 'yyyy-MM-dd', 'en-US')
+    // const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US')
 
-    const certificate = new Certificate(this.createCertificateFormSubject.value.selectedSubject, this.createCertificateFormIssuer.value.selectedIssuerCertificate.issuer,
-      validFrom, validTo, this.createCertificateFormOtherData.value.authorityKeyIdentifier, this.createCertificateFormOtherData.value.subjectKeyIdentifier,
-      this.createCertificateFormOtherData.value.subjectIsCa, keyUsage, extendedKeyUsage);
+    // const certificate = new Certificate(this.createCertificateFormSubject.value.selectedSubject, this.createCertificateFormIssuer.value.selectedIssuerCertificate.issuer,
+    //   validFrom, validTo, this.createCertificateFormOtherData.value.authorityKeyIdentifier, this.createCertificateFormOtherData.value.subjectKeyIdentifier,
+    //   this.createCertificateFormOtherData.value.subjectIsCa, keyUsage, extendedKeyUsage);
 
-    const createCertificate = new CreateCertificate(certificate, this.createCertificateFormIssuer.value.selectedIssuerCertificate,
-      this.createCertificateInfoAboutKeyStorage.value.alias,
-      this.createCertificateInfoAboutKeyStorage.value.password, this.createCertificateInfoAboutKeyStorage.value.privateKeyPassword,
-      this.createCertificateInfoAboutKeyStorage.value.issuerPrivateKeyPassword,
-      this.createCertificateInfoAboutKeyStorage.value.issuerKeyStorePassword);
+    // const createCertificate = new CreateCertificate(certificate, this.createCertificateFormIssuer.value.selectedIssuerCertificate,
+    //   this.createCertificateInfoAboutKeyStorage.value.alias,
+    //   this.createCertificateInfoAboutKeyStorage.value.password, this.createCertificateInfoAboutKeyStorage.value.privateKeyPassword,
+    //   this.createCertificateInfoAboutKeyStorage.value.issuerPrivateKeyPassword,
+    //   this.createCertificateInfoAboutKeyStorage.value.issuerKeyStorePassword);
 
-    this.certificateService.addNewCertificate(createCertificate).subscribe(
-      () => {
-        this.createCertificateFormOtherData.reset();
-        this.createCertificateFormSubject.reset();
-        this.createCertificateFormIssuer.reset();
-        this.createCertificateInfoAboutKeyStorage.reset();
-        this.toastr.success('Successfully created a new certificate.', 'Create certificate');
-        this.router.navigate(['/pages/list-certificates']);
-      },
-      (e: HttpErrorResponse) => {
-        this.toastr.error(e.error.message, 'Failed to create a certificate');
-      }
-    );
+    // this.certificateService.addNewCertificate(createCertificate).subscribe(
+    //   () => {
+    //     this.createCertificateFormOtherData.reset();
+    //     this.createCertificateFormSubject.reset();
+    //     this.createCertificateFormIssuer.reset();
+    //     this.createCertificateInfoAboutKeyStorage.reset();
+    //     this.toastr.success('Successfully created a new certificate.', 'Create certificate');
+    //     this.router.navigate(['/pages/list-certificates']);
+    //   },
+    //   (e: HttpErrorResponse) => {
+    //     this.toastr.error(e.error.message, 'Failed to create a certificate');
+    //   }
+    // );
   }
 
   checkKeyUsage(): boolean {
@@ -305,7 +305,8 @@ export class CreateCertificateComponent implements OnInit {
       this.createCertificateFormOtherData.value.extendedKeyUsage.codeSigning,
       this.createCertificateFormOtherData.value.extendedKeyUsage.emailProtection,
       this.createCertificateFormOtherData.value.extendedKeyUsage.timeStamping,
-      this.createCertificateFormOtherData.value.extendedKeyUsage.ocspSigning
+      this.createCertificateFormOtherData.value.extendedKeyUsage.ocspSigning,
+      this.createCertificateFormOtherData.value.extendedKeyUsage.dvcs,
     )
   }
 
@@ -315,13 +316,13 @@ export class CreateCertificateComponent implements OnInit {
         'authorityKeyIdentifier': this.selectedTemplate.authorityKeyId,
         'subjectKeyIdentifier': this.selectedTemplate.subjectKeyId,
         'subjectIsCa': this.selectedTemplate.CA,
-        'keyUsage': {
+        'keyUsageDTO': {
           'digitalSignature': this.selectedTemplate.digitalSignature,
           'keyEncipherment': this.selectedTemplate.keyEncipherment,
           'certificateSigning': this.selectedTemplate.certSigning,
           'crlSign': this.selectedTemplate.CRLSign,
         },
-        'extendedKeyUsage': {
+        'extendedKeyUsageDTO': {
           'serverAuth': this.selectedTemplate.TLSWebServerAuth,
           'clientAuth': this.selectedTemplate.TLSWebClientAuth,
           'codeSigning': this.selectedTemplate.codeSigning

@@ -47,6 +47,11 @@ public class CertificateGenerator {
 			
 			// Dodavanje cekiranih KeyUsage u sertifikat
 			KeyUsageDTO keyUsageDTO = certificateDTO.getKeyUsageDTO();
+			try {
+				System.out.println(keyUsageDTO.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			KeyUsage k = new KeyUsage(keyUsageDTO.getcRLSign() | keyUsageDTO.getDataEncipherment() | keyUsageDTO.getDecipherOnly() | keyUsageDTO.getDigitalSignature() | keyUsageDTO.getEncipherOnly() | keyUsageDTO.getKeyAgreement() | keyUsageDTO.getKeyCertSign() | keyUsageDTO.getKeyEncipherment() | keyUsageDTO.getNonRepudiation());
 			
 			try {

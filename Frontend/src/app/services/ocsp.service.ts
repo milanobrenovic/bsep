@@ -8,7 +8,7 @@ import { CertificateID } from 'app/models/certificateID';
 })
 export class OCSPService {
 
-  url = environment.baseUrl + environment.ocsp;
+  url = environment.baseUrl + environment.auth;
 
   constructor(
     private httpClient: HttpClient,

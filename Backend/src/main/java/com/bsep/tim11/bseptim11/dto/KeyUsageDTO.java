@@ -185,6 +185,20 @@ public class KeyUsageDTO {
 		else
 			return 0;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "KeyUsageDTO{" +
+				"cRLSign=" + cRLSign +
+				", dataEncipherment=" + dataEncipherment +
+				", decipherOnly=" + decipherOnly +
+				", digitalSignature=" + digitalSignature +
+				", encipherOnly=" + encipherOnly +
+				", keyAgreement=" + keyAgreement +
+				", keyCertSign=" + keyCertSign +
+				", keyEncipherment=" + keyEncipherment +
+				", nonRepudiation=" + nonRepudiation +
+				'}';
+	}
 
 }
