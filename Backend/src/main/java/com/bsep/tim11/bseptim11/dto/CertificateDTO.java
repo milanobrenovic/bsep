@@ -1,5 +1,7 @@
 package com.bsep.tim11.bseptim11.dto;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CertificateDTO {
@@ -15,16 +17,25 @@ public class CertificateDTO {
 	
 	public CertificateDTO() {}
 
-	public CertificateDTO(Long subjectId, Long issuerId, Date startDate, Date endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO) {
+	public CertificateDTO(Long subjectId, Long issuerId, String startDate, String endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO) {
 		super();
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
-		this.startDate = startDate;
-		this.endDate = endDate;
 		this.alias = alias;
 		this.password = password;
 		this.keyUsageDTO = new KeyUsageDTO(keyUsageDTO);
 		this.extendedKeyUsageDTO = new ExtendedKeyUsageDTO(extendedKeyUsageDTO);
+		
+		//Datumi od kad do kad vazi sertifikat
+		SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			this.startDate = iso8601Formater.parse(startDate);
+			this.endDate = iso8601Formater.parse(endDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public Long getSubjectId() {

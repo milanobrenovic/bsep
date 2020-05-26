@@ -116,7 +116,7 @@ public class CertificateController {
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO);
 
 		try {
-			certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(),  cert, issuerData.getPrivateKey(), ct);
+			certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(), cert, issuerData.getPrivateKey(), ct);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -196,7 +196,7 @@ public class CertificateController {
 			}
 			else{
 				System.out.println("Udjes u else?");
-				cert = (X509Certificate) keyStoreReader.readCertificate("keystorenijeroot.p12", "123", ad2.getAlias());
+				cert = (X509Certificate) keyStoreReader.readCertificate("keystoreintermediate.p12", "123", ad2.getAlias());
 				if (cert != null) {
 					ad.setAliasData(ad2);
 					aliasDataService.save(ad);

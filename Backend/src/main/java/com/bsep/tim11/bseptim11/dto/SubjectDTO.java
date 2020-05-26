@@ -4,6 +4,7 @@ import com.bsep.tim11.bseptim11.model.Subject;
 
 public class SubjectDTO {
 
+	private Long id;
     private String commonName;
     private String surname;	
     private String givenName;	
@@ -18,9 +19,10 @@ public class SubjectDTO {
     	
     }
     
-	public SubjectDTO(String commonName, String surname, String givenName, String organization, String organizationUnit,
+	public SubjectDTO(Long id, String commonName, String surname, String givenName, String organization, String organizationUnit,
 			String country, String email, Boolean isCA, Boolean hasCertificate) {
 		super();
+		this.id = id;
 		this.commonName = commonName;
 		this.surname = surname;
 		this.givenName = givenName;
@@ -34,6 +36,7 @@ public class SubjectDTO {
 	
 	public SubjectDTO(Subject s) {
 		super();
+		this.id = s.getId();
 		this.commonName = s.getCommonName();
 		this.surname = s.getSurname();
 		this.givenName = s.getGivenName();
@@ -116,6 +119,13 @@ public class SubjectDTO {
 	public void setHasCertificate(Boolean hasCertificate) {
 		this.hasCertificate = hasCertificate;
 	}
-    
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
     
 }

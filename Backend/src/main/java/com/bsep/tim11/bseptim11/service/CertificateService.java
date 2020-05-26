@@ -10,9 +10,6 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -71,41 +68,32 @@ public class CertificateService {
 	}
 	
 	public SubjectData generateSubjectData(Subject subject) {
-		try {
-			KeyPair keyPairSubject = generateKeyPair();
-			
-			//Datumi od kad do kad vazi sertifikat
-			SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
-			Date startDate = iso8601Formater.parse("2017-12-31");
-			Date endDate = iso8601Formater.parse("2022-12-31");
-			
-			//Serijski broj sertifikata
-			String sn="1";
-			//klasa X500NameBuilder pravi X500Name objekat koji predstavlja podatke o vlasniku
-			X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-		    builder.addRDN(BCStyle.CN, subject.getCommonName());
-		    builder.addRDN(BCStyle.SURNAME, subject.getSurname());
-		    builder.addRDN(BCStyle.GIVENNAME, subject.getGivenName());
-		    builder.addRDN(BCStyle.O, subject.getOrganization());
-		    builder.addRDN(BCStyle.OU, subject.getOrganizationUnit());
-		    builder.addRDN(BCStyle.C, subject.getCountry());
-		    builder.addRDN(BCStyle.E, subject.getEmail());
-		    //UID (USER ID) je ID korisnika
-		    builder.addRDN(BCStyle.UID, "12345");
-		    
-		    //Kreiraju se podaci za sertifikat, sto ukljucuje:
-		    // - javni kljuc koji se vezuje za sertifikat
-		    // - podatke o vlasniku
-		    // - serijski broj sertifikata
-		    // - od kada do kada vazi sertifikat
-		    
-		    SubjectData sd = new SubjectData(keyPairSubject.getPublic(), builder.build(), sn);
+		KeyPair keyPairSubject = generateKeyPair();
+		
+		//Serijski broj sertifikata
+		String sn="1";
+		//klasa X500NameBuilder pravi X500Name objekat koji predstavlja podatke o vlasniku
+		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+		builder.addRDN(BCStyle.CN, subject.getCommonName());
+		builder.addRDN(BCStyle.SURNAME, subject.getSurname());
+		builder.addRDN(BCStyle.GIVENNAME, subject.getGivenName());
+		builder.addRDN(BCStyle.O, subject.getOrganization());
+		builder.addRDN(BCStyle.OU, subject.getOrganizationUnit());
+		builder.addRDN(BCStyle.C, subject.getCountry());
+		builder.addRDN(BCStyle.E, subject.getEmail());
+		//UID (USER ID) je ID korisnika
+		builder.addRDN(BCStyle.UID, "12345");
+		
+		//Kreiraju se podaci za sertifikat, sto ukljucuje:
+		// - javni kljuc koji se vezuje za sertifikat
+		// - podatke o vlasniku
+		// - serijski broj sertifikata
+		// - od kada do kada vazi sertifikat
+		
+		SubjectData sd = new SubjectData(keyPairSubject.getPublic(), builder.build(), sn);
 
-		    return sd;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return sd;
+
 	}
 
 	public IssuerData generateIssuerData(PrivateKey issuerKey, Subject subject) {
