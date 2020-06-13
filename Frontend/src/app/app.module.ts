@@ -32,10 +32,8 @@ import { AdminGuard } from './guards/admin.guard';
 import { AppRoutingModule } from './app-routing.module';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { ToastrModule } from 'ngx-toastr';
-import { AddSubjectComponent } from './main/add-subject/add-subject.component';
 import { MAT_RADIO_DEFAULT_OPTIONS, MatRadioModule } from '@angular/material/radio';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CreateSelfSignedCertificateComponent } from './main/create-self-signed-certificate/create-self-signed-certificate.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
@@ -77,125 +75,127 @@ import { ListCertificatesComponent } from './main/list-certificates/list-certifi
 import { CertificateDetailsComponent } from './main/certificate-details/certificate-details.component';
 import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
 import { CertificateStatusComponent } from './main/certificate-status/certificate-status.component';
+import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
+import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        HomeComponent,
-        LoginComponent,
-        ErrorComponent,
-        ErrorUnauthenticatedComponent,
-        ErrorUnauthorizedComponent,
-        ErrorNotFoundComponent,
-        ErrorInternalServerComponent,
-        AddSubjectComponent,
-        CreateSelfSignedCertificateComponent,
-        CreateCertificateComponent,
-        ListCertificatesComponent,
-        CertificateDetailsComponent,
-        ChooseTemplateComponent,
-        CertificateStatusComponent,
-    ],
-    imports     : [
-        BrowserModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        FormsModule,
-        LayoutModule,
-        ToastrModule.forRoot({
-            timeOut: 5000,
-            positionClass: 'toast-bottom-right',
-            preventDuplicates: true,
-        }),
-        TranslateModule.forRoot(),
+	declarations: [
+		AppComponent,
+		HomeComponent,
+		LoginComponent,
+		ErrorComponent,
+		ErrorUnauthenticatedComponent,
+		ErrorUnauthorizedComponent,
+		ErrorNotFoundComponent,
+		ErrorInternalServerComponent,
+		CreateCertificateComponent,
+		ListCertificatesComponent,
+		CertificateDetailsComponent,
+		ChooseTemplateComponent,
+		CertificateStatusComponent,
+		CreateSubjectComponent,
+		CreateRootCertificateComponent,
+	],
+	imports: [
+		BrowserModule,
+		BrowserAnimationsModule,
+		HttpClientModule,
+		ReactiveFormsModule,
+		FormsModule,
+		LayoutModule,
+		ToastrModule.forRoot({
+			timeOut: 5000,
+			positionClass: 'toast-bottom-right',
+			preventDuplicates: true,
+		}),
+		TranslateModule.forRoot(),
 
-        // Material
-        MatMomentDateModule,
-        MatButtonModule,
-        MatIconModule,
-        MatCheckboxModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDialogModule,
-        MatRadioModule,
-        A11yModule,
-        CdkStepperModule,
-        CdkTableModule,
-        CdkTreeModule,
-        DragDropModule,
-        MatAutocompleteModule,
-        MatBadgeModule,
-        MatBottomSheetModule,
-        MatButtonModule,
-        MatButtonToggleModule,
-        MatCardModule,
-        MatCheckboxModule,
-        MatChipsModule,
-        MatStepperModule,
-        MatDatepickerModule,
-        MatDialogModule,
-        MatDividerModule,
-        MatExpansionModule,
-        MatGridListModule,
-        MatIconModule,
-        MatInputModule,
-        MatListModule,
-        MatMenuModule,
-        MatNativeDateModule,
-        MatPaginatorModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatRadioModule,
-        MatRippleModule,
-        MatSelectModule,
-        MatSidenavModule,
-        MatSliderModule,
-        MatSlideToggleModule,
-        MatSnackBarModule,
-        MatSortModule,
-        MatTableModule,
-        MatTabsModule,
-        MatToolbarModule,
-        MatTooltipModule,
-        MatTreeModule,
-        PortalModule,
-        ScrollingModule,
+		// Material
+		MatMomentDateModule,
+		MatButtonModule,
+		MatIconModule,
+		MatCheckboxModule,
+		MatFormFieldModule,
+		MatInputModule,
+		MatDialogModule,
+		MatRadioModule,
+		A11yModule,
+		CdkStepperModule,
+		CdkTableModule,
+		CdkTreeModule,
+		DragDropModule,
+		MatAutocompleteModule,
+		MatBadgeModule,
+		MatBottomSheetModule,
+		MatButtonModule,
+		MatButtonToggleModule,
+		MatCardModule,
+		MatCheckboxModule,
+		MatChipsModule,
+		MatStepperModule,
+		MatDatepickerModule,
+		MatDialogModule,
+		MatDividerModule,
+		MatExpansionModule,
+		MatGridListModule,
+		MatIconModule,
+		MatInputModule,
+		MatListModule,
+		MatMenuModule,
+		MatNativeDateModule,
+		MatPaginatorModule,
+		MatProgressBarModule,
+		MatProgressSpinnerModule,
+		MatRadioModule,
+		MatRippleModule,
+		MatSelectModule,
+		MatSidenavModule,
+		MatSliderModule,
+		MatSlideToggleModule,
+		MatSnackBarModule,
+		MatSortModule,
+		MatTableModule,
+		MatTabsModule,
+		MatToolbarModule,
+		MatTooltipModule,
+		MatTreeModule,
+		PortalModule,
+		ScrollingModule,
 
-        // Fuse modules
-        FuseModule.forRoot(fuseConfig),
-        FuseProgressBarModule,
-        FuseSharedModule,
-        FuseSidebarModule,
-        FuseThemeOptionsModule,
-        
-        // App modules
-        LayoutModule,
-        AppRoutingModule,
-    ],
-    providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: TokenInterceptor,
-            multi: true,
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: ErrorInterceptor,
-            multi: true,
-        },
-        AdminGuard,
-        {
-            provide: MatDialogRef,
-            useValue: {}
-        },
-        {
-            provide: MAT_RADIO_DEFAULT_OPTIONS,
-            useValue: { color: 'accent' },
-        },
-    ],
-    bootstrap   : [
-        AppComponent
-    ]
+		// Fuse modules
+		FuseModule.forRoot(fuseConfig),
+		FuseProgressBarModule,
+		FuseSharedModule,
+		FuseSidebarModule,
+		FuseThemeOptionsModule,
+
+		// App modules
+		LayoutModule,
+		AppRoutingModule,
+	],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: TokenInterceptor,
+			multi: true,
+		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: ErrorInterceptor,
+			multi: true,
+		},
+		AdminGuard,
+		{
+			provide: MatDialogRef,
+			useValue: {}
+		},
+		{
+			provide: MAT_RADIO_DEFAULT_OPTIONS,
+			useValue: { color: 'accent' },
+		},
+	],
+	bootstrap: [
+		AppComponent
+	]
 })
 export class AppModule { }

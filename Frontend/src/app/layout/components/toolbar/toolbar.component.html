@@ -33,9 +33,9 @@
 
             <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
 
-                <button mat-menu-item routerLink="/pages/add-subject">
+                <button mat-menu-item routerLink="/pages/create-subject">
                     <mat-icon>add_circle_outline</mat-icon>
-                    <span>Add subject</span>
+                    <span>Create subject</span>
                 </button>
 
                 <button mat-menu-item routerLink="/pages/create-certificate">
@@ -43,9 +43,9 @@
                     <span>Create new certificate</span>
                 </button>
 
-                <button mat-menu-item routerLink="/pages/create-self-signed-certificate">
+                <button mat-menu-item routerLink="/pages/create-root-certificate">
                     <mat-icon>add_to_photos</mat-icon>
-                    <span>Create self-signed certificate</span>
+                    <span>Create root certificate</span>
                 </button>
 
                 <button mat-menu-item (click)="logout()">

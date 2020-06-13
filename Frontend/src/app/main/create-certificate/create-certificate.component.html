@@ -35,7 +35,7 @@
 									<mat-card-title>Selected subject details:</mat-card-title>
 								</mat-card-header>
 								<mat-card-content>
-									<div *ngIf="getSelectedSubject().type == 'USER'">
+									<!-- <div *ngIf="getSelectedSubject().type == 'USER'"> -->
 										<table class="table table-font">
 											<tbody>
 												<tr>
@@ -48,7 +48,7 @@
 												</tr>
 												<tr>
 													<th class="first">Givename:</th>
-													<td>{{getSelectedSubject().givename}}</td>
+													<td>{{getSelectedSubject().givenName}}</td>
 												</tr>
 												<tr>
 													<th class="first">Organization:</th>
@@ -60,12 +60,12 @@
 												</tr>
 												<tr>
 													<th class="first">Country code:</th>
-													<td>{{getSelectedSubject().countryCode}}</td>
+													<td>{{getSelectedSubject().country}}</td>
 												</tr>
 											</tbody>
 										</table>
-									</div>
-									<div *ngIf="getSelectedSubject().type == 'COMPANY'">
+									<!-- </div> -->
+									<!-- <div *ngIf="getSelectedSubject().type == 'COMPANY'">
 										<table class="table table-font">
 											<tbody>
 												<tr>
@@ -94,7 +94,7 @@
 												</tr>
 											</tbody>
 										</table>
-									</div>
+									</div> -->
 								</mat-card-content>
 							</mat-card>
 						</div>

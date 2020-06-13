@@ -70,5 +70,21 @@ public class SubjectController {
 		return new ResponseEntity<>(subjectDTO, HttpStatus.CREATED);
 		
 	}
+
+	//Svi ponudjeni subjecti za sertifikat
+	@GetMapping(value = "/subjects-without-certificate")
+	public ResponseEntity<List<SubjectDTO>> getSubjectsWithoutCertificate(){
+
+		List<SubjectDTO> subjectsDTO = new ArrayList<>();
+		List<Subject> subjects = subjectService.findAll();
+
+		for (Subject subject : subjects) {
+			if(!subject.getHasCertificate())
+				subjectsDTO.add(new SubjectDTO(subject));
+		}
+
+		return new ResponseEntity<>(subjectsDTO, HttpStatus.OK);
+
+	}
 	
 }

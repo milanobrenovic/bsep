@@ -15,12 +15,11 @@ export class CertificateService {
     private httpClient: HttpClient,
   ) { }
 
-  public addNewCertificate(certificate: CreateCertificate) {
-    return this.httpClient.post(this.url + "/new", certificate);
+  public createNewCertificate(certificate: Certificate) {
+    return this.httpClient.post(this.url + "/create", certificate);
   }
 
   public createNewRootCertificate(certificate: Certificate) {
-    console.log(certificate);
     return this.httpClient.post(this.url + "/createRoot", certificate);
   }
 

@@ -15,7 +15,6 @@ export class SubjectService {
 
   constructor(
     private httpClient: HttpClient,
-    private router: Router,
   ) { }
 
   public createSubject(subject: Entity) {
@@ -33,6 +32,10 @@ export class SubjectService {
   
   public getAllSubjects(): any {
     return this.httpClient.get(this.url + "/all");
+  }
+
+  public getAllSubjectsWithoutCertificate(): any {
+    return this.httpClient.get(this.url + "/subjects-without-certificate");
   }
   
 }

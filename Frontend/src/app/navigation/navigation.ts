@@ -14,11 +14,11 @@ export const navigation: FuseNavigation[] = [
                 url      : '/pages/home',
             },
             {
-                id       : 'add-subject',
-                title    : 'Add subject',
+                id       : 'create-subject',
+                title    : 'Create subject',
                 type     : 'item',
                 icon     : 'add_circle_outline',
-                url      : '/pages/add-subject',
+                url      : '/pages/create-subject',
             },
             {
                 id       : 'create-certificate',
@@ -28,11 +28,11 @@ export const navigation: FuseNavigation[] = [
                 url      : '/pages/create-certificate',
             },
             {
-                id       : 'create-self-signed-certificate',
-                title    : 'Create self-signed certificate',
+                id       : 'create-root-certificate',
+                title    : 'Create root certificate',
                 type     : 'item',
                 icon     : 'add_to_photos',
-                url      : '/pages/create-self-signed-certificate',
+                url      : '/pages/create-root-certificate',
             },
             {
                 id       : 'list-certificates',

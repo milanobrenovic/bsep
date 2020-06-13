@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, ValidatorFn, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { Entity } from 'app/models/entity';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -7,13 +7,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { SubjectService } from 'app/services/subject.service';
 import { CertificateService } from 'app/services/certificate.service';
 import { Router } from '@angular/router';
-import { Template } from 'app/models/template';
+import { HttpErrorResponse } from '@angular/common/http';
+import { formatDate } from '@angular/common';
 import { KeyUsage } from 'app/models/keyUsage';
 import { ExtendedKeyUsage } from 'app/models/extendedKeyUsage';
-import { formatDate } from '@angular/common';
+import { CreateSubjectComponent } from '../create-subject/create-subject.component';
+import { Template } from 'app/models/template';
 import { Certificate } from 'app/models/certificate';
-import { AddSubjectComponent } from '../add-subject/add-subject.component';
-import { HttpErrorResponse } from '@angular/common/http';
 
 const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
   const from = formGroup.get("validFrom").value;
@@ -27,19 +27,19 @@ const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
 }
 
 @Component({
-  selector: 'app-create-self-signed-certificate',
-  templateUrl: './create-self-signed-certificate.component.html',
-  styleUrls: ['./create-self-signed-certificate.component.scss']
+  selector: 'app-create-root-certificate',
+  templateUrl: './create-root-certificate.component.html',
+  styleUrls: ['./create-root-certificate.component.scss']
 })
-export class CreateSelfSignedCertificateComponent implements OnInit {
+export class CreateRootCertificateComponent implements OnInit {
 
-  createCertificateFromSubject: FormGroup;
-  createCertificateFromOtherData: FormGroup;
-  createCertificateInfoAboutKeyStorage: FormGroup;
-  minDate = new Date();
-  subjects: Entity[] = [];
-  createdNewSubject: Subscription;
-  selectedTemplate: Template;
+  public createCertificateFromSubject: FormGroup;
+  public createCertificateFromOtherData: FormGroup;
+  public createCertificateInfoAboutKeyStorage: FormGroup;
+  public minDate = new Date();
+  public subjects: Entity[] = [];
+  public createdNewSubject: Subscription;
+  public selectedTemplate: Template;
 
   constructor(
     private toastrService: ToastrService,
@@ -251,7 +251,7 @@ export class CreateSelfSignedCertificateComponent implements OnInit {
   }
 
   openAddSubject() {
-    this.dialog.open(AddSubjectComponent);
+    this.dialog.open(CreateSubjectComponent);
   }
 
 }

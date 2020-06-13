@@ -66,22 +66,6 @@ public class CertificateController {
 		
 	}
 	
-	//Svi ponudjeni subjecti za sertifikat
-	@GetMapping(value = "/subjects")
-	public ResponseEntity<List<SubjectDTO>> getSubjects(){
-		
-		List<SubjectDTO> subjectsDTO = new ArrayList<>();
-		List<Subject> subjects = subjectService.findAll();
-		
-		for (Subject subject : subjects) {
-			if(!subject.getHasCertificate())
-				subjectsDTO.add(new SubjectDTO(subject));
-		}
-		
-		return new ResponseEntity<>(subjectsDTO, HttpStatus.OK);
-		
-	}
-	
 	//Pravljenje self-signed sertifikata
 	@PostMapping(value = "/createRoot", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> addRootCertificate(@RequestBody CertificateDTO certificateDTO){

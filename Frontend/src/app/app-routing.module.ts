@@ -8,12 +8,11 @@ import { ErrorNotFoundComponent } from "./main/error-not-found/error-not-found.c
 import { ErrorInternalServerComponent } from "./main/error-internal-server/error-internal-server.component";
 import { ErrorComponent } from "./main/error/error.component";
 import { NgModule } from '@angular/core';
-import { AddSubjectComponent } from './main/add-subject/add-subject.component';
-import { CreateSelfSignedCertificateComponent } from './main/create-self-signed-certificate/create-self-signed-certificate.component';
 import { CreateCertificateComponent } from './main/create-certificate/create-certificate.component';
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
-import { CertificateDetailsComponent } from './main/certificate-details/certificate-details.component';
 import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
+import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
+import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
 
 const appRoutes: Routes = [
 
@@ -46,13 +45,13 @@ const appRoutes: Routes = [
         canActivate : [AdminGuard],
     },
     {
-        path        : 'pages/add-subject',
-        component   : AddSubjectComponent,
+        path        : 'pages/create-subject',
+        component   : CreateSubjectComponent,
         canActivate : [AdminGuard],
     },
     {
-        path        : 'pages/create-self-signed-certificate',
-        component   : CreateSelfSignedCertificateComponent,
+        path        : 'pages/create-root-certificate',
+        component   : CreateRootCertificateComponent,
         canActivate : [AdminGuard],
     },
     {
