@@ -9,10 +9,12 @@ import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
@@ -63,6 +65,39 @@ public class CertificateController {
 		}
 		
 		return new ResponseEntity<>(issuersDTO, HttpStatus.OK);
+		
+	}
+	
+	@GetMapping(value = "/issuersKeyStore")
+	public ResponseEntity<List<String>> getIssuersKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+		
+		//List<SubjectDTO> issuersDTO = new ArrayList<>();
+		List<String> issuers = new ArrayList<>();
+		FileInputStream is = new FileInputStream("keystoreroot");
+
+	    KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+	    keystore.load(is, "123".toCharArray());
+	    Enumeration e = keystore.aliases();
+	    for (; e.hasMoreElements();) {
+	      String alias = (String) e.nextElement();
+
+	     java.security.cert.Certificate cert = keystore.getCertificate(alias);
+	      if (cert instanceof X509Certificate) {
+	        X509Certificate x509cert = (X509Certificate) cert;
+
+	        // Get subject
+	        Principal principal = x509cert.getSubjectDN();
+	        String subjectDn = principal.getName();
+
+	        // Get issuer
+	        principal = x509cert.getIssuerDN();
+	        String issuerDn = principal.getName();
+	        issuers.add(issuerDn);
+	      }
+	    }
+	  
+		
+		return new ResponseEntity<>(issuers, HttpStatus.OK);
 		
 	}
 	
