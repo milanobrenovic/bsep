@@ -81,7 +81,7 @@ export class CreateCertificateComponent implements OnInit {
       this.subjects = subjects;
     })
   }
-
+  
   getKeyUsages(issuerCertificate: Certificate): string {
     if (!issuerCertificate.keyUsageDTO) {
       return " (certS, crlS, dataE, decO, digS, encO, keyAgr, keyE, nonRep)";
@@ -211,11 +211,11 @@ export class CreateCertificateComponent implements OnInit {
     const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US')
 
     console.log(this.createCertificateFormSubject.value.selectedSubject.id);
-    console.log(this.issuerCertificates[0].id);
+    console.log(this.createCertificateFormIssuer.value.selectedIssuerCertificate.id);
 
     const certificate = new Certificate(
       this.createCertificateFormSubject.value.selectedSubject.id,
-      this.issuerCertificates[0].id,
+      this.createCertificateFormIssuer.value.selectedIssuerCertificate.id,
       new Date(validFrom),
       new Date(validTo),
       this.createCertificateInfoAboutKeyStorage.value.alias,

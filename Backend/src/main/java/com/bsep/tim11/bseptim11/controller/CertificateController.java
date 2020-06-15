@@ -92,7 +92,7 @@ public class CertificateController {
 
 	        // Get issuer
 		  //UID=12345, EMAILADDRESS=a@a.com, C=aa, OU=a, O=a, GIVENNAME=a, SURNAME=a, CN=a
-	        principal = x509cert.getIssuerDN();
+	       // principal = x509cert.getIssuerDN();
 	        String issuerDn = principal.getName();
 	        String issuerData[] = issuerDn.split(" ");
 	        String iData[] = issuerData[1].split("=");
@@ -123,7 +123,7 @@ public class CertificateController {
 
 				// Get issuer
 				//UID=12345, EMAILADDRESS=a@a.com, C=aa, OU=a, O=a, GIVENNAME=a, SURNAME=a, CN=a
-				principal = x509cert.getIssuerDN();
+				//principal = x509cert.getIssuerDN();
 				String issuerDn = principal.getName();
 				String issuerData[] = issuerDn.split(" ");
 				String iData[] = issuerData[1].split("=");

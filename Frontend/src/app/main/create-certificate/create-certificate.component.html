@@ -95,9 +95,9 @@
 						<mat-label>Choose an existing issuer</mat-label>
 						<mat-select formControlName="selectedIssuerCertificate" required>
 							<mat-option *ngFor="let issuerCertificate of issuerCertificates" [value]="issuerCertificate">
-								CN={{issuerCertificates[0].commonName}},
-								O={{issuerCertificates[0].organization}}
-								{{ getKeyUsages(issuerCertificates)}}
+								CN={{issuerCertificate.commonName}},
+								O={{issuerCertificate.organization}}
+								{{ getKeyUsages(issuerCertificate)}}
 							</mat-option>
 						</mat-select>
 						<mat-error>Please add an issuer first in order to continue to the next step.</mat-error>
@@ -114,27 +114,27 @@
 								<tbody>
 									<tr>
 										<th class="first">Common name:</th>
-										<td>{{issuerCertificates[0].commonName}}</td>
+										<td>{{getSelectedIssuerCertificate().commonName}}</td>
 									</tr>
 									<tr>
 										<th class="first">Surname:</th>
-										<td>{{issuerCertificates[0].surname}}</td>
+										<td>{{getSelectedIssuerCertificate().surname}}</td>
 									</tr>
 									<tr>
 										<th class="first">Given Name:</th>
-										<td>{{issuerCertificates[0].givenName}}</td>
+										<td>{{getSelectedIssuerCertificate().givenName}}</td>
 									</tr>
 									<tr>
 										<th class="first">Organization:</th>
-										<td>{{issuerCertificates[0].organization}}</td>
+										<td>{{getSelectedIssuerCertificate().organization}}</td>
 									</tr>
 									<tr>
 										<th class="first">Email:</th>
-										<td>{{issuerCertificates[0].email}}</td>
+										<td>{{getSelectedIssuerCertificate().email}}</td>
 									</tr>
 									<tr>
 										<th class="first">Country:</th>
-										<td>{{issuerCertificates[0].country}}</td>
+										<td>{{getSelectedIssuerCertificate().country}}</td>
 									</tr>
 								</tbody>
 							</table>
