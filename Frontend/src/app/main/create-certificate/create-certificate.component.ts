@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, ValidatorFn, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Entity } from 'app/models/entity';
 import { Certificate } from 'app/models/certificate';
 import { Subscription } from 'rxjs';
@@ -14,28 +14,7 @@ import { ExtendedKeyUsage } from 'app/models/extendedKeyUsage';
 import { formatDate } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CreateSubjectComponent } from '../create-subject/create-subject.component';
-
-const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
-  const from = formGroup.get("validFrom").value;
-  const to = formGroup.get("validTo").value;
-
-  if (!from || !to) {
-    return null;
-  }
-
-  return from !== null && to !== null && from < to ? null : { validError: true };
-}
-
-const KeyStoragePasswordValidator: ValidatorFn = (formGroup: FormGroup) => {
-  const from = formGroup.get("rootKeyStoragePassword").value;
-  const to = formGroup.get("intermediateKeyStoragePassword").value;
-
-  if (from || to) {
-    return null;
-  }
-
-  return { validKeyStoragePassword: true };
-}
+import { Subject } from 'app/models/subject';
 
 @Component({
   selector: 'app-create-certificate',
@@ -44,17 +23,17 @@ const KeyStoragePasswordValidator: ValidatorFn = (formGroup: FormGroup) => {
 })
 export class CreateCertificateComponent implements OnInit {
 
-  createCertificateFormSubject: FormGroup;
-  createCertificateFormIssuer: FormGroup;
-  createCertificateFormOtherData: FormGroup;
-  createCertificateInfoAboutKeyStorage: FormGroup;
-  createCertificateKeyStoragePasswords: FormGroup;
+  public createCertificateFormSubject: FormGroup;
+  public createCertificateFormIssuer: FormGroup;
+  public createCertificateFormOtherData: FormGroup;
+  public createCertificateInfoAboutKeyStorage: FormGroup;
+  public createCertificateKeyStoragePasswords: FormGroup;
 
-  minDate = new Date();
-  subjects: Entity[] = [];
-  issuerCertificates: Certificate[] = [];
-  createdNewSubject: Subscription;
-  selectedTemplate: Template;
+  public minDate = new Date();
+  public subjects: Entity[] = [];
+  public issuerCertificates: Subject[] = [];
+  public createdNewSubject: Subscription;
+  public selectedTemplate: Template;
 
   constructor(
     private toastr: ToastrService,
@@ -64,7 +43,7 @@ export class CreateCertificateComponent implements OnInit {
     private certificateService: CertificateService,
     private router: Router,
   ) { }
-
+  
   ngOnInit() {
     this.createCertificateFormSubject = this.formBuilder.group({
       selectedSubject: new FormControl(null, Validators.required),
@@ -73,8 +52,6 @@ export class CreateCertificateComponent implements OnInit {
     this.createCertificateKeyStoragePasswords = this.formBuilder.group({
       rootKeyStoragePassword: new FormControl(null),
       intermediateKeyStoragePassword: new FormControl(null),
-    }, {
-      validator: [KeyStoragePasswordValidator]
     });
 
     this.createCertificateFormIssuer = this.formBuilder.group({
@@ -183,8 +160,6 @@ export class CreateCertificateComponent implements OnInit {
         timeStamping: new FormControl(false),
         ocspSigning: new FormControl(false)
       }),
-    }, {
-      validator: [TimeValidator]
     });
   }
 
@@ -235,13 +210,16 @@ export class CreateCertificateComponent implements OnInit {
     const validFrom = formatDate(this.createCertificateFormOtherData.value.validFrom, 'yyyy-MM-dd', 'en-US')
     const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US')
 
+    console.log(this.createCertificateFormSubject.value.selectedSubject.id);
+    console.log(this.issuerCertificates[0].id);
+
     const certificate = new Certificate(
       this.createCertificateFormSubject.value.selectedSubject.id,
-      this.createCertificateFormIssuer.value.selectedSubject.id,
+      this.issuerCertificates[0].id,
       new Date(validFrom),
       new Date(validTo),
-      "alias-temp",
-      "123",
+      this.createCertificateInfoAboutKeyStorage.value.alias,
+      this.createCertificateInfoAboutKeyStorage.value.password,
       keyUsage,
       extendedKeyUsage,
     );
@@ -373,12 +351,8 @@ export class CreateCertificateComponent implements OnInit {
       }
     );
 
-    this.certificateService.getCACertificates(
-      this.createCertificateFormSubject.value.selectedSubject.id,
-      this.createCertificateKeyStoragePasswords.value.rootKeyStoragePassword,
-      this.createCertificateKeyStoragePasswords.value.intermediateKeyStoragePassword,
-    ).subscribe(
-      (issuers: Certificate[]) => {
+    this.certificateService.getCACertificates().subscribe(
+      (issuers: Subject[]) => {
         this.issuerCertificates = issuers;
       },
       (e: HttpErrorResponse) => {

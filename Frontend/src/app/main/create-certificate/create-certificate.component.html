@@ -66,26 +66,9 @@
 						</mat-card-content>
 					</mat-card>
 				</div>
-
-				<br>
 			</form>
+			<br>
 			<form fxLayout="column" [formGroup]="createCertificateKeyStoragePasswords">
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Root key storage password</mat-label>
-						<input matInput type="password" formControlName="rootKeyStoragePassword">
-						<mat-error>Please add a subject first in order to continue to the next step.</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Intermediate key storage password</mat-label>
-						<input matInput type="password" formControlName="intermediateKeyStoragePassword">
-						<mat-error>Please add a subject first in order to continue to the next step.</mat-error>
-					</mat-form-field>
-				</div>
 
 				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 					<button mat-raised-button color="primary" [disabled]="!createCertificateKeyStoragePasswords.valid"
@@ -112,9 +95,9 @@
 						<mat-label>Choose an existing issuer</mat-label>
 						<mat-select formControlName="selectedIssuerCertificate" required>
 							<mat-option *ngFor="let issuerCertificate of issuerCertificates" [value]="issuerCertificate">
-								CN={{issuerCertificate.subject.commonName}},
-								O={{issuerCertificate.subject.organization}}
-								{{ getKeyUsages(issuerCertificate)}}
+								CN={{issuerCertificates[0].commonName}},
+								O={{issuerCertificates[0].organization}}
+								{{ getKeyUsages(issuerCertificates)}}
 							</mat-option>
 						</mat-select>
 						<mat-error>Please add an issuer first in order to continue to the next step.</mat-error>
@@ -127,58 +110,34 @@
 							<mat-card-title>Selected issuer details:</mat-card-title>
 						</mat-card-header>
 						<mat-card-content>
-							<div *ngIf="getSelectedIssuerCertificate().subject.type == 'USER'">
-								<table class="table table-font">
-									<tbody>
-										<tr>
-											<th class="first">Common name:</th>
-											<td>{{getSelectedIssuerCertificate().subject.commonName}}</td>
-										</tr>
-										<tr>
-											<th class="first">Surname:</th>
-											<td>{{getSelectedIssuerCertificate().subject.surname}}</td>
-										</tr>
-										<tr>
-											<th class="first">Givename:</th>
-											<td>{{getSelectedIssuerCertificate().subject.givename}}</td>
-										</tr>
-										<tr>
-											<th class="first">Organization:</th>
-											<td>{{getSelectedIssuerCertificate().subject.organization}}</td>
-										</tr>
-										<tr>
-											<th class="first">Email:</th>
-											<td>{{getSelectedIssuerCertificate().subject.email}}</td>
-										</tr>
-										<tr>
-											<th class="first">Country code:</th>
-											<td>{{getSelectedIssuerCertificate().subject.countryCode}}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-							<div *ngIf="getSelectedIssuerCertificate().subject.type == 'COMPANY'">
-								<table class="table table-font">
-									<tbody>
-										<tr>
-											<th class="first">Common name:</th>
-											<td>{{getSelectedIssuerCertificate().subject.commonName}}</td>
-										</tr>
-										<tr>
-											<th class="first">Organization:</th>
-											<td>{{getSelectedIssuerCertificate().subject.organization}}</td>
-										</tr>
-										<tr>
-											<th class="first">Organization unit:</th>
-											<td>{{getSelectedIssuerCertificate().subject.organizationUnitName}}</td>
-										</tr>
-										<tr>
-											<th class="first">Country code:</th>
-											<td>{{getSelectedIssuerCertificate().subject.countryCode}}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+							<table class="table table-font">
+								<tbody>
+									<tr>
+										<th class="first">Common name:</th>
+										<td>{{issuerCertificates[0].commonName}}</td>
+									</tr>
+									<tr>
+										<th class="first">Surname:</th>
+										<td>{{issuerCertificates[0].surname}}</td>
+									</tr>
+									<tr>
+										<th class="first">Given Name:</th>
+										<td>{{issuerCertificates[0].givenName}}</td>
+									</tr>
+									<tr>
+										<th class="first">Organization:</th>
+										<td>{{issuerCertificates[0].organization}}</td>
+									</tr>
+									<tr>
+										<th class="first">Email:</th>
+										<td>{{issuerCertificates[0].email}}</td>
+									</tr>
+									<tr>
+										<th class="first">Country:</th>
+										<td>{{issuerCertificates[0].country}}</td>
+									</tr>
+								</tbody>
+							</table>
 						</mat-card-content>
 					</mat-card>
 				</div>
@@ -424,39 +383,6 @@
 						<mat-error
 							*ngIf="createCertificateInfoAboutKeyStorage.get('password').errors && createCertificateInfoAboutKeyStorage.get('password').errors['required']">
 							Please enter key store password.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Private key password</mat-label>
-						<input matInput type="password" formControlName="privateKeyPassword">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('privateKeyPassword').errors && createCertificateInfoAboutKeyStorage.get('privateKeyPassword').errors['required']">
-							Please enter private key password password.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Issuer's key store password</mat-label>
-						<input matInput type="password" formControlName="issuerKeyStorePassword">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('issuerKeyStorePassword').errors && createCertificateInfoAboutKeyStorage.get('issuerKeyStorePassword').errors['required']">
-							Please enter issuer's key store password.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Issuer's private key password</mat-label>
-						<input matInput type="password" formControlName="issuerPrivateKeyPassword">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('issuerPrivateKeyPassword').errors && createCertificateInfoAboutKeyStorage.get('issuerPrivateKeyPassword').errors['required']">
-							Please enter issuer's private key password password.
 						</mat-error>
 					</mat-form-field>
 				</div>

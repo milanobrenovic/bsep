@@ -22,20 +22,9 @@ export class CertificateService {
   public createNewRootCertificate(certificate: Certificate) {
     return this.httpClient.post(this.url + "/createRoot", certificate);
   }
-
-  public getCACertificates(id: number, rootKeyStoragePassword: string, intermediateKeyStoragePassword: string): any {
-    let params = new HttpParams();
-
-    if (rootKeyStoragePassword != null) {
-      params = params.append('rootKeyStoragePassword', rootKeyStoragePassword);
-    }
-
-    if (intermediateKeyStoragePassword != null) {
-      params = params.append('intermediateKeyStoragePassword', intermediateKeyStoragePassword);
-    }
-
-    console.log(this.url + "/" + id);
-    return this.httpClient.get(this.url + "/issuers");
+  
+  public getCACertificates(): any {
+    return this.httpClient.get(this.url + "/issuersKeyStore");
   }
 
   public getCertificates(keyStoreLevel: string, keyStorePassword: string) {

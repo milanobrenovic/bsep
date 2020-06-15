@@ -303,17 +303,6 @@
 					</mat-form-field>
 				</div>
 
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Private key password</mat-label>
-						<input matInput type="password" formControlName="privateKeyPassword">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('privateKeyPassword').errors && createCertificateInfoAboutKeyStorage.get('privateKeyPassword').errors['required']">
-							Please enter private key password password.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<button mat-raised-button color="primary" (click)="createRootCertificate()"
 						[disabled]="!createCertificateFromOtherData.valid && !createCertificateFromSubject.valid">

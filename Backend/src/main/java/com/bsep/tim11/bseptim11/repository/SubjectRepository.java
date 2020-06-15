@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SubjectRepository extends JpaRepository<Subject, Long>{
 	
 	Subject findOneById(Long Id);
-	
+	Subject findOneByEmail(String Email);
 	List<Subject> findAll();
 	
 }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import ch.qos.logback.core.property.FileExistsPropertyDefiner;
 import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
 import com.bsep.tim11.bseptim11.dto.CertificateDTO;
 import com.bsep.tim11.bseptim11.dto.SubjectDTO;
@@ -69,11 +70,11 @@ public class CertificateController {
 	}
 	
 	@GetMapping(value = "/issuersKeyStore")
-	public ResponseEntity<List<String>> getIssuersKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+	public ResponseEntity<List<Subject>> getIssuersKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 		
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
-		List<String> issuers = new ArrayList<>();
-		FileInputStream is = new FileInputStream("keystoreroot");
+		List<Subject> issuers = new ArrayList<>();
+		FileInputStream is = new FileInputStream("keystoreroot.p12");
 
 	    KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 	    keystore.load(is, "123".toCharArray());
@@ -90,12 +91,49 @@ public class CertificateController {
 	        String subjectDn = principal.getName();
 
 	        // Get issuer
+		  //UID=12345, EMAILADDRESS=a@a.com, C=aa, OU=a, O=a, GIVENNAME=a, SURNAME=a, CN=a
 	        principal = x509cert.getIssuerDN();
 	        String issuerDn = principal.getName();
-	        issuers.add(issuerDn);
+	        String issuerData[] = issuerDn.split(" ");
+	        String iData[] = issuerData[1].split("=");
+
+			  String iFinalno[] = iData[1].split(",");
+			  System.out.println(iFinalno[0]);
+//			  if(subjectService.findByEmail(iFinalno[0]) != null)
+			  	issuers.add(subjectService.findByEmail(iFinalno[0]));
 	      }
 	    }
-	  
+		File exits = new File("keystoreintermediate.p12");
+	    if (exits.exists()){
+		FileInputStream is2 = new FileInputStream("keystoreintermediate.p12");
+
+		KeyStore keystore2 = KeyStore.getInstance(KeyStore.getDefaultType());
+		keystore.load(is2, "123".toCharArray());
+		Enumeration e2 = keystore.aliases();
+		for (; e2.hasMoreElements();) {
+			String alias = (String) e2.nextElement();
+
+			java.security.cert.Certificate cert = keystore.getCertificate(alias);
+			if (cert instanceof X509Certificate) {
+				X509Certificate x509cert = (X509Certificate) cert;
+
+				// Get subject
+				Principal principal = x509cert.getSubjectDN();
+				String subjectDn = principal.getName();
+
+				// Get issuer
+				//UID=12345, EMAILADDRESS=a@a.com, C=aa, OU=a, O=a, GIVENNAME=a, SURNAME=a, CN=a
+				principal = x509cert.getIssuerDN();
+				String issuerDn = principal.getName();
+				String issuerData[] = issuerDn.split(" ");
+				String iData[] = issuerData[1].split("=");
+
+				String iFinalno[] = iData[1].split(",");
+				System.out.println(iFinalno[0]);
+//			  if(subjectService.findByEmail(iFinalno[0]) != null)
+				issuers.add(subjectService.findByEmail(iFinalno[0]));
+			}
+		}}
 		
 		return new ResponseEntity<>(issuers, HttpStatus.OK);
 		
