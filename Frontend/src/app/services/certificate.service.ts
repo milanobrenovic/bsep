@@ -27,14 +27,12 @@ export class CertificateService {
     return this.httpClient.get(this.url + "/issuersKeyStore");
   }
 
-  public getCertificates(keyStoreLevel: string, keyStorePassword: string) {
-    let params = new HttpParams();
-    params = params.append('role', keyStoreLevel);
-    params = params.append('keyStorePassword', keyStorePassword);
-
-    return this.httpClient.get(this.url + "/all", {
-      params: params
-    });
+  public getValidity(certificate: Certificate) {
+    return this.httpClient.post(this.url + "/isValid", certificate);
+  }
+  
+  public getAllRootCertificates() {
+    return this.httpClient.get(this.url + "/get-all-root-certificates");
   }
 
   public download(certRole: string, keyStorePassword: string, alias: string) {

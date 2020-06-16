@@ -5,12 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { CertificateService } from 'app/services/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { ChooseTemplateComponent } from '../choose-template/choose-template.component';
-import { CertificateDetailsComponent } from '../certificate-details/certificate-details.component';
 import { Certificate } from 'app/models/certificate';
 import { OCSPService } from 'app/services/ocsp.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { CertificateItem } from 'app/models/certificateItem';
 import { CertificateStatusComponent } from '../certificate-status/certificate-status.component';
+import { CertificateDetails } from 'app/models/certificateDetails';
 
 @Component({
   selector: 'app-list-certificates',
@@ -20,8 +20,8 @@ import { CertificateStatusComponent } from '../certificate-status/certificate-st
 export class ListCertificatesComponent implements OnInit {
 
   keyStoreForm: FormGroup;
-  displayedColumns: string[] = ['serialNumber', 'subjectCN', 'issuerCN', 'validFrom', 'validTo', 'buttons'];
-  certificatesDataSource: MatTableDataSource<CertificateItem>;
+  displayedColumns: string[] = ['serialNumber', 'subjectName', 'issuerName', 'validFrom', 'validTo', 'buttons'];
+  certificatesDataSource: MatTableDataSource<CertificateDetails>;
 
   constructor(
     public dialog: MatDialog,
@@ -39,23 +39,40 @@ export class ListCertificatesComponent implements OnInit {
   }
 
   fetchCertificates() {
-    this.certificateService.getCertificates(this.keyStoreForm.value.certRole, this.keyStoreForm.value.keyStorePassword).subscribe(
-      (data: CertificateItem[]) => {
+    this.certificateService.getAllRootCertificates().subscribe(
+      (data: CertificateDetails[]) => {
         this.certificatesDataSource = new MatTableDataSource(data)
         if (data.length == 0) {
           this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
         }
       },
       (e: HttpErrorResponse) => {
-        const data: CertificateItem[] = []
+        const data: CertificateDetails[] = []
         this.certificatesDataSource = new MatTableDataSource(data)
         this.toastr.error(e.error.message, 'Failed to show certificates');
       }
-    );
+    )
   }
 
-  viewDetails(cert: CertificateItem) {
-    this.dialog.open(CertificateDetailsComponent, { data: cert });
+  viewDetails(cert: Certificate) {
+    console.log(cert);
+    this.certificateService.getValidity(cert).subscribe(
+      (valid: boolean) => {
+        if (valid == true) {
+          this.toastr.info("This certificate is valid.", 'Certificate info');
+        } else {
+          this.toastr.info("This certificate is NOT valid.", 'Certificate info');
+        }
+      },
+      (e: HttpErrorResponse) => {
+        console.log("sranje");
+        this.toastr.error(e.error.message, 'Failed to verify certificate validity');
+      }
+    );
+    // this.dialog.open(CertificateDetailsComponent, {
+    //   data: cert,
+
+    // });
   }
 
   download(cert: CertificateItem) {

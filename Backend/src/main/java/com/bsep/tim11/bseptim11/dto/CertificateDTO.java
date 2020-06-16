@@ -111,8 +111,8 @@ public class CertificateDTO {
 				", endDate=" + endDate +
 				", alias='" + alias + '\'' +
 				", password='" + password + '\'' +
-				", keyUsage=" + keyUsageDTO.toString() +
-				", extendedKeyUsage=" + extendedKeyUsageDTO.toString() +
+			//	", keyUsage=" + keyUsageDTO.toString() +
+			//	", extendedKeyUsage=" + extendedKeyUsageDTO.toString() +
 				'}';
 	}
 }

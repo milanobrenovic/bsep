@@ -181,8 +181,8 @@ export class CreateRootCertificateComponent implements OnInit {
       this.createCertificateFromSubject.value.selectedSubject.id,
       new Date(validFrom),
       new Date(validTo),
-      "alias-temp",
-      "123",
+      this.createCertificateInfoAboutKeyStorage.value.alias,
+      this.createCertificateInfoAboutKeyStorage.value.password,
       keyUsage,
       extendedKeyUsage,
     );

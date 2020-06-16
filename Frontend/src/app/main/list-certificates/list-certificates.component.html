@@ -64,17 +64,17 @@
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef="subjectCN">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Subject CN</mat-header-cell>
+						<ng-container matColumnDef="subjectName">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Subject Name</mat-header-cell>
 							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.subject.commonName}}
+								{{element.subjectName}}
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef="issuerCN">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Issuer CN</mat-header-cell>
+						<ng-container matColumnDef="issuerName">
+							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Issuer Name</mat-header-cell>
 							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.issuer.commonName}}
+								{{element.issuerName}}
 							</mat-cell>
 						</ng-container>
 
@@ -98,7 +98,7 @@
 								<div class="px-4">
 									<button
 										mat-raised-button
-										color="primary"
+										class="primary ml-2 mr-2"
 										(click)="viewDetails(element)">
 										Details
 									</button>

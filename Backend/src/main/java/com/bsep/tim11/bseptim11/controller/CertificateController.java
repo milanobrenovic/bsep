@@ -5,12 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.KeyPair;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
-import java.security.Security;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -20,10 +15,13 @@ import java.util.List;
 import ch.qos.logback.core.property.FileExistsPropertyDefiner;
 import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
 import com.bsep.tim11.bseptim11.dto.CertificateDTO;
+import com.bsep.tim11.bseptim11.dto.CertificateDetailsDTO;
+import com.bsep.tim11.bseptim11.dto.KeyUsageDTO;
 import com.bsep.tim11.bseptim11.dto.SubjectDTO;
 import com.bsep.tim11.bseptim11.enums.CertificateType;
 import com.bsep.tim11.bseptim11.keystores.KeyStoreReader;
 import com.bsep.tim11.bseptim11.model.*;
+import com.bsep.tim11.bseptim11.model.Certificate;
 import com.bsep.tim11.bseptim11.service.AliasDataService;
 import com.bsep.tim11.bseptim11.service.CertificateService;
 import com.bsep.tim11.bseptim11.service.SubjectService;
@@ -334,11 +332,78 @@ public class CertificateController {
 			aliasDataService.save(adZaBrisanje);
 		}
 	}
-	@GetMapping(value = "/isValid", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> isItAValidCertificate(@RequestBody CertificateDTO certificateDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
-		Certificate c = certificateService.convertFromDTO(certificateDTO);
-		return new ResponseEntity<>(c.isValid(), HttpStatus.OK);
+
+	@PostMapping(value = "/isValid", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> isItAValidCertificate(@RequestBody CertificateDetailsDTO certificateDetailsDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
+		System.out.println("test dtoAlias: "+certificateDetailsDTO.getAlias() );
+
+		Certificate c = certificateService.findByAlias(certificateDetailsDTO.getAlias());
+		Boolean valid = c.isValid();
+		return new ResponseEntity<>(valid, HttpStatus.OK);
 	}
-	
+
+
+
+	@GetMapping(value = "/get-all-root-certificates")
+	public ResponseEntity<List<CertificateDetailsDTO>> getAllRootCertificates() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+
+		//List<SubjectDTO> issuersDTO = new ArrayList<>();
+		List<CertificateDetailsDTO> certificateDetailsDTOS = new ArrayList<>();
+		FileInputStream is = new FileInputStream("keystoreroot.p12");
+
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keystore.load(is, "123".toCharArray());
+		Enumeration e = keystore.aliases();
+		for (; e.hasMoreElements();) {
+			String alias = (String) e.nextElement();
+
+			java.security.cert.Certificate cert = keystore.getCertificate(alias);
+			if (cert instanceof X509Certificate) {
+				X509Certificate x509cert = (X509Certificate) cert;
+
+				CertificateDetailsDTO certificateDetailsDTO = new CertificateDetailsDTO(
+					x509cert.getIssuerDN().getName(),
+					x509cert.getSubjectDN().getName(),
+					x509cert.getSerialNumber(),
+					x509cert.getNotBefore(),
+					x509cert.getNotAfter(),
+					alias
+				);
+				certificateDetailsDTOS.add(certificateDetailsDTO);
+			}
+		}
+
+		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/downloadCertificate")
+	public void downloadCertificate(String keyStoreFile, String keyStorePass, String alias)
+			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
+
+		/*String certificateRoleStr = downloadCertificateDTO.getCertRole().toLowerCase();
+		String alias = downloadCertificateDTO.getAlias();
+		CertificateRole certificateRole = downloadCertificateDTO.returnCertRoleToEnum();*/
+
+		KeyStoreReader	keyStoreReader = new KeyStoreReader();
+
+		java.security.cert.Certificate certificate = keyStoreReader.readCertificate(keyStoreFile, keyStorePass, alias);
+
+
+	/*	if (certificateRole == null) {
+			throw new NullPointerException("Certificate role has not been defined.");
+		}
+
+		Certificate certificate = keyStoreService.getCertificate(
+
+				downloadCertificateDTO.getKeyStorePassword(),
+				alias
+		);*/
+
+		/*FileOutputStream fos = new FileOutputStream(alias + ".cer");
+		fos.write("-----BEGIN CERTIFICATE-----\n".getBytes("US-ASCII"));
+		fos.write(certificate);
+		fos.write("-----END CERTIFICATE-----\n".getBytes("US-ASCII"));
+		fos.close();*/
+	}
 	
 }

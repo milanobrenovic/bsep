@@ -44,7 +44,11 @@ public class CertificateService {
 	public Certificate findOne(Long id) {
 		return certificateRepository.findOneById(id);
 	}
-	
+	public Certificate findByAlias(String alias){
+		return certificateRepository.findOneByAlias(alias);
+	}
+
+
 	public List<Certificate> findAll(){
 		return certificateRepository.findAll();
 	}
