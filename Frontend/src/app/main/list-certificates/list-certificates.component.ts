@@ -75,12 +75,9 @@ export class ListCertificatesComponent implements OnInit {
     // });
   }
 
-  download(cert: CertificateItem) {
+  download(cert: Certificate) {
     this.certificateService.download(
-      this.keyStoreForm.value.certRole,
-      this.keyStoreForm.value.keyStorePassword,
-      cert.alias,
-    ).subscribe(
+      cert).subscribe(
       () => {
         this.toastr.success('Success!', 'Download certificate');
       },

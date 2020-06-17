@@ -4,37 +4,50 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.security.*;
+import java.io.StringWriter;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import ch.qos.logback.core.property.FileExistsPropertyDefiner;
-import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
-import com.bsep.tim11.bseptim11.dto.CertificateDTO;
-import com.bsep.tim11.bseptim11.dto.CertificateDetailsDTO;
-import com.bsep.tim11.bseptim11.dto.KeyUsageDTO;
-import com.bsep.tim11.bseptim11.dto.SubjectDTO;
-import com.bsep.tim11.bseptim11.enums.CertificateType;
-import com.bsep.tim11.bseptim11.keystores.KeyStoreReader;
-import com.bsep.tim11.bseptim11.model.*;
-import com.bsep.tim11.bseptim11.model.Certificate;
-import com.bsep.tim11.bseptim11.service.AliasDataService;
-import com.bsep.tim11.bseptim11.service.CertificateService;
-import com.bsep.tim11.bseptim11.service.SubjectService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
+import org.bouncycastle.util.io.pem.PemObjectGenerator;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
+import com.bsep.tim11.bseptim11.dto.CertificateDTO;
+import com.bsep.tim11.bseptim11.dto.CertificateDetailsDTO;
+import com.bsep.tim11.bseptim11.dto.SubjectDTO;
+import com.bsep.tim11.bseptim11.enums.CertificateType;
+import com.bsep.tim11.bseptim11.keystores.KeyStoreReader;
+import com.bsep.tim11.bseptim11.model.AliasData;
+import com.bsep.tim11.bseptim11.model.Certificate;
+import com.bsep.tim11.bseptim11.model.IssuerData;
+import com.bsep.tim11.bseptim11.model.Subject;
+import com.bsep.tim11.bseptim11.model.SubjectData;
+import com.bsep.tim11.bseptim11.service.AliasDataService;
+import com.bsep.tim11.bseptim11.service.CertificateService;
+import com.bsep.tim11.bseptim11.service.SubjectService;
 
 @RestController
 @RequestMapping(value = "/api/certificate")
@@ -376,34 +389,28 @@ public class CertificateController {
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/downloadCertificate")
-	public void downloadCertificate(String keyStoreFile, String keyStorePass, String alias)
+	@PostMapping(value = "/downloadCertificate")
+	public void downloadCertificate(@RequestBody CertificateDetailsDTO certificateDetails)
 			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
-
-		/*String certificateRoleStr = downloadCertificateDTO.getCertRole().toLowerCase();
-		String alias = downloadCertificateDTO.getAlias();
-		CertificateRole certificateRole = downloadCertificateDTO.returnCertRoleToEnum();*/
 
 		KeyStoreReader	keyStoreReader = new KeyStoreReader();
 
-		java.security.cert.Certificate certificate = keyStoreReader.readCertificate(keyStoreFile, keyStorePass, alias);
+		String alias = certificateDetails.getAlias();
+				
+		X509Certificate certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", "123", alias);
 
+		StringWriter sw = new StringWriter();
 
-	/*	if (certificateRole == null) {
-			throw new NullPointerException("Certificate role has not been defined.");
+		try (PemWriter pw = new PemWriter(sw)) {
+		  PemObjectGenerator gen = new JcaMiscPEMGenerator(certificate);
+		  pw.writeObject(gen);
 		}
 
-		Certificate certificate = keyStoreService.getCertificate(
-
-				downloadCertificateDTO.getKeyStorePassword(),
-				alias
-		);*/
-
-		/*FileOutputStream fos = new FileOutputStream(alias + ".cer");
-		fos.write("-----BEGIN CERTIFICATE-----\n".getBytes("US-ASCII"));
-		fos.write(certificate);
-		fos.write("-----END CERTIFICATE-----\n".getBytes("US-ASCII"));
-		fos.close();*/
+		FileWriter fw = new FileWriter(alias + ".cert");
+		fw.write(sw.toString());
+		fw.flush();
+		fw.close();
+		
 	}
 	
 }

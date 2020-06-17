@@ -35,8 +35,8 @@ export class CertificateService {
     return this.httpClient.get(this.url + "/get-all-root-certificates");
   }
 
-  public download(certRole: string, keyStorePassword: string, alias: string) {
-    return this.httpClient.post(this.url + "/download", { certRole, keyStorePassword, alias });
+  public download(certificate: Certificate) {
+    return this.httpClient.post(this.url + "/downloadCertificate", certificate );
   }
 
 }
