@@ -39,4 +39,8 @@ export class CertificateService {
     return this.httpClient.post(this.url + "/downloadCertificate", certificate );
   }
 
+  public revokeCertificate(certificate: Certificate) {
+    return this.httpClient.post(this.url + "/revoke", certificate);
+  }
+
 }

@@ -323,13 +323,15 @@ public class CertificateController {
 						
 						removeFromBase(ad2);
 					}
+				}else {
+					aliasDataService.save(ad);
 				}
 			}
 		}
 		//ks.deleteEntry(certificateDTO.getAlias());
 		//ks.store(new FileOutputStream(new File("keystoreroot.p12")), "123".toCharArray());
 
-		return new ResponseEntity<>(certificateDTO, HttpStatus.GONE);
+		return new ResponseEntity<>(certificateDTO, HttpStatus.OK);
 	}
 	public void removeFromBase(AliasData ad){
 		certificateService.findOne(ad.getId()).setIsRevoked(true);

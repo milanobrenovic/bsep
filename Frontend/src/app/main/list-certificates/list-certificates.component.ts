@@ -87,14 +87,15 @@ export class ListCertificatesComponent implements OnInit {
     );
   }
 
-  checkStatus(cert: CertificateItem) {
-    console.log("LIST-CERTIFICATES: " + cert.certificateIdentifier);
-    this.dialog.open(CertificateStatusComponent, {
-      data: {
-        "cert": cert,
-        "certRole": this.keyStoreForm.value.certRole,
+  revoke(cert: Certificate) {
+    this.certificateService.revokeCertificate(cert).subscribe(
+      () => {
+        this.toastr.success("This certificate has been revoked", 'Certificate revoked successfully');
+      },
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, 'Failed to revoke selected certificate');
       }
-    });
+    );
   }
 
   openTemplatesDialog() {
