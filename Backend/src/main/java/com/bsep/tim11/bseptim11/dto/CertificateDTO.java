@@ -14,8 +14,31 @@ public class CertificateDTO {
 	private String password;
 	private KeyUsageDTO keyUsageDTO;
 	private ExtendedKeyUsageDTO extendedKeyUsageDTO;
+	private String keyStorePassword;
 	
 	public CertificateDTO() {}
+	
+	public String getKeyStorePassword() {
+		return keyStorePassword;
+	}
+
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
+	
+	public CertificateDTO(Long subjectId, Long issuerId, Date startDate, Date endDate, String alias, String password,
+			KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO, String keyStorePassword) {
+		super();
+		this.subjectId = subjectId;
+		this.issuerId = issuerId;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.alias = alias;
+		this.password = password;
+		this.keyUsageDTO = keyUsageDTO;
+		this.extendedKeyUsageDTO = extendedKeyUsageDTO;
+		this.keyStorePassword = keyStorePassword;
+	}
 
 	public CertificateDTO(Long subjectId, Long issuerId, String startDate, String endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO) {
 		super();

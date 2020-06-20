@@ -115,14 +115,14 @@ public class CertificateService {
 	}
 	
 	
-	public X509Certificate createCertificate(String alias, String pass, X509Certificate cert, PrivateKey pk, CertificateType ct) throws IOException {
+	public Boolean createCertificate(String alias, String pass, X509Certificate cert, PrivateKey pk, CertificateType ct,String keystorePassword) throws IOException {
 
 		this.keyStoreWriter = new KeyStoreWriter(); 
 		
 		this.keyStore = keyStoreWriter.getKeyStore();
 				
 		//BufferedInputStream in = new BufferedInputStream(new FileInputStream("/data/keystore.p12"));
-		char[] password = "123".toCharArray();
+		char[] password = keystorePassword.toCharArray();
 		
 		if(ct.equals(CertificateType.ROOT)) {
 			File f = new File("keystoreroot.p12");
@@ -131,7 +131,10 @@ public class CertificateService {
 				keyStoreWriter.loadKeyStore(null, password);
 			} else {
 				// U else ulazi svaki sledeci put
-				keyStoreWriter.loadKeyStore("keystoreroot.p12", password);
+				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
+				if(!keyStoreWriter.loadKeyStore("keystoreroot.p12", password)){
+					return false;
+				}
 			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
 			keyStoreWriter.saveKeyStore("keystoreroot.p12", password);
@@ -139,9 +142,14 @@ public class CertificateService {
 		} else if(ct.equals(CertificateType.INTERMEDIATE)){
 			File f = new File("keystoreintermediate.p12");
 			if(!f.isFile()) {
+				// U if ulazi kada prvi put pravimo keystore odnosno kada on jos ne postoji
 				keyStoreWriter.loadKeyStore(null, password);
 			} else {
-				keyStoreWriter.loadKeyStore("keystoreintermediate.p12", password);
+				// U else ulazi svaki sledeci put
+				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
+				if(!keyStoreWriter.loadKeyStore("keystoreintermediate.p12", password)){
+					return false;
+				}
 			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
 			keyStoreWriter.saveKeyStore("keystoreintermediate.p12", password);
@@ -166,8 +174,8 @@ public class CertificateService {
 		}else {
 			System.out.println("NKEMA GAAAAAAAAAAAAA+++++++++++++++++++++");
 		}
-		
-		return cert;
+		System.out.println("dodjes do kraja?");
+		return true;
 	}
 	
 	public Certificate convertFromDTO(CertificateDTO cDTO) {

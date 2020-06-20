@@ -19,11 +19,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.websocket.server.PathParam;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.support.IsNewStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
@@ -80,15 +84,15 @@ public class CertificateController {
 		
 	}
 	
-	@GetMapping(value = "/issuersKeyStore")
-	public ResponseEntity<List<Subject>> getIssuersKeyStore() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
-		
+	@GetMapping(value = "/issuersKeyStore/{password}")
+	public ResponseEntity<List<Subject>> getIssuersKeyStore(@PathVariable (value = "password")String password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+		System.out.println("Password::: "+password);
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
 		List<Subject> issuers = new ArrayList<>();
 		FileInputStream is = new FileInputStream("keystoreroot.p12");
 
 	    KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-	    keystore.load(is, "123".toCharArray());
+	    keystore.load(is, password.toCharArray());
 	    Enumeration e = keystore.aliases();
 	    for (; e.hasMoreElements();) {
 	      String alias = (String) e.nextElement();
@@ -109,9 +113,21 @@ public class CertificateController {
 	        String iData[] = issuerData[1].split("=");
 
 			  String iFinalno[] = iData[1].split(",");
-			  System.out.println(iFinalno[0]);
+			 // System.out.println(iFinalno[0]);
 //			  if(subjectService.findByEmail(iFinalno[0]) != null)
-			  	issuers.add(subjectService.findByEmail(iFinalno[0]));
+			  Boolean isCA = false;
+			  Subject issuer = subjectService.findByEmail(iFinalno[0]);
+			  List<AliasData> aliasDatas = aliasDataService.findAll();
+			  for(AliasData add : aliasDatas){
+					Certificate c = certificateService.findByAlias(add.getAlias());
+					if(c.getIssuerId() == issuer.getId()){
+						if(c.getIsRevoked()==false){
+						isCA = true;
+						}
+					}
+			}
+			  if(isCA == true)
+			  	issuers.add(issuer);
 	      }
 	    }
 		File exits = new File("keystoreintermediate.p12");
@@ -119,7 +135,7 @@ public class CertificateController {
 		FileInputStream is2 = new FileInputStream("keystoreintermediate.p12");
 
 		KeyStore keystore2 = KeyStore.getInstance(KeyStore.getDefaultType());
-		keystore.load(is2, "123".toCharArray());
+		keystore.load(is2, password.toCharArray());
 		Enumeration e2 = keystore.aliases();
 		for (; e2.hasMoreElements();) {
 			String alias = (String) e2.nextElement();
@@ -142,9 +158,23 @@ public class CertificateController {
 				String iFinalno[] = iData[1].split(",");
 				System.out.println(iFinalno[0]);
 //			  if(subjectService.findByEmail(iFinalno[0]) != null)
-				issuers.add(subjectService.findByEmail(iFinalno[0]));
+				 Boolean isCA = false;
+				  Subject issuer = subjectService.findByEmail(iFinalno[0]);
+				  List<AliasData> aliasDatas = aliasDataService.findAll();
+				  for(AliasData add : aliasDatas){
+						Certificate c = certificateService.findByAlias(add.getAlias());
+				//		System.out.println("c: "+ c.getIssuerId()+"issuer: "+issuer.getId());
+						if(c.getSubjectId() == issuer.getId()){
+							if(c.getIsRevoked()==false){
+							isCA = true;
+							}
+						}
+				}
+				  if(isCA == true)
+				  	issuers.add(issuer);
+		      }
 			}
-		}}
+		}
 		
 		return new ResponseEntity<>(issuers, HttpStatus.OK);
 		
@@ -153,6 +183,9 @@ public class CertificateController {
 	//Pravljenje self-signed sertifikata
 	@PostMapping(value = "/createRoot", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> addRootCertificate(@RequestBody CertificateDTO certificateDTO){
+		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 		
 		//Ovo ne znam gde da stavim, ima u primeru sa vezbi
 		Security.addProvider(new BouncyCastleProvider());
@@ -169,10 +202,10 @@ public class CertificateController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		subject.setIsCA(true);
+	/*	subject.setIsCA(true);
 		subject.setHasCertificate(true);
 		subjectService.save(subject);
-		
+		*/
 		Subject issuer = subjectService.findOne((Long)certificateDTO.getIssuerId());
 		
 		KeyPair keyPair = certificateService.generateKeyPair();
@@ -189,13 +222,29 @@ public class CertificateController {
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO);
 
 		try {
-			certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(), cert, issuerData.getPrivateKey(), ct);
+			if(certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(), cert, issuerData.getPrivateKey(), ct,certificateDTO.getKeyStorePassword())){
+			subject.setIsCA(true);
+			subject.setHasCertificate(true);
+			subjectService.save(subject);
+			Certificate c = certificateService.convertFromDTO(certificateDTO);
+			c.setIsRevoked(false);
+			certificateService.save(c);
+			
+			AliasData ad= new AliasData();
+			System.out.println("Iz nekog razloga ulazis ovde?????");
+			ad.setId(22222L);
+			ad.setAlias(certificateDTO.getAlias());
+			aliasDataService.save(ad);
+			}else{
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		}
 		
-		Certificate c = certificateService.convertFromDTO(certificateDTO);
+	/*	Certificate c = certificateService.convertFromDTO(certificateDTO);
 		c.setIsRevoked(false);
 		certificateService.save(c);
 		
@@ -203,7 +252,7 @@ public class CertificateController {
 		System.out.println("Iz nekog razloga ulazis ovde?????");
 		ad.setId(22222L);
 		ad.setAlias(certificateDTO.getAlias());
-		aliasDataService.save(ad);
+		aliasDataService.save(ad);*/
 		
 		return new ResponseEntity<>(certificateDTO, HttpStatus.CREATED);
 		
@@ -212,7 +261,9 @@ public class CertificateController {
 	//Pravljenje potpisanih sertifikata
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> addCertificate(@RequestBody CertificateDTO certificateDTO){
-		
+		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 		Security.addProvider(new BouncyCastleProvider());
 		
 		// Za sad hardkovano da su svi intermediate
@@ -227,9 +278,9 @@ public class CertificateController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		subject.setIsCA(false);
+	/*	subject.setIsCA(true);
 		subject.setHasCertificate(true);
-		subjectService.save(subject);
+		subjectService.save(subject);*/
 		
 		Subject issuer = subjectService.findOne((Long)certificateDTO.getIssuerId());
 		
@@ -242,7 +293,16 @@ public class CertificateController {
 		X509Certificate cert = cg.generateCertificate(subjectData, issuerData, certificateDTO);
 
 		try {
-			certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(), cert, issuerData.getPrivateKey(), ct);
+			if(certificateService.createCertificate(certificateDTO.getAlias(), certificateDTO.getPassword(), cert, issuerData.getPrivateKey(), ct,certificateDTO.getKeyStorePassword())){
+			subject.setIsCA(true);
+			subject.setHasCertificate(true);
+			subjectService.save(subject);
+			}
+			else{
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+			}
+			
+		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -328,6 +388,11 @@ public class CertificateController {
 				}
 			}
 		}
+		
+		
+		
+		//subjectService.findOne(certificateDTO.getSubjectId()).setIsCA(iDaljeCa);
+		
 		//ks.deleteEntry(certificateDTO.getAlias());
 		//ks.store(new FileOutputStream(new File("keystoreroot.p12")), "123".toCharArray());
 
@@ -346,6 +411,7 @@ public class CertificateController {
 		//	aliasDataService.remove(ad.getId());
 			aliasDataService.save(adZaBrisanje);
 		}
+		
 	}
 
 	@PostMapping(value = "/isValid", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

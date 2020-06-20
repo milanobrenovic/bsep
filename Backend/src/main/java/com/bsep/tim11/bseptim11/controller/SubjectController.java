@@ -64,9 +64,18 @@ public class SubjectController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		
 		Subject subject = subjectService.convertFromDTO(subjectDTO);
+		Boolean emailExists = false;
+		List<Subject> subjects = subjectService.findAll();
+		if(subjectService.findByEmail(subject.getEmail()) != null){
+			emailExists = true;
+		}
 		
+		if(emailExists == false){
 		subject = subjectService.save(subject);
-		
+		}
+		else{
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
 		return new ResponseEntity<>(subjectDTO, HttpStatus.CREATED);
 		
 	}

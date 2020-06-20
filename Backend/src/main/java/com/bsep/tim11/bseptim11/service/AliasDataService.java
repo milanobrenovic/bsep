@@ -28,5 +28,8 @@ public class AliasDataService {
 	public void remove(Long id){
 		aliasDataRepository.deleteById(id);
 	}
+	public AliasData findByAlias(String alias){
+		return aliasDataRepository.findOneByAlias(alias);
+	}
 	
 }
