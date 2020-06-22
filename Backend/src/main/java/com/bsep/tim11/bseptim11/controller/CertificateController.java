@@ -88,6 +88,9 @@ public class CertificateController {
 	public ResponseEntity<List<Subject>> getIssuersKeyStore(@PathVariable (value = "password")String password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 		System.out.println("Password::: "+password);
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
+		if(!checkForInvalidInput(password)){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
 		List<Subject> issuers = new ArrayList<>();
 		FileInputStream is = new FileInputStream("keystoreroot.p12");
 
@@ -183,6 +186,15 @@ public class CertificateController {
 	//Pravljenje self-signed sertifikata
 	@PostMapping(value = "/createRoot", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> addRootCertificate(@RequestBody CertificateDTO certificateDTO){
+		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(certificateDTO.getAlias())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -261,6 +273,16 @@ public class CertificateController {
 	//Pravljenje potpisanih sertifikata
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CertificateDTO> addCertificate(@RequestBody CertificateDTO certificateDTO){
+		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(certificateDTO.getAlias())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -480,5 +502,42 @@ public class CertificateController {
 		fw.close();
 		
 	}
+	
+	public Boolean checkForInvalidInput(String text){
+		Boolean isValid = true;
+		for(char c:text.toCharArray()){
+			int asciiC = (c);
+			System.out.println(asciiC);
+			if(asciiC>=0 && asciiC<=31){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 33 && asciiC <=47){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 58 && asciiC <=64){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 91 && asciiC <=96){
+				isValid = false;
+				break;
+			}else if(asciiC >= 123){
+				isValid = false;
+				break;
+			}
+		}
+		
+		if(text.toUpperCase().contains("DROP") || text.toUpperCase().contains("INTO")|| text.toUpperCase().contains("INSERT") || text.toUpperCase().contains("SELECT")
+					|| text.toUpperCase().contains("DELETE")){
+			isValid = false;
+		}
+		return isValid;
+		
+		
+	}
+	
+	
 	
 }

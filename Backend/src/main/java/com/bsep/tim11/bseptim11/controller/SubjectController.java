@@ -60,8 +60,34 @@ public class SubjectController {
 	)
 	public ResponseEntity<SubjectDTO> addSubject(@RequestBody SubjectDTO subjectDTO){
 		
+		
+		
+		
 		if (subjectDTO.getClass() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		
+		if(!checkForInvalidInput(subjectDTO.getCommonName())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(subjectDTO.getCountry())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(subjectDTO.getGivenName())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(subjectDTO.getOrganization())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(subjectDTO.getOrganizationUnit())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInput(subjectDTO.getSurname())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInputEmail(subjectDTO.getEmail())){
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		
 		
 		Subject subject = subjectService.convertFromDTO(subjectDTO);
 		Boolean emailExists = false;
@@ -95,5 +121,75 @@ public class SubjectController {
 		return new ResponseEntity<>(subjectsDTO, HttpStatus.OK);
 
 	}
+	
+	
+	
+	public Boolean checkForInvalidInput(String text){
+		Boolean isValid = true;
+		for(char c:text.toCharArray()){
+			int asciiC = (c);
+			System.out.println(asciiC);
+			if(asciiC>=0 && asciiC<=31){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 33 && asciiC <=47){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 58 && asciiC <=64){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 91 && asciiC <=96){
+				isValid = false;
+				break;
+			}else if(asciiC >= 123){
+				isValid = false;
+				break;
+			}
+		}
+		
+		if(text.toUpperCase().contains("DROP") || text.toUpperCase().contains("DELETE") || text.toUpperCase().contains("INSERT") || text.toUpperCase().contains("SELECT")){
+			isValid = false;
+		}
+		return isValid;
+		
+		
+	}
+	public Boolean checkForInvalidInputEmail(String text){
+		Boolean isValid = true;
+		for(char c:text.toCharArray()){
+			int asciiC = (c);
+			System.out.println(asciiC);
+			if(asciiC>=0 && asciiC<=31){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 33 && asciiC <=47){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 58 && asciiC <=63){
+				isValid = false;
+				break;
+			}
+			else if(asciiC >= 91 && asciiC <=96){
+				isValid = false;
+				break;
+			}else if(asciiC >= 123){
+				isValid = false;
+				break;
+			}
+		}
+		
+		if(text.toUpperCase().contains("DROP") || text.toUpperCase().contains("INTO") || text.toUpperCase().contains("DELETE") || text.toUpperCase().contains("INSERT") || text.toUpperCase().contains("SELECT")){
+			isValid = false;
+		}
+		return isValid;
+		
+		
+	}
+	
 	
 }
