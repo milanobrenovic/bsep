@@ -27,7 +27,6 @@ export class ListCertificatesComponent implements OnInit {
     public dialog: MatDialog,
     private formBuilder: FormBuilder,
     private certificateService: CertificateService,
-    private ocspService: OCSPService,
     private toastr: ToastrService,
   ) { }
 
@@ -39,19 +38,37 @@ export class ListCertificatesComponent implements OnInit {
   }
 
   fetchCertificates() {
-    this.certificateService.getAllRootCertificates().subscribe(
-      (data: CertificateDetails[]) => {
-        this.certificatesDataSource = new MatTableDataSource(data)
-        if (data.length == 0) {
-          this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
+    const keyStorePassword = this.keyStoreForm.value.keyStorePassword;
+
+    if (this.keyStoreForm.value.certRole === "root") {
+      this.certificateService.getAllRootCertificates(keyStorePassword).subscribe(
+        (data: CertificateDetails[]) => {
+          this.certificatesDataSource = new MatTableDataSource(data)
+          if (data.length == 0) {
+            this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
+          }
+        },
+        (e: HttpErrorResponse) => {
+          const data: CertificateDetails[] = []
+          this.certificatesDataSource = new MatTableDataSource(data)
+          this.toastr.error(e.error.message, 'Failed to show certificates');
         }
-      },
-      (e: HttpErrorResponse) => {
-        const data: CertificateDetails[] = []
-        this.certificatesDataSource = new MatTableDataSource(data)
-        this.toastr.error(e.error.message, 'Failed to show certificates');
-      }
-    )
+      );
+    } else if (this.keyStoreForm.value.certRole === "intermediate") {
+      this.certificateService.getAllIntermediateCertificates(keyStorePassword).subscribe(
+        (data: CertificateDetails[]) => {
+          this.certificatesDataSource = new MatTableDataSource(data)
+          if (data.length == 0) {
+            this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
+          }
+        },
+        (e: HttpErrorResponse) => {
+          const data: CertificateDetails[] = []
+          this.certificatesDataSource = new MatTableDataSource(data)
+          this.toastr.error(e.error.message, 'Failed to show certificates');
+        }
+      );
+    }
   }
 
   viewDetails(cert: Certificate) {

@@ -447,15 +447,15 @@ public class CertificateController {
 
 
 
-	@GetMapping(value = "/get-all-root-certificates")
-	public ResponseEntity<List<CertificateDetailsDTO>> getAllRootCertificates() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+	@GetMapping(value = "/get-all-root-certificates/{password}")
+	public ResponseEntity<List<CertificateDetailsDTO>> getAllRootCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
 		List<CertificateDetailsDTO> certificateDetailsDTOS = new ArrayList<>();
 		FileInputStream is = new FileInputStream("keystoreroot.p12");
 
 		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keystore.load(is, "123".toCharArray());
+		keystore.load(is, password.toCharArray());
 		Enumeration e = keystore.aliases();
 		for (; e.hasMoreElements();) {
 			String alias = (String) e.nextElement();
@@ -478,7 +478,37 @@ public class CertificateController {
 
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
+	@GetMapping(value = "/get-all-intermediate-certificates/{password}")
+	public ResponseEntity<List<CertificateDetailsDTO>> getAllIntermediateCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
+		//List<SubjectDTO> issuersDTO = new ArrayList<>();
+		List<CertificateDetailsDTO> certificateDetailsDTOS = new ArrayList<>();
+		FileInputStream is = new FileInputStream("keystoreintermediate.p12");
+
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keystore.load(is, password.toCharArray());
+		Enumeration e = keystore.aliases();
+		for (; e.hasMoreElements();) {
+			String alias = (String) e.nextElement();
+
+			java.security.cert.Certificate cert = keystore.getCertificate(alias);
+			if (cert instanceof X509Certificate) {
+				X509Certificate x509cert = (X509Certificate) cert;
+
+				CertificateDetailsDTO certificateDetailsDTO = new CertificateDetailsDTO(
+						x509cert.getIssuerDN().getName(),
+						x509cert.getSubjectDN().getName(),
+						x509cert.getSerialNumber(),
+						x509cert.getNotBefore(),
+						x509cert.getNotAfter(),
+						alias
+				);
+				certificateDetailsDTOS.add(certificateDetailsDTO);
+			}
+		}
+
+		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
+	}
 	@PostMapping(value = "/downloadCertificate")
 	public void downloadCertificate(@RequestBody CertificateDetailsDTO certificateDetails)
 			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {

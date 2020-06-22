@@ -50,8 +50,7 @@ export class CreateCertificateComponent implements OnInit {
     });
 
     this.createCertificateKeyStoragePasswords = this.formBuilder.group({
-      rootKeyStoragePassword: new FormControl(null),
-      intermediateKeyStoragePassword: new FormControl(null),
+      keyStorePassword: new FormControl(null, [Validators.required]),
     });
 
     this.createCertificateFormIssuer = this.formBuilder.group({
@@ -207,11 +206,8 @@ export class CreateCertificateComponent implements OnInit {
     const keyUsage = this.createKeyUsage();
     const extendedKeyUsage = this.createExtendedKeyUsage();
 
-    const validFrom = formatDate(this.createCertificateFormOtherData.value.validFrom, 'yyyy-MM-dd', 'en-US')
-    const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US')
-
-    console.log(this.createCertificateFormSubject.value.selectedSubject.id);
-    console.log(this.createCertificateFormIssuer.value.selectedIssuerCertificate.id);
+    const validFrom = formatDate(this.createCertificateFormOtherData.value.validFrom, 'yyyy-MM-dd', 'en-US');
+    const validTo = formatDate(this.createCertificateFormOtherData.value.validTo, 'yyyy-MM-dd', 'en-US');
 
     const certificate = new Certificate(
       this.createCertificateFormSubject.value.selectedSubject.id,
@@ -220,16 +216,19 @@ export class CreateCertificateComponent implements OnInit {
       new Date(validTo),
       this.createCertificateInfoAboutKeyStorage.value.alias,
       this.createCertificateInfoAboutKeyStorage.value.password,
+      this.createCertificateKeyStoragePasswords.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
     );
 
+    console.log(certificate);
+
     this.certificateService.createNewCertificate(certificate).subscribe(
       () => {
-        this.createCertificateFormOtherData.reset();
-        this.createCertificateFormSubject.reset();
-        this.createCertificateFormIssuer.reset();
-        this.createCertificateInfoAboutKeyStorage.reset();
+        // this.createCertificateFormOtherData.reset();
+        // this.createCertificateFormSubject.reset();
+        // this.createCertificateFormIssuer.reset();
+        // this.createCertificateInfoAboutKeyStorage.reset();
         this.toastr.success('Successfully created a new certificate.', 'Create certificate');
         this.router.navigate(['/pages/list-certificates']);
       },
@@ -351,9 +350,10 @@ export class CreateCertificateComponent implements OnInit {
       }
     );
 
-    this.certificateService.getCACertificates().subscribe(
+    this.certificateService.getCACertificates(this.createCertificateKeyStoragePasswords.value.keyStorePassword).subscribe(
       (issuers: Subject[]) => {
         this.issuerCertificates = issuers;
+        this.toastr.success("Keystore password was successful.", "Success");
       },
       (e: HttpErrorResponse) => {
         this.toastr.error(e.error.message, "Failed to get CA certificates");

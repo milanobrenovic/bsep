@@ -71,6 +71,17 @@
 			<form fxLayout="column" [formGroup]="createCertificateKeyStoragePasswords">
 
 				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
+						<mat-label>Key store password</mat-label>
+						<input matInput type="password" formControlName="keyStorePassword" required>
+						<mat-error
+							*ngIf="createCertificateKeyStoragePasswords.get('keyStorePassword').errors && createCertificateKeyStoragePasswords.get('keyStorePassword').errors['required']">
+							Key store password is required.
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 					<button mat-raised-button color="primary" [disabled]="!createCertificateKeyStoragePasswords.valid"
 						(click)="getCACertificates()">
 						Get all CA certificates
@@ -382,7 +393,7 @@
 						<input matInput type="password" formControlName="password">
 						<mat-error
 							*ngIf="createCertificateInfoAboutKeyStorage.get('password').errors && createCertificateInfoAboutKeyStorage.get('password').errors['required']">
-							Please enter key store password.
+							Please enter the password.
 						</mat-error>
 					</mat-form-field>
 				</div>

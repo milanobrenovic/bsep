@@ -110,7 +110,7 @@ export class CreateRootCertificateComponent implements OnInit {
     this.createCertificateInfoAboutKeyStorage = this.formBuilder.group({
       alias: new FormControl(null, Validators.required),
       password: new FormControl(null, Validators.required),
-      privateKeyPassword: new FormControl(null, Validators.required),
+      keyStorePassword: new FormControl(null, Validators.required),
     });
   }
   
@@ -162,10 +162,12 @@ export class CreateRootCertificateComponent implements OnInit {
 
     if (!this.checkKeyUsage()) {
       this.toastrService.error("Please select at least one key usage.", "Could not create certificate");
+      return;
     }
     
     if (!this.checkExtendedKeyUsage()) {
       this.toastrService.error("Please select at least one extended key usage.", "Could not create certificate");
+      return;
     }
 
     const keyUsage = this.createKeyUsage();
@@ -174,8 +176,6 @@ export class CreateRootCertificateComponent implements OnInit {
     const validFrom = formatDate(this.createCertificateFromOtherData.value.validFrom, "yyyy-MM-dd", "en-US");
     const validTo = formatDate(this.createCertificateFromOtherData.value.validTo, "yyyy-MM-dd", "en-US");
 
-    console.log(new Date(validFrom));
-
     const certificate = new Certificate(
       this.createCertificateFromSubject.value.selectedSubject.id,
       this.createCertificateFromSubject.value.selectedSubject.id,
@@ -183,6 +183,7 @@ export class CreateRootCertificateComponent implements OnInit {
       new Date(validTo),
       this.createCertificateInfoAboutKeyStorage.value.alias,
       this.createCertificateInfoAboutKeyStorage.value.password,
+      this.createCertificateInfoAboutKeyStorage.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
     );

@@ -266,16 +266,6 @@
 				</div>
 
 				<br>
-
-				<!-- <div fxLayout="row" fxLayoutAlign="center center">
-							<button class="mr-8" mat-raised-button matStepperPrevious color="primary">
-								Previous
-							</button>
-							<button mat-raised-button matStepperNext color="primary"
-								[disabled]="!createCertificateFromOtherData.valid">
-								Next
-							</button>
-						</div> -->
 			</form>
 
 			<form fxLayout="column" [formGroup]="createCertificateInfoAboutKeyStorage">
@@ -294,15 +284,26 @@
 
 				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Key store password</mat-label>
+						<mat-label>password</mat-label>
 						<input matInput type="password" formControlName="password">
 						<mat-error
 							*ngIf="createCertificateInfoAboutKeyStorage.get('password').errors && createCertificateInfoAboutKeyStorage.get('password').errors['required']">
-							Please enter key store password.
+							Please enter the password.
 						</mat-error>
 					</mat-form-field>
 				</div>
 
+				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
+						<mat-label>Key store password</mat-label>
+						<input matInput type="password" formControlName="keyStorePassword">
+						<mat-error
+							*ngIf="createCertificateInfoAboutKeyStorage.get('keyStorePassword').errors && createCertificateInfoAboutKeyStorage.get('keyStorePassword').errors['required']">
+							Please enter key store password.
+						</mat-error>
+					</mat-form-field>
+				</div>
+				
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<button mat-raised-button color="primary" (click)="createRootCertificate()"
 						[disabled]="!createCertificateFromOtherData.valid && !createCertificateFromSubject.valid">
