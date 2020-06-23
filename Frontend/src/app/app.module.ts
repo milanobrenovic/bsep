@@ -72,8 +72,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
 import { CreateCertificateComponent } from './main/create-certificate/create-certificate.component';
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
-import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
-import { CertificateStatusComponent } from './main/certificate-status/certificate-status.component';
 import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
 import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
 
@@ -89,8 +87,6 @@ import { CreateRootCertificateComponent } from './main/create-root-certificate/c
 		ErrorInternalServerComponent,
 		CreateCertificateComponent,
 		ListCertificatesComponent,
-		ChooseTemplateComponent,
-		CertificateStatusComponent,
 		CreateSubjectComponent,
 		CreateRootCertificateComponent,
 	],

@@ -1,6 +1,5 @@
 import { ExtendedKeyUsage } from './extendedKeyUsage';
 import { KeyUsage } from './keyUsage';
-import { DateTime } from 'luxon';
 
 export class Certificate {
 

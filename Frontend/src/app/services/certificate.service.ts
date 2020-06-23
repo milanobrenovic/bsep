@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { CreateCertificate } from 'app/models/createCertificate';
+import { HttpClient } from '@angular/common/http';
 import { Certificate } from 'app/models/certificate';
 
 @Injectable({
@@ -9,7 +8,7 @@ import { Certificate } from 'app/models/certificate';
 })
 export class CertificateService {
 
-  url = environment.baseUrl + environment.certificate;
+  public url = environment.baseUrl + environment.certificate;
 
   constructor(
     private httpClient: HttpClient,

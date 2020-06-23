@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Entity } from 'app/models/entity';
 import { Certificate } from 'app/models/certificate';
-import { Subscription } from 'rxjs';
-import { Template } from 'app/models/template';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { SubjectService } from 'app/services/subject.service';
@@ -32,8 +30,6 @@ export class CreateCertificateComponent implements OnInit {
   public minDate = new Date();
   public subjects: Entity[] = [];
   public issuerCertificates: Subject[] = [];
-  public createdNewSubject: Subscription;
-  public selectedTemplate: Template;
 
   constructor(
     private toastr: ToastrService,
@@ -61,18 +57,6 @@ export class CreateCertificateComponent implements OnInit {
     this.functionForCreatingFormCertificateInfoAboutKeyStorage();
 
     this.getSubjects();
-
-    this.createdNewSubject = this.subjectService.createSuccessEmitter.subscribe(
-      () => {
-        this.getSubjects();
-      }
-    );
-
-    if (JSON.parse(localStorage.getItem('selectedTemplate'))) {
-      this.selectedTemplate = JSON.parse(localStorage.getItem('selectedTemplate'));
-      localStorage.removeItem('selectedTemplate');
-      this.setExtensions();
-    }
   }
   
   getSubjects(): void {
@@ -291,52 +275,6 @@ export class CreateCertificateComponent implements OnInit {
       this.createCertificateFormOtherData.value.extendedKeyUsage.ocspSigning,
       this.createCertificateFormOtherData.value.extendedKeyUsage.dvcs,
     )
-  }
-
-  setExtensions() {
-    this.createCertificateFormOtherData.patchValue(
-      {
-        'authorityKeyIdentifier': this.selectedTemplate.authorityKeyId,
-        'subjectKeyIdentifier': this.selectedTemplate.subjectKeyId,
-        'subjectIsCa': this.selectedTemplate.CA,
-        'keyUsageDTO': {
-          'digitalSignature': this.selectedTemplate.digitalSignature,
-          'keyEncipherment': this.selectedTemplate.keyEncipherment,
-          'certificateSigning': this.selectedTemplate.certSigning,
-          'crlSign': this.selectedTemplate.CRLSign,
-        },
-        'extendedKeyUsageDTO': {
-          'serverAuth': this.selectedTemplate.TLSWebServerAuth,
-          'clientAuth': this.selectedTemplate.TLSWebClientAuth,
-          'codeSigning': this.selectedTemplate.codeSigning
-        }
-      }
-    );
-  }
-
-  setExtensionsAfterChoosingIssuer() {
-    if (!this.getSelectedIssuerCertificate().keyUsage) {
-      return;
-    }
-    if (!this.selectedTemplate) {
-      return;
-    }
-    this.functionForCreatingFormCertificateFormOtherData();
-    this.createCertificateFormOtherData.patchValue(
-      {
-        'keyUsage': {
-          'digitalSignature': this.selectedTemplate.digitalSignature && this.getSelectedIssuerCertificate().keyUsage.digitalSignature,
-          'keyEncipherment': this.selectedTemplate.keyEncipherment && this.getSelectedIssuerCertificate().keyUsage.keyEncipherment,
-          'certificateSigning': this.selectedTemplate.certSigning && this.getSelectedIssuerCertificate().keyUsage.certificateSigning,
-          'crlSign': this.selectedTemplate.CRLSign && this.getSelectedIssuerCertificate().keyUsage.crlSign,
-        },
-        'extendedKeyUsage': {
-          'serverAuth': this.selectedTemplate.TLSWebServerAuth && this.getSelectedIssuerCertificate().extendedKeyUsage.serverAuth,
-          'clientAuth': this.selectedTemplate.TLSWebClientAuth && this.getSelectedIssuerCertificate().extendedKeyUsage.clientAuth,
-          'codeSigning': this.selectedTemplate.codeSigning && this.getSelectedIssuerCertificate().extendedKeyUsage.codeSigning,
-        }
-      }
-    );
   }
 
   openAddSubject() {

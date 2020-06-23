@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
 import { Entity } from 'app/models/entity';
-import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog } from '@angular/material/dialog';
 import { SubjectService } from 'app/services/subject.service';
 import { CertificateService } from 'app/services/certificate.service';
 import { Router } from '@angular/router';
@@ -11,8 +9,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { formatDate } from '@angular/common';
 import { KeyUsage } from 'app/models/keyUsage';
 import { ExtendedKeyUsage } from 'app/models/extendedKeyUsage';
-import { CreateSubjectComponent } from '../create-subject/create-subject.component';
-import { Template } from 'app/models/template';
 import { Certificate } from 'app/models/certificate';
 
 const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
@@ -23,7 +19,11 @@ const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
     return null;
   }
 
-  return from !== null && to !== null && from < to ? null : { validError: true };
+  if (from !== null && to !== null && from < to) {
+    return null;
+  }
+
+  return { validError: true };
 }
 
 @Component({
@@ -33,54 +33,49 @@ const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
 })
 export class CreateRootCertificateComponent implements OnInit {
 
-  public createCertificateFromSubject: FormGroup;
-  public createCertificateFromOtherData: FormGroup;
-  public createCertificateInfoAboutKeyStorage: FormGroup;
+  public createRootCertificateSubjectForm: FormGroup;
+  public createRootCertificateValidityForm: FormGroup;
+  public createRootCertificateKeyUsageExtensionsForm: FormGroup;
+  public createRootCertificateExtendedKeyUsageExtensionsForm: FormGroup;
+  public createRootCertificateAccessInformationForm: FormGroup;
+
   public minDate = new Date();
   public subjects: Entity[] = [];
-  public createdNewSubject: Subscription;
-  public selectedTemplate: Template;
 
   constructor(
+    private certificateService: CertificateService,
+    private subjectService: SubjectService,
     private toastrService: ToastrService,
     private formBuilder: FormBuilder,
-    public dialog: MatDialog,
-    private subjectService: SubjectService,
-    private certificateService: CertificateService,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.createCertificateFromSubject = this.formBuilder.group({
-      selectedSubject: new FormControl(null, Validators.required),
-    });
-
-    this.createFormCertificateFromOtherData();
-    this.createFormCertificateInfoAboutKeyStorage();
+    this.initSubjectForm();
+    this.initValidityForm();
+    this.initKeyUsageForm();
+    this.initExtendedKeyUsageForm();
+    this.initAccessInformationForm();
     this.getSubjects();
-
-    this.createdNewSubject = this.subjectService.createSuccessEmitter.subscribe(
-      () => {
-        this.getSubjects();
-      },
-      (e: HttpErrorResponse) => {
-        this.toastrService.error(e.error.message, "Failed to create a new subject");
-      }
-    );
-
-    if (JSON.parse(localStorage.getItem("selectedTemplate"))) {
-      this.selectedTemplate = JSON.parse(localStorage.getItem("selectedTemplate"));
-      localStorage.removeItem("selectedTemplate");
-      this.setExtensions();
-    }
   }
 
-  createFormCertificateFromOtherData() {
-    this.createCertificateFromOtherData = this.formBuilder.group({
-      validFrom: new FormControl(null, Validators.required),
-      validTo: new FormControl(null, Validators.required),
-      authorityKeyIdentifier: new FormControl(false, Validators.required),
-      subjectKeyIdentifier: new FormControl(false, Validators.required),
+  private initSubjectForm() {
+    this.createRootCertificateSubjectForm = this.formBuilder.group({
+      selectedSubject: new FormControl(null, [Validators.required]),
+    });
+  }
+
+  private initValidityForm() {
+    this.createRootCertificateValidityForm = this.formBuilder.group({
+      validFrom: new FormControl(null, [Validators.required]),
+      validTo: new FormControl(null, [Validators.required]),
+    }, {
+      validator: [TimeValidator],
+    });
+  }
+
+  private initKeyUsageForm() {
+    this.createRootCertificateKeyUsageExtensionsForm = this.formBuilder.group({
       keyUsage: this.formBuilder.group({
         certificateSigning: new FormControl(false),
         crlSign: new FormControl(false),
@@ -92,6 +87,11 @@ export class CreateRootCertificateComponent implements OnInit {
         keyEncipherment: new FormControl(false),
         nonRepudiation: new FormControl(false),
       }),
+    });
+  }
+
+  private initExtendedKeyUsageForm() {
+    this.createRootCertificateExtendedKeyUsageExtensionsForm = this.formBuilder.group({
       extendedKeyUsage: this.formBuilder.group({
         serverAuth: new FormControl(false),
         clientAuth: new FormControl(false),
@@ -101,20 +101,18 @@ export class CreateRootCertificateComponent implements OnInit {
         ocspSigning: new FormControl(false),
         dvcs: new FormControl(false),
       }),
-    }, {
-      validator: [TimeValidator],
     });
   }
 
-  createFormCertificateInfoAboutKeyStorage() {
-    this.createCertificateInfoAboutKeyStorage = this.formBuilder.group({
-      alias: new FormControl(null, Validators.required),
-      password: new FormControl(null, Validators.required),
-      keyStorePassword: new FormControl(null, Validators.required),
+  private initAccessInformationForm() {
+    this.createRootCertificateAccessInformationForm = this.formBuilder.group({
+      alias: new FormControl(null, [Validators.required]),
+      password: new FormControl(null, [Validators.required]),
+      keyStorePassword: new FormControl(null, [Validators.required]),
     });
   }
   
-  getSubjects(): void {
+  private getSubjects() {
     this.subjectService.getAllSubjects().subscribe(
       (subjects: Entity[]) => {
         this.subjects = subjects;
@@ -125,47 +123,42 @@ export class CreateRootCertificateComponent implements OnInit {
     );
   }
 
-  setExtensions() {
-    this.createCertificateFromOtherData.patchValue(
-      {
-        "authorityKeyIdentifier": this.selectedTemplate.authorityKeyId,
-        "subjectKeyIdentifier": this.selectedTemplate.subjectKeyId,
-        "keyUsage": {
-          "digitalSignature": this.selectedTemplate.digitalSignature,
-          "keyEncipherment": this.selectedTemplate.keyEncipherment,
-          "certificateSigning": this.selectedTemplate.certSigning,
-          "crlSign": this.selectedTemplate.CRLSign,
-        },
-        "extendedKeyUsage": {
-          "serverAuth": this.selectedTemplate.TLSWebServerAuth,
-          "clientAuth": this.selectedTemplate.TLSWebClientAuth,
-          "codeSigning": this.selectedTemplate.codeSigning,
-        }
-      }
-    );
+  public getSelectedSubject() {
+    return this.createRootCertificateSubjectForm.value.selectedSubject;
   }
 
-  getSelectedSubject() {
-    return this.createCertificateFromSubject.get("selectedSubject").value;
-  }
-
-  createRootCertificate() {
-    if (this.createCertificateFromSubject.invalid) {
+  public createRootCertificate() {
+    if (this.createRootCertificateSubjectForm.invalid) {
       this.toastrService.error("Please choose a subject.", "Could not create certificate");
       return;
     }
 
-    if (this.createCertificateFromOtherData.invalid) {
-      this.toastrService.error("Please set a valid period.", "Could not create certificate");
+    if (this.createRootCertificateValidityForm.invalid) {
+      this.toastrService.error("Please set the correct validity date.", "Could not create certificate");
       return;
     }
 
-    if (!this.checkKeyUsage()) {
+    if (this.createRootCertificateKeyUsageExtensionsForm.invalid) {
+      this.toastrService.error("Please select at least one key usage extension.", "Could not create certificate");
+      return;
+    }
+
+    if (this.createRootCertificateExtendedKeyUsageExtensionsForm.invalid) {
+      this.toastrService.error("Please select at least one extended key usage extension.", "Could not create certificate");
+      return;
+    }
+
+    if (this.createRootCertificateAccessInformationForm.invalid) {
+      this.toastrService.error("Please fill out all fields for the access information.", "Could not create certificate");
+      return;
+    }
+
+    if (!this.isAtLeastOneKeyUsageChecked()) {
       this.toastrService.error("Please select at least one key usage.", "Could not create certificate");
       return;
     }
     
-    if (!this.checkExtendedKeyUsage()) {
+    if (!this.isAtLeastOneExtendedKeyUsageChecked()) {
       this.toastrService.error("Please select at least one extended key usage.", "Could not create certificate");
       return;
     }
@@ -173,26 +166,24 @@ export class CreateRootCertificateComponent implements OnInit {
     const keyUsage = this.createKeyUsage();
     const extendedKeyUsage = this.createExtendedKeyUsage();
     
-    const validFrom = formatDate(this.createCertificateFromOtherData.value.validFrom, "yyyy-MM-dd", "en-US");
-    const validTo = formatDate(this.createCertificateFromOtherData.value.validTo, "yyyy-MM-dd", "en-US");
+    const validFrom = formatDate(this.createRootCertificateValidityForm.value.validFrom, "yyyy-MM-dd", "en-US");
+    const validTo = formatDate(this.createRootCertificateValidityForm.value.validTo, "yyyy-MM-dd", "en-US");
 
     const certificate = new Certificate(
-      this.createCertificateFromSubject.value.selectedSubject.id,
-      this.createCertificateFromSubject.value.selectedSubject.id,
+      this.createRootCertificateSubjectForm.value.selectedSubject.id,
+      this.createRootCertificateSubjectForm.value.selectedSubject.id,
       new Date(validFrom),
       new Date(validTo),
-      this.createCertificateInfoAboutKeyStorage.value.alias,
-      this.createCertificateInfoAboutKeyStorage.value.password,
-      this.createCertificateInfoAboutKeyStorage.value.keyStorePassword,
+      this.createRootCertificateAccessInformationForm.value.alias,
+      this.createRootCertificateAccessInformationForm.value.password,
+      this.createRootCertificateAccessInformationForm.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
     );
 
+    this.toastrService.info("Creating certificate...", "Please wait");
     this.certificateService.createNewRootCertificate(certificate).subscribe(
       () => {
-        this.createCertificateFromOtherData.reset();
-        this.createCertificateFromSubject.reset();
-        this.createCertificateInfoAboutKeyStorage.reset();
         this.toastrService.success("New self-signed certificate has been created successfully.", "Certificate created");
         this.router.navigate(["/pages/list-certificates"]);
       },
@@ -202,8 +193,8 @@ export class CreateRootCertificateComponent implements OnInit {
     );
   }
 
-  checkKeyUsage(): boolean {
-    let keyUsage = this.createCertificateFromOtherData.value.keyUsage;
+  private isAtLeastOneKeyUsageChecked(): boolean {
+    let keyUsage = this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage;
     return  keyUsage.certificateSigning ||
             keyUsage.crlSign ||
             keyUsage.dataEncipherment ||
@@ -215,8 +206,8 @@ export class CreateRootCertificateComponent implements OnInit {
             keyUsage.nonRepudiation;
   }
 
-  checkExtendedKeyUsage(): boolean {
-    let keyUsage = this.createCertificateFromOtherData.value.extendedKeyUsage;
+  private isAtLeastOneExtendedKeyUsageChecked(): boolean {
+    let keyUsage = this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage;
     return  keyUsage.serverAuth ||
             keyUsage.clientAuth ||
             keyUsage.codeSigning ||
@@ -225,34 +216,30 @@ export class CreateRootCertificateComponent implements OnInit {
             keyUsage.ocspSigning;
   }
 
-  createKeyUsage(): KeyUsage {
+  private createKeyUsage(): KeyUsage {
     return new KeyUsage(
-      this.createCertificateFromOtherData.value.keyUsage.certificateSigning,
-      this.createCertificateFromOtherData.value.keyUsage.crlSign,
-      this.createCertificateFromOtherData.value.keyUsage.dataEncipherment,
-      this.createCertificateFromOtherData.value.keyUsage.decipherOnly,
-      this.createCertificateFromOtherData.value.keyUsage.digitalSignature,
-      this.createCertificateFromOtherData.value.keyUsage.encipherOnly,
-      this.createCertificateFromOtherData.value.keyUsage.keyAgreement,
-      this.createCertificateFromOtherData.value.keyUsage.keyEncipherment,
-      this.createCertificateFromOtherData.value.keyUsage.nonRepudiation,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.certificateSigning,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.crlSign,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.dataEncipherment,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.decipherOnly,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.digitalSignature,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.encipherOnly,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.keyAgreement,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.keyEncipherment,
+      this.createRootCertificateKeyUsageExtensionsForm.value.keyUsage.nonRepudiation,
     );
   }
 
-  createExtendedKeyUsage(): ExtendedKeyUsage {
+  private createExtendedKeyUsage(): ExtendedKeyUsage {
     return new ExtendedKeyUsage(
-      this.createCertificateFromOtherData.value.extendedKeyUsage.serverAuth,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.clientAuth,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.codeSigning,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.emailProtection,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.timeStamping,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.ocspSigning,
-      this.createCertificateFromOtherData.value.extendedKeyUsage.dvcs,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.serverAuth,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.clientAuth,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.codeSigning,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.emailProtection,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.timeStamping,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.ocspSigning,
+      this.createRootCertificateExtendedKeyUsageExtensionsForm.value.extendedKeyUsage.dvcs,
     );
-  }
-
-  openAddSubject() {
-    this.dialog.open(CreateSubjectComponent);
   }
 
 }

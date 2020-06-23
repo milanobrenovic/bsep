@@ -66,7 +66,6 @@ export class CreateSubjectComponent implements OnInit {
       () => {
         this.createSubjectForm.reset();
         this.toastrService.success("New subject added successfully.", "Subject created");
-        this.subjectService.createSuccessEmitter.next(subject);
       },
       (e: HttpErrorResponse) => {
         this.toastrService.error(e.error.message, "Could not create new subject");

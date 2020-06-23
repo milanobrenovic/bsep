@@ -4,12 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { CertificateService } from 'app/services/certificate.service';
 import { ToastrService } from 'ngx-toastr';
-import { ChooseTemplateComponent } from '../choose-template/choose-template.component';
 import { Certificate } from 'app/models/certificate';
-import { OCSPService } from 'app/services/ocsp.service';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { CertificateItem } from 'app/models/certificateItem';
-import { CertificateStatusComponent } from '../certificate-status/certificate-status.component';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CertificateDetails } from 'app/models/certificateDetails';
 
 @Component({
@@ -113,10 +109,6 @@ export class ListCertificatesComponent implements OnInit {
         this.toastr.error(e.error.message, 'Failed to revoke selected certificate');
       }
     );
-  }
-
-  openTemplatesDialog() {
-    this.dialog.open(ChooseTemplateComponent);
   }
 
 }

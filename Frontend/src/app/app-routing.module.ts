@@ -10,7 +10,6 @@ import { ErrorComponent } from "./main/error/error.component";
 import { NgModule } from '@angular/core';
 import { CreateCertificateComponent } from './main/create-certificate/create-certificate.component';
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
-import { ChooseTemplateComponent } from './main/choose-template/choose-template.component';
 import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
 import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
 
@@ -57,11 +56,6 @@ const appRoutes: Routes = [
     {
         path        : 'pages/create-certificate',
         component   : CreateCertificateComponent,
-        canActivate : [AdminGuard],
-    },
-    {
-        path        : 'pages/choose-template',
-        component   : ChooseTemplateComponent,
         canActivate : [AdminGuard],
     },
     {

@@ -1,315 +1,392 @@
-<div class="page-layout blank p-24" fusePerfectScrollbar>
+<div fxLayout="column" class="page-layout blank p-24" fusePerfectScrollbar>
 
-	<mat-card class="example-card">
+	<mat-card>
 		<mat-card-header>
-			<mat-card-title>Create self-signed certificate</mat-card-title>
+			<mat-card-title>1. Create or select a subject</mat-card-title>
 		</mat-card-header>
-		<mat-divider></mat-divider>
-		<br>
 		<mat-card-content>
-			<form fxLayout="column" [formGroup]="createCertificateFromSubject">
-				<ng-template matStepLabel>Subject</ng-template>
+			<p>
+				First select a subject or create a new one if you don't
+				have it already.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createRootCertificateSubjectForm">
 
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" fxFlex="100">
-						<mat-label>Choose existing subject</mat-label>
-						<mat-select formControlName="selectedSubject" required>
-							<mat-option *ngFor="let subject of subjects" [value]="subject">
-								CN={{subject.commonName}}, O={{subject.organization}}
-							</mat-option>
-						</mat-select>
-						<mat-error>Please add a subject first in order to continue to the next step.</mat-error>
-					</mat-form-field>
-				</div>
+				<table class="form-full-width">
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Choose existing subject</mat-label>
+								<mat-select formControlName="selectedSubject" required>
+									<mat-option *ngFor="let subject of subjects" [value]="subject">
+										CommonName: {{subject.commonName}}, Organization: {{subject.organization}}
+									</mat-option>
+								</mat-select>
+								<mat-error
+									*ngIf="createRootCertificateSubjectForm.get('selectedSubject').errors && createRootCertificateSubjectForm.get('selectedSubject').errors['required']">
+									Please select a subject.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Don't have a subject? <a routerLink="/pages/create-subject">Create one here</a>.
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div *ngIf="getSelectedSubject()">
+								<br>
+								<table class="table table-striped border">
+									<thead>
+										<tr>
+											<th>Common name</th>
+											<th>Surname</th>
+											<th>Given name</th>
+											<th>Organization</th>
+											<th>Email</th>
+											<th>Country code</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>{{getSelectedSubject().commonName}}</td>
+											<td>{{getSelectedSubject().surname}}</td>
+											<td>{{getSelectedSubject().givenName}}</td>
+											<td>{{getSelectedSubject().organization}}</td>
+											<td>{{getSelectedSubject().email}}</td>
+											<td>{{getSelectedSubject().country}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
 
-				<div fxLayout="row" fxFlex="100">
-					<button mat-raised-button color="primary" (click)="openAddSubject()">Add subject</button>
-				</div>
-
-				<div *ngIf="getSelectedSubject()">
-					<mat-card>
-						<mat-card-header>
-							<mat-card-title>
-								Selected subject details:
-							</mat-card-title>
-						</mat-card-header>
-						<mat-card-content>
-							<table class="table table-font">
-								<tbody>
-									<tr>
-										<th class="first">Common name:</th>
-										<td>{{getSelectedSubject().commonName}}</td>
-									</tr>
-									<tr>
-										<th class="first">Surname:</th>
-										<td>{{getSelectedSubject().surname}}</td>
-									</tr>
-									<tr>
-										<th class="first">Givename:</th>
-										<td>{{getSelectedSubject().givenName}}</td>
-									</tr>
-									<tr>
-										<th class="first">Organization:</th>
-										<td>{{getSelectedSubject().organization}}</td>
-									</tr>
-									<tr>
-										<th class="first">Email:</th>
-										<td>{{getSelectedSubject().email}}</td>
-									</tr>
-									<tr>
-										<th class="first">Country code:</th>
-										<td>{{getSelectedSubject().country}}</td>
-									</tr>
-								</tbody>
-							</table>
-						</mat-card-content>
-					</mat-card>
-				</div>
-				<br>
 			</form>
-			<form fxLayout="column" [formGroup]="createCertificateFromOtherData">
-				<ng-template matStepLabel>Extensions</ng-template>
-				<mat-card fxLayout="column" fxFlex="100">
-					<mat-card-header>
-						<mat-card-title>Validity Period</mat-card-title>
-					</mat-card-header>
-					<mat-card-content fxLayout="column" fxFlex="100">
-						<mat-divider></mat-divider>
-						<br>
-						<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-							<mat-form-field appearance="outline" fxFlex="100">
-								<mat-label>Start date *</mat-label>
-								<input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" readonly [min]="minDate">
+		</mat-card-content>
+	</mat-card>
+
+	<br>
+
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>2. Validity period</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<p>
+				Next, select when this root certificate is supposed to be valid.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createRootCertificateValidityForm">
+
+				<table class="form-full-width">
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Start date</mat-label>
+								<input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required [min]="minDate">
 								<mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
 								<mat-datepicker #pickerFrom disabled="false"></mat-datepicker>
+								<mat-error
+									*ngIf="createRootCertificateValidityForm.get('validFrom').errors && createRootCertificateValidityForm.get('validFrom').errors['required']">
+									Start date is required.
+								</mat-error>
 							</mat-form-field>
-						</div>
-
-						<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-							<mat-form-field appearance="outline" fxFlex="100">
-								<mat-label>End date *</mat-label>
-								<input matInput [matDatepicker]="pickerTo" formControlName="validTo" readonly [min]="minDate">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>End date</mat-label>
+								<input matInput [matDatepicker]="pickerTo" formControlName="validTo" required [min]="minDate">
 								<mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
 								<mat-datepicker #pickerTo disabled="false"></mat-datepicker>
+								<mat-error
+									*ngIf="createRootCertificateValidityForm.get('validTo').errors && createRootCertificateValidityForm.get('validTo').errors['required']">
+									End date is required.
+								</mat-error>
 							</mat-form-field>
-						</div>
-
-						<div fxLayout="row" fxFlex="1 0 auto">
-							<mat-error class="date-err"
-								*ngIf="(createCertificateFromOtherData.get('validFrom').errors && createCertificateFromOtherData.get('validFrom').errors['required']) || 
-													(createCertificateFromOtherData.get('validTo').errors && createCertificateFromOtherData.get('validTo').errors['required']) ">
-								The start and end date of the validity period is required.
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-error
+								*ngIf="createRootCertificateValidityForm.errors && createRootCertificateValidityForm.errors['validError']">
+								End date cannot be greater or equal to the start date.
 							</mat-error>
-							<mat-error class="date-err"
-								*ngIf="createCertificateFromOtherData.errors && createCertificateFromOtherData.errors['validError']">
-								The start date validity period must be between the present day and the end date in the future.
-							</mat-error>
-						</div>
-					</mat-card-content>
-				</mat-card>
-
-				<br>
-
-				<div fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto">
-					<mat-card>
-						<mat-card-header>
-							<mat-card-title>Extensions</mat-card-title>
-						</mat-card-header>
-						<mat-divider></mat-divider>
-						<br>
-						<mat-card-content>
-							<table class="form-full-width table-font mb-2">
-								<tr>
-									<td>
-										<mat-checkbox formControlName="authorityKeyIdentifier">
-											Generate Authority Key Identifier
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="subjectKeyIdentifier">
-											Generate Subject Key Identifier
-										</mat-checkbox>
-									</td>
-								</tr>
-							</table>
-						</mat-card-content>
-					</mat-card>
-
-					<br>
-
-					<mat-card>
-						<mat-card-header>
-							<mat-card-title>Key Usage Extensions</mat-card-title>
-						</mat-card-header>
-						<mat-divider></mat-divider>
-						<br>
-						<mat-card-content>
-							<table class="form-full-width table-font" formGroupName="keyUsage">
-								<tr>
-									<td>
-										<mat-checkbox formControlName="digitalSignature">
-											Digital Signature
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="nonRepudiation">
-											Non Repudiation
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="keyEncipherment">
-											Key Encipherment
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="dataEncipherment">
-											Data Encipherment
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="keyAgreement">
-											Key Agreement
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="certificateSigning">
-											Certificate Signing
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="crlSign">
-											CRL Sign
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="encipherOnly">
-											Encipher Only
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="decipherOnly">
-											Decipher Only
-										</mat-checkbox>
-									</td>
-								</tr>
-							</table>
-						</mat-card-content>
-					</mat-card>
-
-					<br>
-
-					<mat-card>
-						<mat-card-header>
-							<mat-card-title>Additional Key Usage Extensions</mat-card-title>
-						</mat-card-header>
-						<mat-divider></mat-divider>
-						<br>
-						<mat-card-content>
-							<table class="form-full-width table-font" formGroupName="extendedKeyUsage">
-								<tr>
-									<td>
-										<mat-checkbox formControlName="serverAuth">
-											TLS Web Server Authentication
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="codeSigning">
-											Code Signing
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="clientAuth">
-											TLS Web Client Authentication
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="emailProtection">
-											E-mail Protection
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="timeStamping">
-											Time Stamping
-										</mat-checkbox>
-									</td>
-									<td>
-										<mat-checkbox formControlName="ocspSigning">
-											OCSP Signing
-										</mat-checkbox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<mat-checkbox formControlName="dvcs">
-											DVCS
-										</mat-checkbox>
-									</td>
-								</tr>
-							</table>
-						</mat-card-content>
-					</mat-card>
-
-				</div>
-
-				<br>
-			</form>
-
-			<form fxLayout="column" [formGroup]="createCertificateInfoAboutKeyStorage">
-				<ng-template matStepLabel>Access info</ng-template>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Certificate alias</mat-label>
-						<input matInput type="text" formControlName="alias">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('alias').errors && createCertificateInfoAboutKeyStorage.get('alias').errors['required']">
-							Please enter alias for the certificate.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>password</mat-label>
-						<input matInput type="password" formControlName="password">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('password').errors && createCertificateInfoAboutKeyStorage.get('password').errors['required']">
-							Please enter the password.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Key store password</mat-label>
-						<input matInput type="password" formControlName="keyStorePassword">
-						<mat-error
-							*ngIf="createCertificateInfoAboutKeyStorage.get('keyStorePassword').errors && createCertificateInfoAboutKeyStorage.get('keyStorePassword').errors['required']">
-							Please enter key store password.
-						</mat-error>
-					</mat-form-field>
-				</div>
+						</td>
+					</tr>
+				</table>
 				
-				<div fxLayout="row" fxLayoutAlign="center center">
-					<button mat-raised-button color="primary" (click)="createRootCertificate()"
-						[disabled]="!createCertificateFromOtherData.valid && !createCertificateFromSubject.valid">
-						Create Root Certificate
-					</button>
-				</div>
+			</form>
+		</mat-card-content>
+	</mat-card>
+
+	<br>
+
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>3. Select key usage extensions</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<p>
+				Select at least one key usage extension.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createRootCertificateKeyUsageExtensionsForm">
+
+				<table class="form-full-width" formGroupName="keyUsage">
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="digitalSignature">
+									Digital Signature
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="nonRepudiation">
+									Non Repudiation
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="keyEncipherment">
+									Key Encipherment
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="dataEncipherment">
+									Data Encipherment
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="keyAgreement">
+									Key Agreement
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="certificateSigning">
+									Certificate Signing
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="crlSign">
+									CRL Sign
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="encipherOnly">
+									Encipher Only
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="decipherOnly">
+									Decipher Only
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-error
+								*ngIf="createRootCertificateKeyUsageExtensionsForm.errors && createRootCertificateKeyUsageExtensionsForm.errors['validError']">
+								At least one extension needs to be checked.
+							</mat-error>
+						</td>
+					</tr>
+				</table>
+
+			</form>
+		</mat-card-content>
+	</mat-card>
+	
+	<br>
+
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>4. Select extended key usage extensions</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<p>
+				Select at least one extended key usage extension.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createRootCertificateExtendedKeyUsageExtensionsForm">
+				
+				<table class="form-full-width" formGroupName="extendedKeyUsage">
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="serverAuth">
+									TLS Web Server Authentication
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="codeSigning">
+									Code Signing
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="clientAuth">
+									TLS Web Client Authentication
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="emailProtection">
+									E-mail Protection
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="timeStamping">
+									Time Stamping
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="ocspSigning">
+									OCSP Signing
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div fxLayout="column" fxFlex="50">
+								<mat-checkbox formControlName="dvcs">
+									DVCS
+								</mat-checkbox>
+							</div>
+						</td>
+					</tr>
+				</table>
+
+			</form>
+		</mat-card-content>
+	</mat-card>
+
+	<br>
+
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>5. Access information</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<p>
+				Create a password for your root certificate below.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createRootCertificateAccessInformationForm">
+
+				<table class="form-full-width">
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Certificate alias</mat-label>
+								<input matInput type="text" formControlName="alias" required>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('alias').errors && createRootCertificateAccessInformationForm.get('alias').errors['required']">
+									Alias is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Password</mat-label>
+								<input matInput type="password" formControlName="password" required>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('password').errors && createRootCertificateAccessInformationForm.get('password').errors['required']">
+									Password is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Key store password</mat-label>
+								<input matInput type="password" formControlName="keyStorePassword" required>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('keyStorePassword').errors && createRootCertificateAccessInformationForm.get('keyStorePassword').errors['required']">
+									Key store password is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button mat-raised-button color="primary" (click)="createRootCertificate()"
+								[disabled]="
+									createRootCertificateSubjectForm.invalid ||
+									createRootCertificateValidityForm.invalid ||
+									createRootCertificateKeyUsageExtensionsForm.invalid ||
+									createRootCertificateExtendedKeyUsageExtensionsForm.invalid ||
+									createRootCertificateAccessInformationForm.invalid">
+								Create root certificate
+							</button>
+						</td>
+					</tr>
+				</table>
+
 			</form>
 		</mat-card-content>
 	</mat-card>

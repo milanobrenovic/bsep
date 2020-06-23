@@ -3,15 +3,13 @@ import { environment } from 'environments/environment';
 import { Subject } from 'rxjs';
 import { Entity } from 'app/models/entity';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectService {
 
-  url = environment.baseUrl + environment.subject;
-  createSuccessEmitter = new Subject<Entity>();
+  public url = environment.baseUrl + environment.subject;
 
   constructor(
     private httpClient: HttpClient,

@@ -1,6 +1,6 @@
-import { map, catchError } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { UserTokenState } from './../models/userTokenState';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { UserLoginRequest } from './../models/userLoginRequest';
 import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
@@ -12,12 +12,12 @@ import { Router } from '@angular/router';
 })
 export class UserService {
   
-  url = environment.baseUrl + environment.auth;
-  jwt_access_token = null;
-  req: UserTokenState
-  loggedInUserSubject: BehaviorSubject<UserTokenState>;
-  loggedInUser: Observable<UserTokenState>;
-  loggedInSuccess: BehaviorSubject<UserTokenState> = new BehaviorSubject<UserTokenState>(null);
+  public url = environment.baseUrl + environment.auth;
+  public jwtAccessToken = null;
+  public req: UserTokenState;
+  public loggedInUserSubject: BehaviorSubject<UserTokenState>;
+  public loggedInUser: Observable<UserTokenState>;
+  public loggedInSuccess: BehaviorSubject<UserTokenState> = new BehaviorSubject<UserTokenState>(null);
 
   constructor(private httpClient: HttpClient, private router: Router) {
     this.loggedInUserSubject = new BehaviorSubject<UserTokenState>(
@@ -26,30 +26,30 @@ export class UserService {
     this.loggedInUser = this.loggedInUserSubject.asObservable();
   }
 
-  getLoggedInUser(): UserTokenState {
+  public getLoggedInUser(): UserTokenState {
     return this.loggedInUserSubject.value;
   }
 
-  login(user: UserLoginRequest) {
+  public login(user: UserLoginRequest) {
     return this.httpClient.post(this.url, user).pipe(map((res: UserTokenState) => {
-      this.jwt_access_token = res.jwtAccessToken;
+      this.jwtAccessToken = res.jwtAccessToken;
       localStorage.setItem('LoggedInUser', JSON.stringify(res));
       this.loggedInUserSubject.next(res);
     }));
   }
 
-  getToken() {
-    return this.jwt_access_token;
+  public getToken() {
+    return this.jwtAccessToken;
   }
 
-  logout() {
-    this.jwt_access_token = null;
+  public logout() {
+    this.jwtAccessToken = null;
     localStorage.removeItem('LoggedInUser');
     this.router.navigate(['/pages/login']);
   }
 
-  isLoggedIn() {
+  public isLoggedIn() {
     return localStorage.getItem('LoggedInUser') !== null;
   }
-
+  
 }
