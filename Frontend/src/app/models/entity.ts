@@ -10,7 +10,7 @@ export class Entity {
 	public email: string;
 	public isCA: boolean;
 	public hasCertificate: boolean;
-	
+
 	constructor(
 			commonName: string,
 			surname: string,

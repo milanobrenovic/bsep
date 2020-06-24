@@ -60,31 +60,38 @@ public class SubjectController {
 	)
 	public ResponseEntity<SubjectDTO> addSubject(@RequestBody SubjectDTO subjectDTO){
 		
-		
+		System.out.println("subject: "+subjectDTO.toString());
 		
 		
 		if (subjectDTO.getClass() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		
 		if(!checkForInvalidInput(subjectDTO.getCommonName())){
+			System.out.println(">>> getCommonName");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getCountry())){
+			System.out.println(">>> getCountry");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getGivenName())){
+			System.out.println(">>> getGivenName");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getOrganization())){
+			System.out.println(">>> getOrganization");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getOrganizationUnit())){
+			System.out.println(">>> getOrganizationUnit");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getSurname())){
+			System.out.println(">>> getSurname");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInputEmail(subjectDTO.getEmail())){
+			System.out.println(">>> getEmail");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		
@@ -96,8 +103,8 @@ public class SubjectController {
 			emailExists = true;
 		}
 		
-		if(emailExists == false){
-		subject = subjectService.save(subject);
+		if (!emailExists) {
+			subjectService.save(subject);
 		}
 		else{
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -128,7 +135,7 @@ public class SubjectController {
 		Boolean isValid = true;
 		for(char c:text.toCharArray()){
 			int asciiC = (c);
-			System.out.println(asciiC);
+		//	System.out.println(asciiC);
 			if(asciiC>=0 && asciiC<=31){
 				isValid = false;
 				break;
@@ -161,12 +168,16 @@ public class SubjectController {
 		Boolean isValid = true;
 		for(char c:text.toCharArray()){
 			int asciiC = (c);
-			System.out.println(asciiC);
+			//System.out.println(asciiC);
 			if(asciiC>=0 && asciiC<=31){
 				isValid = false;
 				break;
 			}
-			else if(asciiC >= 33 && asciiC <=47){
+			else if(asciiC >= 33 && asciiC <=45){
+				isValid = false;
+				break;
+			}
+			else if(asciiC == 47){
 				isValid = false;
 				break;
 			}

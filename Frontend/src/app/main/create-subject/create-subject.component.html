@@ -1,107 +1,123 @@
 <div class="page-layout blank p-24" fusePerfectScrollbar>
 
-	<mat-card class="example-card">
+	<mat-card>
 		<mat-card-header>
 			<mat-card-title>Add a new subject</mat-card-title>
 		</mat-card-header>
-		<mat-divider></mat-divider>
-		<br>
 		<mat-card-content>
-			<mat-dialog-content class="dialog-class">
-				<form [formGroup]="createSubjectForm">
-					<table class="form-full-width">
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Common Name *</mat-label>
-									<input matInput formControlName="commonName">
-									<mat-error *ngIf="createSubjectForm.get('commonName').errors && createSubjectForm.get('commonName').errors['required']">
-										Common name is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Surname *</mat-label>
-									<input matInput formControlName="surname">
-									<mat-error *ngIf="createSubjectForm.get('surname').errors && createSubjectForm.get('surname').errors['required']">
-										Surname is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Givename *</mat-label>
-									<input matInput formControlName="givename">
-									<mat-error *ngIf="createSubjectForm.get('givename').errors && createSubjectForm.get('givename').errors['required']">
-										Givename is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Organization *</mat-label>
-									<input matInput formControlName="organization">
-									<mat-error *ngIf="createSubjectForm.get('organization').errors && createSubjectForm.get('organization').errors['required']">
-										Organization's name is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Organization unit *</mat-label>
-									<input matInput formControlName="organizationUnit">
-									<mat-error *ngIf="createSubjectForm.get('organizationUnit').errors && createSubjectForm.get('organizationUnit').errors['required']">
-										Organization unit's name is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Country code *</mat-label>
-									<input matInput formControlName="countryCode" minlength="2" maxlength="2">
-									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['required']">
-										Country code is required.
-									</mat-error>
-									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['maxlength']">
-										Country code length has to be exactly 2 characters.
-									</mat-error>
-									<mat-error *ngIf="createSubjectForm.get('countryCode').errors && createSubjectForm.get('countryCode').errors['minlength']">
-										Country code length has to be exactly 2 characters.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<mat-form-field appearance="outline" fxFlex="100">
-									<mat-label>Email address *</mat-label>
-									<input matInput formControlName="email">
-									<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['required']">
-										An email address is required.
-									</mat-error>
-									<mat-error *ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['email']">
-										A valid email address is required.
-									</mat-error>
-								</mat-form-field>
-							</td>
-						</tr>
-					</table>
-				</form>
-			</mat-dialog-content>
-			<mat-dialog-actions class="mt-3 mb-1">
-				<button mat-raised-button color="primary" (click)="create()" [disabled]="!createSubjectForm.valid">Create new subject</button>
-			</mat-dialog-actions>
+			<p>
+				Please fill out all the required fields below in order
+				to create a new subject.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="createSubjectForm">
+
+				<table class="form-full-width">
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Common name</mat-label>
+								<input matInput formControlName="commonName" required>
+								<mat-error
+									*ngIf="createSubjectForm.get('commonName').errors && createSubjectForm.get('commonName').errors['required']">
+									Common name is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Surname</mat-label>
+								<input matInput formControlName="surname" required>
+								<mat-error
+									*ngIf="createSubjectForm.get('surname').errors && createSubjectForm.get('surname').errors['required']">
+									Surname is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Given name</mat-label>
+								<input matInput formControlName="givenName" required>
+								<mat-error *ngIf="createSubjectForm.get('givenName').errors && createSubjectForm.get('givenName').errors['required']">
+									Given name is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Organization</mat-label>
+								<input matInput formControlName="organization" required>
+								<mat-error *ngIf="createSubjectForm.get('organization').errors && createSubjectForm.get('organization').errors['required']">
+									Organization's name is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Organization unit</mat-label>
+								<input matInput formControlName="organizationUnit" required>
+								<mat-error *ngIf="createSubjectForm.get('organizationUnit').errors && createSubjectForm.get('organizationUnit').errors['required']">
+									Organization unit's name is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Country code</mat-label>
+								<input matInput formControlName="country" minlength="2" maxlength="2" required>
+								<mat-error
+									*ngIf="createSubjectForm.get('country').errors && createSubjectForm.get('country').errors['required']">
+									Country code is required.
+								</mat-error>
+								<mat-error
+									*ngIf="createSubjectForm.get('country').errors && createSubjectForm.get('country').errors['maxlength'] ||
+													createSubjectForm.get('country').errors && createSubjectForm.get('country').errors['minlength']">
+									Country code length has to be exactly 2 characters.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Email address</mat-label>
+								<input matInput formControlName="email" required>
+								<mat-error
+									*ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['required']">
+									An email address is required.
+								</mat-error>
+								<mat-error
+									*ngIf="createSubjectForm.get('email').errors && createSubjectForm.get('email').errors['email']">
+									A valid email address is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button
+								mat-raised-button
+								color="primary"
+								(click)="createSubject()"
+								[disabled]="!createSubjectForm.valid">
+								Create new subject
+							</button>
+						</td>
+					</tr>
+				</table>
+
+			</form>
 		</mat-card-content>
 	</mat-card>
 

@@ -148,11 +148,6 @@ export class CreateRootCertificateComponent implements OnInit {
       return;
     }
 
-    if (this.createRootCertificateAccessInformationForm.invalid) {
-      this.toastrService.error("Please fill out all fields for the access information.", "Could not create certificate");
-      return;
-    }
-
     if (!this.isAtLeastOneKeyUsageChecked()) {
       this.toastrService.error("Please select at least one key usage.", "Could not create certificate");
       return;
@@ -160,6 +155,11 @@ export class CreateRootCertificateComponent implements OnInit {
     
     if (!this.isAtLeastOneExtendedKeyUsageChecked()) {
       this.toastrService.error("Please select at least one extended key usage.", "Could not create certificate");
+      return;
+    }
+
+    if (this.createRootCertificateAccessInformationForm.invalid) {
+      this.toastrService.error("Please fill out all fields for the access information.", "Could not create certificate");
       return;
     }
 
@@ -181,14 +181,17 @@ export class CreateRootCertificateComponent implements OnInit {
       extendedKeyUsage,
     );
 
-    this.toastrService.info("Creating certificate...", "Please wait");
+    this.toastrService.info("Creating root certificate...", "Please wait");
     this.certificateService.createNewRootCertificate(certificate).subscribe(
       () => {
-        this.toastrService.success("New self-signed certificate has been created successfully.", "Certificate created");
+        this.toastrService.success("New self-signed certificate has been created successfully.", "Root certificate created");
         this.router.navigate(["/pages/list-certificates"]);
       },
       (e: HttpErrorResponse) => {
-        this.toastrService.error(e.error.message, "Could not create certificate");
+        if (e.status == 409) {
+          this.toastrService.error("Root certificate under this alias name already exists.", "Failed to create a root certificate");
+        }
+        this.toastrService.error(e.error.message, "Could not create a root certificate");
       }
     );
   }

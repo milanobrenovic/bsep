@@ -127,5 +127,21 @@ public class SubjectDTO {
 	public void setId(Long id) {
 		this.id = id;
 	}
-    
+
+	@Override
+	public String toString() {
+		return "SubjectDTO{" +
+				"id=" + id +
+				", commonName='" + commonName + '\'' +
+				", surname='" + surname + '\'' +
+				", givenName='" + givenName + '\'' +
+				", organization='" + organization + '\'' +
+				", organizationUnit='" + organizationUnit + '\'' +
+				", country='" + country + '\'' +
+				", email='" + email + '\'' +
+				", isCA=" + isCA +
+				", hasCertificate=" + hasCertificate +
+				'}';
+	}
+
 }
