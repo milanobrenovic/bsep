@@ -48,6 +48,14 @@ public class Certificate {
 		this.alias = alias;
 		this.isRevoked = false;
 	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getSubjectId() {
 		return subjectId;
@@ -97,6 +105,7 @@ public class Certificate {
 		this.isRevoked = isRevoked;
 	}
 	public Boolean isValid(){
+		
 		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 		Date now = new Date();  
 		   System.out.println(df.format(now));

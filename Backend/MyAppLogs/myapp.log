@@ -1,0 +1,63 @@
+2020-06-23 20:56:46 [main] INFO  c.b.t.bseptim11.BsepTim11Application - Starting BsepTim11Application on Petar-PC with PID 5820 (C:\Users\Petar\workspace1\bsep\Backend\target\classes started by Petar in C:\Users\Petar\workspace1\bsep\Backend)
+2020-06-23 20:56:46 [main] INFO  c.b.t.bseptim11.BsepTim11Application - No active profile set, falling back to default profiles: default
+2020-06-23 20:56:47 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2020-06-23 20:56:48 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 189ms. Found 5 JPA repository interfaces.
+2020-06-23 20:56:49 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@3cbcd8f3' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-23 20:56:49 [main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-23 20:56:50 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2020-06-23 20:56:50 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2020-06-23 20:56:50 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.34]
+2020-06-23 20:56:50 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2020-06-23 20:56:50 [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 4045 ms
+2020-06-23 20:56:51 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2020-06-23 20:56:51 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.15.Final
+2020-06-23 20:56:51 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2020-06-23 20:56:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2020-06-23 20:56:51 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2020-06-23 20:56:51 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2020-06-23 20:56:54 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2020-06-23 20:56:54 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-06-23 20:56:54 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-06-23 20:56:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/auth/**', POST], []
+2020-06-23 20:56:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/auth', PUT], []
+2020-06-23 20:56:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/', GET], []
+2020-06-23 20:56:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/ocsp', GET], []
+2020-06-23 20:56:57 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@32d1d6c5, org.springframework.security.web.context.SecurityContextPersistenceFilter@5814b4fb, org.springframework.security.web.header.HeaderWriterFilter@50fa5938, org.springframework.web.filter.CorsFilter@4a5b38e6, org.springframework.security.web.authentication.logout.LogoutFilter@6f9a3325, com.bsep.tim11.bseptim11.security.auth.TokenAuthenticationFilter@58583a2d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4ba13fed, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@878feb2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3e8afc2d, org.springframework.security.web.session.SessionManagementFilter@2e8986b6, org.springframework.security.web.access.ExceptionTranslationFilter@74b7497b, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5358c8fa]
+2020-06-23 20:56:58 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2020-06-23 20:56:58 [main] INFO  c.b.t.bseptim11.BsepTim11Application - Started BsepTim11Application in 13.15 seconds (JVM running for 13.915)
+2020-06-23 20:57:02 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-06-23 20:57:02 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2020-06-23 20:57:03 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 48 ms
+2020-06-23 21:05:52 [restartedMain] INFO  c.b.t.bseptim11.BsepTim11Application - Starting BsepTim11Application on Petar-PC with PID 5260 (C:\Users\Petar\workspace1\bsep\Backend\target\classes started by Petar in C:\Users\Petar\workspace1\bsep\Backend)
+2020-06-23 21:05:52 [restartedMain] INFO  c.b.t.bseptim11.BsepTim11Application - No active profile set, falling back to default profiles: default
+2020-06-23 21:05:52 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2020-06-23 21:05:52 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2020-06-23 21:05:54 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2020-06-23 21:05:54 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 167ms. Found 5 JPA repository interfaces.
+2020-06-23 21:05:56 [restartedMain] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@a62cb66' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-23 21:05:56 [restartedMain] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-23 21:05:57 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2020-06-23 21:05:57 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2020-06-23 21:05:57 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.34]
+2020-06-23 21:05:57 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2020-06-23 21:05:57 [restartedMain] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 5072 ms
+2020-06-23 21:05:58 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2020-06-23 21:05:58 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.4.15.Final
+2020-06-23 21:05:58 [restartedMain] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2020-06-23 21:05:59 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2020-06-23 21:05:59 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2020-06-23 21:05:59 [restartedMain] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL95Dialect
+2020-06-23 21:06:01 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2020-06-23 21:06:01 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-06-23 21:06:01 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2020-06-23 21:06:02 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2020-06-23 21:06:05 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/auth/**', POST], []
+2020-06-23 21:06:05 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/auth', PUT], []
+2020-06-23 21:06:05 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/', GET], []
+2020-06-23 21:06:05 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: Ant [pattern='/api/ocsp', GET], []
+2020-06-23 21:06:05 [restartedMain] INFO  o.s.s.web.DefaultSecurityFilterChain - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6e489423, org.springframework.security.web.context.SecurityContextPersistenceFilter@134c1a53, org.springframework.security.web.header.HeaderWriterFilter@72090a1c, org.springframework.web.filter.CorsFilter@7b675ef7, org.springframework.security.web.authentication.logout.LogoutFilter@2302b1a0, com.bsep.tim11.bseptim11.security.auth.TokenAuthenticationFilter@40e618e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@16eea413, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5ebebcd2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7bc6926a, org.springframework.security.web.session.SessionManagementFilter@2b913b4b, org.springframework.security.web.access.ExceptionTranslationFilter@75aa5b63, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@66fe3b36]
+2020-06-23 21:06:06 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2020-06-23 21:06:06 [restartedMain] INFO  c.b.t.bseptim11.BsepTim11Application - Started BsepTim11Application in 14.355 seconds (JVM running for 15.952)
+2020-06-23 21:06:09 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-06-23 21:06:09 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2020-06-23 21:06:09 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 40 ms

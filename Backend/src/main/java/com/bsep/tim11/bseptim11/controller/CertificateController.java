@@ -14,7 +14,10 @@ import java.security.Principal;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -281,6 +284,26 @@ public class CertificateController {
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		if(aliasDataService.findOne(certificateDTO.getIssuerId())==null){
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
+		Boolean valid = false;
+		List<Certificate> certs = certificateService.findAll();
+		List<AliasData> certDatas = aliasDataService.findAll();
+	//	for (AliasData a: certDatas){
+			for(Certificate c: certs){
+				if(certificateDTO.getIssuerId() == c.getSubjectId()){
+					if(isCertificateValid(c)){
+						valid= true;
+						break;
+					}
+				}
+			}
+	//	}
+		if(!valid){
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
+		}
 		Security.addProvider(new BouncyCastleProvider());
 		
 		// Za sad hardkovano da su svi intermediate
@@ -543,7 +566,7 @@ public class CertificateController {
 		Boolean isValid = true;
 		for(char c:text.toCharArray()){
 			int asciiC = (c);
-			System.out.println(asciiC);
+		//System.out.println(asciiC);
 			if(asciiC>=0 && asciiC<=31){
 				isValid = false;
 				break;
@@ -572,6 +595,23 @@ public class CertificateController {
 		return isValid;
 		
 		
+	}
+	public Boolean isCertificateValid(Certificate c){
+		if(aliasDataService.findOne(c.getId()).getAliasData()!=null){
+			if(!isCertificateValid(certificateService.findOne(aliasDataService.findOne(c.getId()).getAliasData().getId()))){
+				return false;
+			}
+		}
+		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		Date now = new Date();  
+		   System.out.println(df.format(now));
+		   if((now).compareTo(c.getStartDate()) < 0){
+			   return false;
+		   }
+		   else if(now.compareTo(c.getEndDate()) > 0){
+			   return false;
+		   }
+		   return true;
 	}
 	
 	
