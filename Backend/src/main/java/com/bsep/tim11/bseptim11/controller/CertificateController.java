@@ -3,7 +3,6 @@ package com.bsep.tim11.bseptim11.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -19,14 +18,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.support.IsNewStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bsep.tim11.bseptim11.certificates.CertificateGenerator;
@@ -470,7 +465,8 @@ public class CertificateController {
 					x509cert.getSerialNumber(),
 					x509cert.getNotBefore(),
 					x509cert.getNotAfter(),
-					alias
+					alias,
+					CertificateType.ROOT
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -501,7 +497,8 @@ public class CertificateController {
 						x509cert.getSerialNumber(),
 						x509cert.getNotBefore(),
 						x509cert.getNotAfter(),
-						alias
+						alias,
+						CertificateType.INTERMEDIATE
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -509,6 +506,7 @@ public class CertificateController {
 
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
+	
 	@PostMapping(value = "/downloadCertificate")
 	public void downloadCertificate(@RequestBody CertificateDetailsDTO certificateDetails)
 			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
@@ -517,8 +515,16 @@ public class CertificateController {
 
 		String alias = certificateDetails.getAlias();
 				
-		X509Certificate certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", "123", alias);
-
+		X509Certificate certificate;
+		
+		if (certificateDetails.getType().equals(CertificateType.ROOT)) {
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", "123", alias);
+		} else if(certificateDetails.getType().equals(CertificateType.INTERMEDIATE)) {
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreintermediate.p12", "123", alias);
+		} else {
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreendentity.p12", "123", alias);
+		}
+		
 		StringWriter sw = new StringWriter();
 
 		try (PemWriter pw = new PemWriter(sw)) {
@@ -526,7 +532,7 @@ public class CertificateController {
 		  pw.writeObject(gen);
 		}
 
-		FileWriter fw = new FileWriter(alias + ".cert");
+		FileWriter fw = new FileWriter(alias + ".cer");
 		fw.write(sw.toString());
 		fw.flush();
 		fw.close();

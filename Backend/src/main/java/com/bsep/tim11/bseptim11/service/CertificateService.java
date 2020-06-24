@@ -29,7 +29,7 @@ import com.bsep.tim11.bseptim11.repository.CertificateRepository;
 
 @Service
 public class CertificateService {
-
+	
 	private KeyStoreReader keyStoreReader;
 	
 	private KeyStoreWriter keyStoreWriter;
@@ -125,7 +125,7 @@ public class CertificateService {
 		char[] password = keystorePassword.toCharArray();
 		
 		if(ct.equals(CertificateType.ROOT)) {
-			File f = new File("keystoreroot.p12");
+			File f = new File("src/main/resources/keystoreroot.p12");
 			if(!f.isFile()) {
 				// U if ulazi kada prvi put pravimo keystore odnosno kada on jos ne postoji
 				keyStoreWriter.loadKeyStore(null, password);
@@ -153,6 +153,7 @@ public class CertificateService {
 			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
 			keyStoreWriter.saveKeyStore("keystoreintermediate.p12", password);
+		
 		} else if(ct.equals(CertificateType.ENDENTITY)) {
 			File f = new File("keystoreendentity.p12");
 			if(!f.isFile()) {

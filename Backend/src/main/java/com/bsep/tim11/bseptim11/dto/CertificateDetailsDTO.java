@@ -3,6 +3,8 @@ package com.bsep.tim11.bseptim11.dto;
 import java.math.BigInteger;
 import java.util.Date;
 
+import com.bsep.tim11.bseptim11.enums.CertificateType;
+
 public class CertificateDetailsDTO {
 
     private String subjectName;
@@ -11,18 +13,20 @@ public class CertificateDetailsDTO {
     private Date validFrom;
     private Date validTo;
     private String alias;
+    private CertificateType type;
 
     public CertificateDetailsDTO() {
 
     }
 
-    public CertificateDetailsDTO(String subjectName, String issuerName, BigInteger serialNumber, Date validFrom, Date validTo, String alias) {
+    public CertificateDetailsDTO(String subjectName, String issuerName, BigInteger serialNumber, Date validFrom, Date validTo, String alias, CertificateType type) {
         this.subjectName = subjectName;
         this.issuerName = issuerName;
         this.serialNumber = serialNumber;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.alias = alias;
+        this.type = type;
     }
 
     public String getSubjectName() {
@@ -72,8 +76,16 @@ public class CertificateDetailsDTO {
     public void setAlias(String alias) {
         this.alias = alias;
     }
+    
+    public CertificateType getType() {
+		return type;
+	}
 
-    @Override
+	public void setType(CertificateType type) {
+		this.type = type;
+	}
+
+	@Override
     public String toString() {
         return "CertificateDetailsDTO{" +
                 "subjectName='" + subjectName + '\'' +
