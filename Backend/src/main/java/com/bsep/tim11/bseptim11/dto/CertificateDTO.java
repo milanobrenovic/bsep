@@ -18,14 +18,6 @@ public class CertificateDTO {
 	
 	public CertificateDTO() {}
 	
-	public String getKeyStorePassword() {
-		return keyStorePassword;
-	}
-
-	public void setKeyStorePassword(String keyStorePassword) {
-		this.keyStorePassword = keyStorePassword;
-	}
-	
 	public CertificateDTO(Long subjectId, Long issuerId, Date startDate, Date endDate, String alias, String password,
 			KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO, String keyStorePassword) {
 		super();
@@ -123,6 +115,14 @@ public class CertificateDTO {
 
 	public void setExtendedKeyUsageDTO(ExtendedKeyUsageDTO extendedKeyUsageDTO) {
 		this.extendedKeyUsageDTO = extendedKeyUsageDTO;
+	}
+	
+	public String getKeyStorePassword() {
+		return keyStorePassword;
+	}
+
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
 	}
 
 	@Override
