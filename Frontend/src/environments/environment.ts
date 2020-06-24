@@ -6,7 +6,7 @@ export const environment = {
     production      : false,
     hmr             : false,
     itemsPerPage    : 5,
-    baseUrl         : "http://localhost:443/api",
+    baseUrl         : "http://localhost:8080/api",
     auth            : "/auth/login",
     subject         : '/subject',
     certificate     : '/certificate',

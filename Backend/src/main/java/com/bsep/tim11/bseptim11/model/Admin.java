@@ -10,11 +10,6 @@ import java.util.Set;
 @Entity
 public class Admin implements UserDetails {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 3534212541199599323L;
-
 	@Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,6 +77,10 @@ public class Admin implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Long getId() {
+        return id;
     }
 
 }

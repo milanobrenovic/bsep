@@ -28,7 +28,7 @@ public class SubjectController {
 	private SubjectService subjectService;
 	
 	@GetMapping(value = "/all")
-	//@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<SubjectDTO>> getAllSubjects(){
 		
 		List<Subject> subjects = subjectService.findAll();
@@ -42,7 +42,7 @@ public class SubjectController {
 	}
 	
 	@GetMapping(value ="/{id}")
-	//@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<SubjectDTO> getSubject(@PathVariable Long id){
 		
 		Subject subject = subjectService.findOne(id);
@@ -58,6 +58,7 @@ public class SubjectController {
 			value = "/create-subject",
 			consumes = MediaType.APPLICATION_JSON_VALUE
 	)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<SubjectDTO> addSubject(@RequestBody SubjectDTO subjectDTO){
 		
 		System.out.println("subject: "+subjectDTO.toString());
@@ -115,6 +116,7 @@ public class SubjectController {
 
 	//Svi ponudjeni subjecti za sertifikat
 	@GetMapping(value = "/subjects-without-certificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<SubjectDTO>> getSubjectsWithoutCertificate(){
 
 		List<SubjectDTO> subjectsDTO = new ArrayList<>();

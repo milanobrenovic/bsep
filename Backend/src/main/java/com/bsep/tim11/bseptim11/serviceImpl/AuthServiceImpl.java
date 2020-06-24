@@ -1,5 +1,6 @@
 package com.bsep.tim11.bseptim11.serviceImpl;
 
+import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
 import com.bsep.tim11.bseptim11.model.Admin;
 import com.bsep.tim11.bseptim11.model.Authority;
 import com.bsep.tim11.bseptim11.model.UserTokenState;
@@ -46,23 +47,48 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserTokenState login(JwtAuthenticationRequest jwtAuthenticationRequest) {
-        final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+    public LoggedInUserDTO login(JwtAuthenticationRequest jwtAuthenticationRequest) {
+        final Authentication authentication = authManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
                 jwtAuthenticationRequest.getUsername(),
                 jwtAuthenticationRequest.getPassword()
+            )
         );
-        final Authentication authentication = authManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Admin admin = (Admin) authentication.getPrincipal();
-        String jwtAccessToken = tokenUtils.generateToken(admin.getUsername());
+        String username = returnUsername(authentication.getPrincipal());
+        if (username == null) {
+            return null;
+        }
+
+        String jwtToken = tokenUtils.generateToken(username);
         int expiresIn = tokenUtils.getExpiredIn();
 
-        return new UserTokenState(
-                jwtAccessToken,
-                expiresIn
+        return returnLoggedInUser(
+                authentication.getPrincipal(),
+                new UserTokenState(jwtToken, expiresIn)
         );
+    }
+
+    private String returnUsername(Object object) {
+        if (object instanceof Admin) {
+            return ((Admin) object).getUsername();
+        }
+        return null;
+    }
+
+    private LoggedInUserDTO returnLoggedInUser(Object object, UserTokenState userTokenState) {
+        if (object instanceof Admin) {
+            Admin admin = (Admin) object;
+            return new LoggedInUserDTO(
+                admin.getId(),
+                admin.getUsername(),
+                "ROLE_ADMIN",
+                userTokenState
+            );
+        }
+        return null;
     }
 
 }

@@ -16,7 +16,6 @@ export class SubjectService {
   ) { }
 
   public createSubject(subject: Entity) {
-    console.log(subject);
     return this.httpClient.post(this.url + "/create-subject", subject);
   }
 

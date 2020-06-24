@@ -1,5 +1,6 @@
 package com.bsep.tim11.bseptim11.controller;
 
+import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
 import com.bsep.tim11.bseptim11.model.UserTokenState;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
@@ -12,23 +13,24 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin(value = "https://localhost:4200")
 public class AuthenticationController {
 
     @Autowired
     private AuthService authService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<UserTokenState> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
+    public ResponseEntity<LoggedInUserDTO> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
         try {
-            UserTokenState userTokenState = authService.login(authenticationRequest);
+            LoggedInUserDTO loggedInUserDTO = authService.login(authenticationRequest);
 
-            if (userTokenState == null) {
+            if (loggedInUserDTO == null) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-                return new ResponseEntity<>(userTokenState, HttpStatus.OK);
+                return new ResponseEntity<>(loggedInUserDTO, HttpStatus.OK);
             }
         } catch (AuthenticationException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

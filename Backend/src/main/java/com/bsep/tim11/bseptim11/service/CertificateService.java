@@ -125,13 +125,13 @@ public class CertificateService {
 		char[] password = keystorePassword.toCharArray();
 		
 		if(ct.equals(CertificateType.ROOT)) {
-			File f = new File("src/main/resources/keystoreroot.p12");
+			File f = new File("keystoreroot.p12");
 			if(!f.isFile()) {
 				// U if ulazi kada prvi put pravimo keystore odnosno kada on jos ne postoji
 				keyStoreWriter.loadKeyStore(null, password);
 			} else {
 				// U else ulazi svaki sledeci put
-				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
+//				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
 				if(!keyStoreWriter.loadKeyStore("keystoreroot.p12", password)){
 					return false;
 				}

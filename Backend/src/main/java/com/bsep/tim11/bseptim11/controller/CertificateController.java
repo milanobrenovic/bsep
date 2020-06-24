@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,6 +69,7 @@ public class CertificateController {
 	
 	//Vraca sve subjekte koji mogu biti issueri, samo one koji su CA
 	@GetMapping(value = "/issuers")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<SubjectDTO>> getIssuers(){
 		
 		List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -83,6 +85,7 @@ public class CertificateController {
 	}
 	
 	@GetMapping(value = "/issuersKeyStore/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<Subject>> getIssuersKeyStore(@PathVariable (value = "password")String password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 		System.out.println("Password::: "+password);
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -183,6 +186,7 @@ public class CertificateController {
 	
 	//Pravljenje self-signed sertifikata
 	@PostMapping(value = "/createRoot", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> addRootCertificate(@RequestBody CertificateDTO certificateDTO){
 		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -270,6 +274,7 @@ public class CertificateController {
 	
 	//Pravljenje potpisanih sertifikata
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> addCertificate(@RequestBody CertificateDTO certificateDTO){
 		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -386,6 +391,7 @@ public class CertificateController {
 	}
 	
 	@PostMapping(value = "/revoke", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> revokeCertificate(@RequestBody CertificateDTO certificateDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
 		
 		Security.addProvider(new BouncyCastleProvider());
@@ -455,6 +461,7 @@ public class CertificateController {
 	}
 
 	@PostMapping(value = "/isValid", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Boolean> isItAValidCertificate(@RequestBody CertificateDetailsDTO certificateDetailsDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
 		System.out.println("test dtoAlias: "+certificateDetailsDTO.getAlias() );
 
@@ -466,6 +473,7 @@ public class CertificateController {
 
 
 	@GetMapping(value = "/get-all-root-certificates/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDetailsDTO>> getAllRootCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -489,7 +497,8 @@ public class CertificateController {
 					x509cert.getNotBefore(),
 					x509cert.getNotAfter(),
 					alias,
-					CertificateType.ROOT
+					CertificateType.ROOT,
+					password
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -498,6 +507,7 @@ public class CertificateController {
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
 	@GetMapping(value = "/get-all-intermediate-certificates/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDetailsDTO>> getAllIntermediateCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -521,7 +531,8 @@ public class CertificateController {
 						x509cert.getNotBefore(),
 						x509cert.getNotAfter(),
 						alias,
-						CertificateType.INTERMEDIATE
+						CertificateType.INTERMEDIATE,
+						password
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -531,21 +542,22 @@ public class CertificateController {
 	}
 	
 	@PostMapping(value = "/downloadCertificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void downloadCertificate(@RequestBody CertificateDetailsDTO certificateDetails)
 			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
 
 		KeyStoreReader	keyStoreReader = new KeyStoreReader();
 
 		String alias = certificateDetails.getAlias();
-				
+
 		X509Certificate certificate;
 		
 		if (certificateDetails.getType().equals(CertificateType.ROOT)) {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", certificateDetails.getKeyStorePassword(), alias);
 		} else if(certificateDetails.getType().equals(CertificateType.INTERMEDIATE)) {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreintermediate.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreintermediate.p12", certificateDetails.getKeyStorePassword(), alias);
 		} else {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreendentity.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreendentity.p12", certificateDetails.getKeyStorePassword(), alias);
 		}
 		
 		StringWriter sw = new StringWriter();

@@ -104,7 +104,7 @@
 								<button
 									mat-raised-button
 									color="primary"
-									[disabled]="createCertificateExistingIssuerForm.get('keyStorePassword').errors"
+									[attr.disabled]="createCertificateExistingIssuerForm.get('keyStorePassword').errors"
 									(click)="getCACertificates()">
 									Get all CA certificates
 								</button>
@@ -272,7 +272,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="digitalSignature"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.digitalSignature == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.digitalSignature == false">
 									Digital Signature
 								</mat-checkbox>
 							</div>
@@ -282,7 +282,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="nonRepudiation"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.nonRepudiation == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.nonRepudiation == false">
 									Non Repudiation
 								</mat-checkbox>
 							</div>
@@ -292,7 +292,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="keyEncipherment"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.keyEncipherment == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.keyEncipherment == false">
 									Key Encipherment
 								</mat-checkbox>
 							</div>
@@ -302,7 +302,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="dataEncipherment"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.dataEncipherment == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.dataEncipherment == false">
 									Data Encipherment
 								</mat-checkbox>
 							</div>
@@ -312,7 +312,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="keyAgreement"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.keyAgreement == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.keyAgreement == false">
 									Key Agreement
 								</mat-checkbox>
 							</div>
@@ -322,7 +322,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="certificateSigning"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.certificateSigning == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.certificateSigning == false">
 									Certificate Signing
 								</mat-checkbox>
 							</div>
@@ -332,7 +332,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="crlSign"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.crlSign == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.crlSign == false">
 									CRL Sign
 								</mat-checkbox>
 							</div>
@@ -342,7 +342,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="enchiperOnly"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.enchiperOnly == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.enchiperOnly == false">
 									Enchiper Only
 								</mat-checkbox>
 							</div>
@@ -352,7 +352,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="decipherOnly"
-									[disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.decipherOnly == false">
+									[attr.disabled]="issuerKeyUsageExists() && getSelectedIssuerCertificate().keyUsage.decipherOnly == false">
 									Decipher Only
 								</mat-checkbox>
 							</div>
@@ -383,7 +383,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="serverAuth"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.serverAuth == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.serverAuth == false">
 									TLS Web Server Authentication
 								</mat-checkbox>
 							</div>
@@ -393,7 +393,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="codeSigning"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.codeSigning == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.codeSigning == false">
 									Code Signing
 								</mat-checkbox>
 							</div>
@@ -403,7 +403,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="clientAuth"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.clientAuth == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.clientAuth == false">
 									TLS Web Client Authentication
 								</mat-checkbox>
 							</div>
@@ -413,7 +413,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="emailProtection"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.emailProtection == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.emailProtection == false">
 									E-mail Protection
 								</mat-checkbox>
 							</div>
@@ -423,7 +423,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="timeStamping"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.timeStamping == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.timeStamping == false">
 									Time Stamping
 								</mat-checkbox>
 							</div>
@@ -433,7 +433,7 @@
 						<td>
 							<div fxLayout="column" fxFlex="50">
 								<mat-checkbox formControlName="ocspSigning"
-									[disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.ocspSigning == false">
+									[attr.disabled]="issuerExtendedKeyUsageExists() && getSelectedIssuerCertificate().extendedKeyUsage.ocspSigning == false">
 									OCSP Signing
 								</mat-checkbox>
 							</div>
