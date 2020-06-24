@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { CertificateService } from 'app/services/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { Certificate } from 'app/models/certificate';
@@ -15,98 +14,98 @@ import { CertificateDetails } from 'app/models/certificateDetails';
 })
 export class ListCertificatesComponent implements OnInit {
 
-  keyStoreForm: FormGroup;
-  displayedColumns: string[] = ['serialNumber', 'subjectName', 'issuerName', 'validFrom', 'validTo', 'buttons'];
-  certificatesDataSource: MatTableDataSource<CertificateDetails>;
+  public listCertificatesForm: FormGroup;
+  public displayedColumns: string[] = ['serialNumber', 'subjectName', 'issuerName', 'validFrom', 'validTo', 'options'];
+  public certificatesDataSource: MatTableDataSource<CertificateDetails>;
 
   constructor(
-    public dialog: MatDialog,
     private formBuilder: FormBuilder,
     private certificateService: CertificateService,
     private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
-    this.keyStoreForm = this.formBuilder.group({
-      certRole: new FormControl(null, Validators.required),
-      keyStorePassword: new FormControl(null, Validators.required)
+    this.listCertificatesForm = this.formBuilder.group({
+      certRole: new FormControl(null, [Validators.required]),
+      keyStorePassword: new FormControl(null, [Validators.required]),
     });
   }
 
   fetchCertificates() {
-    const keyStorePassword = this.keyStoreForm.value.keyStorePassword;
+    const keyStorePassword = this.listCertificatesForm.value.keyStorePassword;
 
-    if (this.keyStoreForm.value.certRole === "root") {
-      this.certificateService.getAllRootCertificates(keyStorePassword).subscribe(
-        (data: CertificateDetails[]) => {
-          this.certificatesDataSource = new MatTableDataSource(data)
-          if (data.length == 0) {
-            this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
-          }
-        },
-        (e: HttpErrorResponse) => {
-          const data: CertificateDetails[] = []
-          this.certificatesDataSource = new MatTableDataSource(data)
-          this.toastr.error(e.error.message, 'Failed to show certificates');
-        }
-      );
-    } else if (this.keyStoreForm.value.certRole === "intermediate") {
-      this.certificateService.getAllIntermediateCertificates(keyStorePassword).subscribe(
-        (data: CertificateDetails[]) => {
-          this.certificatesDataSource = new MatTableDataSource(data)
-          if (data.length == 0) {
-            this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
-          }
-        },
-        (e: HttpErrorResponse) => {
-          const data: CertificateDetails[] = []
-          this.certificatesDataSource = new MatTableDataSource(data)
-          this.toastr.error(e.error.message, 'Failed to show certificates');
-        }
-      );
+    if (this.listCertificatesForm.value.certRole === "root") {
+      this.fetchRootCertificates(keyStorePassword);
+    } else if (this.listCertificatesForm.value.certRole === "intermediate") {
+      this.fetchIntermediateCertificates(keyStorePassword);
     }
   }
 
-  viewDetails(cert: Certificate) {
-    console.log(cert);
-    this.certificateService.getValidity(cert).subscribe(
-      (valid: boolean) => {
-        if (valid == true) {
-          this.toastr.info("This certificate is valid.", 'Certificate info');
-        } else {
-          this.toastr.info("This certificate is NOT valid.", 'Certificate info');
+  private fetchRootCertificates(keyStorePassword: string) {
+    this.certificateService.getAllRootCertificates(keyStorePassword).subscribe(
+      (data: CertificateDetails[]) => {
+        this.certificatesDataSource = new MatTableDataSource(data)
+        if (data.length == 0) {
+          this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
         }
       },
       (e: HttpErrorResponse) => {
-        console.log("sranje");
-        this.toastr.error(e.error.message, 'Failed to verify certificate validity');
-      }
-    );
-    // this.dialog.open(CertificateDetailsComponent, {
-    //   data: cert,
-
-    // });
-  }
-
-  download(cert: Certificate) {
-    this.certificateService.download(
-      cert).subscribe(
-      () => {
-        this.toastr.success('Success!', 'Download certificate');
-      },
-      (e: HttpErrorResponse) => {
-        this.toastr.error(e.error.message, 'Failed to download selected certificate');
+        const data: CertificateDetails[] = []
+        this.certificatesDataSource = new MatTableDataSource(data)
+        this.toastr.error(e.error.message, 'Failed to show certificates');
       }
     );
   }
 
-  revoke(cert: Certificate) {
-    this.certificateService.revokeCertificate(cert).subscribe(
-      () => {
-        this.toastr.success("This certificate has been revoked", 'Certificate revoked successfully');
+  private fetchIntermediateCertificates(keyStorePassword: string) {
+    this.certificateService.getAllIntermediateCertificates(keyStorePassword).subscribe(
+      (data: CertificateDetails[]) => {
+        this.certificatesDataSource = new MatTableDataSource(data)
+        if (data.length == 0) {
+          this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
+        }
       },
       (e: HttpErrorResponse) => {
-        this.toastr.error(e.error.message, 'Failed to revoke selected certificate');
+        const data: CertificateDetails[] = []
+        this.certificatesDataSource = new MatTableDataSource(data)
+        this.toastr.error(e.error.message, 'Failed to show certificates');
+      }
+    );
+  }
+
+  public viewDetails(certificate: Certificate) {
+    this.certificateService.getValidity(certificate).subscribe(
+      (valid: boolean) => {
+        if (valid == true) {
+          this.toastr.info("This certificate is valid.", "Certificate info");
+        } else {
+          this.toastr.info("This certificate is NOT valid.", "Certificate info");
+        }
+      },
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, "Failed to verify certificate validity");
+      }
+    );
+  }
+
+  public download(certificate: Certificate) {
+    this.certificateService.download(certificate).subscribe(
+      () => {
+        this.toastr.success("Certificate downloaded successfully.", "Success");
+      },
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, "Failed to download selected certificate");
+      }
+    );
+  }
+
+  public revoke(certificate: Certificate) {
+    this.certificateService.revokeCertificate(certificate).subscribe(
+      () => {
+        this.toastr.success("This certificate has been revoked.", "Success");
+      },
+      (e: HttpErrorResponse) => {
+        this.toastr.error(e.error.message, "Failed to revoke selected certificate");
       }
     );
   }

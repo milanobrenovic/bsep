@@ -30,11 +30,11 @@ export class CertificateService {
     return this.httpClient.post(this.url + "/isValid", certificate);
   }
   
-  public getAllRootCertificates(keyStorePassword: number) {
+  public getAllRootCertificates(keyStorePassword: string) {
     return this.httpClient.get(this.url + "/get-all-root-certificates/" + keyStorePassword);
   }
   
-  public getAllIntermediateCertificates(keyStorePassword: number) {
+  public getAllIntermediateCertificates(keyStorePassword: string) {
     return this.httpClient.get(this.url + "/get-all-intermediate-certificates/" + keyStorePassword);
   }
 

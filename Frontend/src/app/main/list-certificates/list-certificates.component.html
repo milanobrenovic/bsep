@@ -2,124 +2,124 @@
 
 	<mat-card>
 		<mat-card-header>
-			<mat-card-title>List of certificates</mat-card-title>
+			<mat-card-title>View all certificates</mat-card-title>
 		</mat-card-header>
-		<mat-divider></mat-divider>
-		<br>
 		<mat-card-content>
-			<form fxLayout="column" [formGroup]="keyStoreForm">
+			<p>
+				Here you can select the type of certificate you would like to
+				view and then click the button below to list all of those
+				specific certificates after entering the correct key store password.
+			</p>
+			<mat-divider></mat-divider>
+			<br>
+			<form fxLayout="column" [formGroup]="listCertificatesForm">
 
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Select certificate role</mat-label>
-						<mat-select formControlName="certRole" required>
-							<mat-option value="root">Root</mat-option>
-							<mat-option value="intermediate">Intermediate</mat-option>
-							<mat-option value="end-entity">End-entity</mat-option>
-						</mat-select>
-						<mat-error
-							*ngIf="keyStoreForm.get('certRole').errors && keyStoreForm.get('certRole').errors['required']">
-							Please select a certificate role to continue.
-						</mat-error>
-					</mat-form-field>
-				</div>
+				<table class="form-full-width">
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Select certificate role</mat-label>
+								<mat-select formControlName="certRole" required>
+									<mat-option value="root">Root</mat-option>
+									<mat-option value="intermediate">Intermediate</mat-option>
+									<mat-option value="end-entity">End-entity</mat-option>
+								</mat-select>
+								<mat-error
+									*ngIf="listCertificatesForm.get('certRole').errors && listCertificatesForm.get('certRole').errors['required']">
+									Please select a certificate role.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-form-field appearance="outline" fxFlex="50">
+								<mat-label>Key store password</mat-label>
+								<input matInput type="password" formControlName="keyStorePassword" required>
+								<mat-error
+									*ngIf="listCertificatesForm.get('keyStorePassword').errors && listCertificatesForm.get('keyStorePassword').errors['required']">
+									Key store password is required.
+								</mat-error>
+							</mat-form-field>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button
+								mat-raised-button
+								color="primary"
+								[disabled]="listCertificatesForm.invalid"
+								(click)="fetchCertificates()">
+								Show certificates
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<mat-table #table [dataSource]="certificatesDataSource">
+					
+								<ng-container matColumnDef="serialNumber">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Serial number</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">{{element.serialNumber}}</mat-cell>
+								</ng-container>
+			
+								<ng-container matColumnDef="subjectName">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Subject Name</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">{{element.subjectName}}</mat-cell>
+								</ng-container>
+			
+								<ng-container matColumnDef="issuerName">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Issuer Name</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">{{element.issuerName}}</mat-cell>
+								</ng-container>
+			
+								<ng-container matColumnDef="validFrom">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Valid From</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">{{element.validFrom | date: 'd.M.yyyy.'}}</mat-cell>
+								</ng-container>
+			
+								<ng-container matColumnDef="validTo">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Valid To</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">{{element.validTo | date: 'd.M.yyyy.'}}</mat-cell>
+								</ng-container>
+			
+								<ng-container matColumnDef="options">
+									<mat-header-cell fxFlex="100" *matHeaderCellDef>Available options</mat-header-cell>
+									<mat-cell fxFlex="100" *matCellDef="let element">
+										<div class="px-4">
+											<button
+												mat-raised-button
+												class="primary"
+												(click)="viewDetails(element)">
+												Check Validity
+											</button>
+										</div>
+										<div class="px-4">
+											<button
+												mat-raised-button
+												class="accent"
+												(click)="download(element)">
+												Download
+											</button>
+										</div>
+										<div class="px-4">
+											<button
+												mat-raised-button
+												color="warn"
+												(click)="revoke(element)">
+												Revoke
+											</button>
+										</div>
+									</mat-cell>
+								</ng-container>
+			
+								<mat-header-row *matHeaderRowDef="displayedColumns sticky: true"></mat-header-row>
+								<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+							</mat-table>
+						</td>
+					</tr>
+				</table>
 
-				<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-					<mat-form-field appearance="outline" class="form-full-width" fxFlex="100">
-						<mat-label>Key store password</mat-label>
-						<input matInput type="password" formControlName="keyStorePassword" required>
-						<mat-error
-							*ngIf="keyStoreForm.get('keyStorePassword').errors && keyStoreForm.get('keyStorePassword').errors['required']">
-							Key store password is required.
-						</mat-error>
-					</mat-form-field>
-				</div>
-
-				<div fxLayout="row" fxFlex="100%">
-					<button
-						mat-raised-button
-						color="primary"
-						style="margin-right: 8px"
-						[disabled]="!keyStoreForm.valid"
-						(click)="fetchCertificates()">
-						Show certificates
-					</button>
-				</div>
-
-				<br>
-
-				<div class="example-container">
-					<mat-table #table [dataSource]="certificatesDataSource">
-						
-						<ng-container matColumnDef="serialNumber">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Serial number</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.serialNumber}}
-							</mat-cell>
-						</ng-container>
-
-						<ng-container matColumnDef="subjectName">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Subject Name</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.subjectName}}
-							</mat-cell>
-						</ng-container>
-
-						<ng-container matColumnDef="issuerName">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Issuer Name</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.issuerName}}
-							</mat-cell>
-						</ng-container>
-
-						<ng-container matColumnDef="validFrom">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Valid From</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.validFrom | date: 'd.M.yyyy.'}}
-							</mat-cell>
-						</ng-container>
-
-						<ng-container matColumnDef="validTo">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Valid To</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								{{element.validTo | date: 'd.M.yyyy.'}}
-							</mat-cell>
-						</ng-container>
-
-						<ng-container matColumnDef="buttons">
-							<mat-header-cell fxFlex="100%" *matHeaderCellDef>Available actions</mat-header-cell>
-							<mat-cell fxFlex="100%" *matCellDef="let element">
-								<div class="px-4">
-									<button
-										mat-raised-button
-										class="primary ml-2 mr-2"
-										(click)="viewDetails(element)">
-										Check Validity
-									</button>
-								</div>
-								<div class="px-4">
-									<button
-										mat-raised-button
-										class="accent ml-2 mr-2"
-										(click)="download(element)">
-										Download
-									</button>
-								</div>
-								<div class="px-4">
-									<button
-										mat-raised-button
-										color="warn"
-										(click)="revoke(element)">
-										Revoke
-									</button>
-								</div>
-							</mat-cell>
-						</ng-container>
-	
-						<mat-header-row *matHeaderRowDef="displayedColumns sticky: true"></mat-header-row>
-						<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-					</mat-table>
-				</div>
 			</form>
 		</mat-card-content>
 	</mat-card>
