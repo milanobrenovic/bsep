@@ -15,7 +15,7 @@ public class CertificateDetailsDTO {
     private String alias;
     private CertificateType type;
     private String keyStorePassword;
-
+    
     public CertificateDetailsDTO() {
 
     }
@@ -87,25 +87,20 @@ public class CertificateDetailsDTO {
 		this.type = type;
 	}
 
-    public String getKeyStorePassword() {
-        return keyStorePassword;
-    }
+	public String getKeyStorePassword() {
+		return keyStorePassword;
+	}
 
-    public void setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-    }
+	public void setKeyStorePassword(String keyStorePassword) {
+		this.keyStorePassword = keyStorePassword;
+	}
 
-    @Override
-    public String toString() {
-        return "CertificateDetailsDTO{" +
-                "subjectName='" + subjectName + '\'' +
-                ", issuerName='" + issuerName + '\'' +
-                ", serialNumber=" + serialNumber +
-                ", validFrom=" + validFrom +
-                ", validTo=" + validTo +
-                ", alias='" + alias + '\'' +
-                ", type=" + type +
-                ", keyStorePassword='" + keyStorePassword + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "CertificateDetailsDTO [subjectName=" + subjectName + ", issuerName=" + issuerName + ", serialNumber="
+				+ serialNumber + ", validFrom=" + validFrom + ", validTo=" + validTo + ", alias=" + alias + ", type="
+				+ type + ", keyStorePassword=" + keyStorePassword + "]";
+	}
+
+	
 }
