@@ -14,9 +14,16 @@ import java.security.Principal;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
@@ -26,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +57,6 @@ import com.bsep.tim11.bseptim11.service.CertificateService;
 import com.bsep.tim11.bseptim11.service.SubjectService;
 
 @RestController
-@CrossOrigin(origins = { "https://localhost:4200"})
 @RequestMapping(value = "/api/certificate")
 public class CertificateController {
 	
@@ -67,6 +73,7 @@ public class CertificateController {
 	
 	//Vraca sve subjekte koji mogu biti issueri, samo one koji su CA
 	@GetMapping(value = "/issuers")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<SubjectDTO>> getIssuers(){
 		
 		List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -82,8 +89,10 @@ public class CertificateController {
 	}
 	
 	@GetMapping(value = "/issuersKeyStore/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<Subject>> getIssuersKeyStore(@PathVariable (value = "password")String password) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 		System.out.println("Password::: "+password);
+		
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
 		if(!checkForInvalidInput(password)){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -182,17 +191,36 @@ public class CertificateController {
 	
 	//Pravljenje self-signed sertifikata
 	@PostMapping(value = "/createRoot", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> addRootCertificate(@RequestBody CertificateDTO certificateDTO){
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+			logger.log(Level.SEVERE,"Incorrect keyStore password was used");
+
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+			logger.log(Level.SEVERE,"Given certificate password is not acceptable");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(certificateDTO.getAlias())){
+			logger.log(Level.SEVERE,"Given certificate alias is not acceptable");
+
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
+			logger.log(Level.SEVERE,"Certificate with given alias already exists");
+
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		
@@ -208,6 +236,8 @@ public class CertificateController {
 		Subject subject = subjectService.findOne((Long)certificateDTO.getSubjectId());
 		
 		if(subject == null) {
+			logger.log(Level.SEVERE,"Subject was not passed into the function");
+
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -245,6 +275,7 @@ public class CertificateController {
 			ad.setAlias(certificateDTO.getAlias());
 			aliasDataService.save(ad);
 			}else{
+				logger.log(Level.SEVERE,"Could not create new certificate because keyStore password was incorrect");
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			}
 		} catch (IOException e) {
@@ -262,26 +293,64 @@ public class CertificateController {
 		ad.setId(22222L);
 		ad.setAlias(certificateDTO.getAlias());
 		aliasDataService.save(ad);*/
-		
+		logger.log(Level.INFO, "Certificate successfully created");
+
 		return new ResponseEntity<>(certificateDTO, HttpStatus.CREATED);
 		
 	}
 	
 	//Pravljenje potpisanih sertifikata
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> addCertificate(@RequestBody CertificateDTO certificateDTO){
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+			logger.log(Level.SEVERE,"Incorrect keyStore password was used");
+
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+			logger.log(Level.SEVERE,"Given certificate password is not acceptable");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(certificateDTO.getAlias())){
+			logger.log(Level.SEVERE,"Given certificate alias is not acceptable");
+
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-		
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
+			logger.log(Level.SEVERE,"Certificate with given alias already exists");
+
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		Boolean valid = false;
+		List<Certificate> certs = certificateService.findAll();
+		List<AliasData> certDatas = aliasDataService.findAll();
+	//	for (AliasData a: certDatas){
+			for(Certificate c: certs){
+				if(certificateDTO.getIssuerId() == c.getSubjectId()){
+					if(isCertificateValid(c)){
+						valid= true;
+						break;
+					}
+				}
+			}
+	//	}
+		if(!valid){
+			logger.log(Level.SEVERE,"Given certificate cant be created , because the referenced certificate could not be found");
+
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
 		}
 		Security.addProvider(new BouncyCastleProvider());
 		
@@ -294,6 +363,7 @@ public class CertificateController {
 		Subject subject = subjectService.findOne((Long)certificateDTO.getSubjectId());
 		
 		if(subject == null) {
+			logger.log(Level.SEVERE,"Selected subject could not be found");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
@@ -318,6 +388,8 @@ public class CertificateController {
 			subjectService.save(subject);
 			}
 			else{
+				logger.log(Level.SEVERE,"KeyStore could not be accessed");
+
 				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 			}
 			
@@ -360,13 +432,25 @@ public class CertificateController {
 		}
 		//aliasDataService.save(ad);
 		certificateService.save(c);
-		
+		logger.log(Level.INFO, "Successfully created intermediate certificate");
+
 		return new ResponseEntity<>(certificateDTO, HttpStatus.CREATED);
 	}
 	
 	@PostMapping(value = "/revoke", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<CertificateDTO> revokeCertificate(@RequestBody CertificateDTO certificateDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
-		
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		Security.addProvider(new BouncyCastleProvider());
 		
 		//Da znamo u koji keystore da ga bacimo
@@ -414,6 +498,7 @@ public class CertificateController {
 		
 		//ks.deleteEntry(certificateDTO.getAlias());
 		//ks.store(new FileOutputStream(new File("keystoreroot.p12")), "123".toCharArray());
+		logger.log(Level.INFO, "Revoked selected certificate and all other that were dependend of it ");
 
 		return new ResponseEntity<>(certificateDTO, HttpStatus.OK);
 	}
@@ -434,6 +519,7 @@ public class CertificateController {
 	}
 
 	@PostMapping(value = "/isValid", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<Boolean> isItAValidCertificate(@RequestBody CertificateDetailsDTO certificateDetailsDTO) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
 		System.out.println("test dtoAlias: "+certificateDetailsDTO.getAlias() );
 
@@ -445,6 +531,7 @@ public class CertificateController {
 
 
 	@GetMapping(value = "/get-all-root-certificates/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDetailsDTO>> getAllRootCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -478,6 +565,7 @@ public class CertificateController {
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
 	@GetMapping(value = "/get-all-intermediate-certificates/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDetailsDTO>> getAllIntermediateCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
 
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
@@ -512,13 +600,24 @@ public class CertificateController {
 	}
 	
 	@PostMapping(value = "/downloadCertificate")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void downloadCertificate(@RequestBody CertificateDetailsDTO certificateDetails)
 			throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
-
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		KeyStoreReader	keyStoreReader = new KeyStoreReader();
 
 		String alias = certificateDetails.getAlias();
-				
+
 		X509Certificate certificate;
 		
 		if (certificateDetails.getType().equals(CertificateType.ROOT)) {
@@ -535,11 +634,12 @@ public class CertificateController {
 		  PemObjectGenerator gen = new JcaMiscPEMGenerator(certificate);
 		  pw.writeObject(gen);
 		}
-
+		
 		FileWriter fw = new FileWriter(alias + ".cer");
 		fw.write(sw.toString());
 		fw.flush();
 		fw.close();
+		logger.log(Level.INFO, "Certificate has been downloaded");
 		
 	}
 	
@@ -547,7 +647,7 @@ public class CertificateController {
 		Boolean isValid = true;
 		for(char c:text.toCharArray()){
 			int asciiC = (c);
-			System.out.println(asciiC);
+		//System.out.println(asciiC);
 			if(asciiC>=0 && asciiC<=31){
 				isValid = false;
 				break;
@@ -576,6 +676,23 @@ public class CertificateController {
 		return isValid;
 		
 		
+	}
+	public Boolean isCertificateValid(Certificate c){
+		if(aliasDataService.findOne(c.getId()).getAliasData()!=null){
+			if(!isCertificateValid(certificateService.findOne(aliasDataService.findOne(c.getId()).getAliasData().getId()))){
+				return false;
+			}
+		}
+		DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+		Date now = new Date();  
+		   System.out.println(df.format(now));
+		   if((now).compareTo(c.getStartDate()) < 0){
+			   return false;
+		   }
+		   else if(now.compareTo(c.getEndDate()) > 0){
+			   return false;
+		   }
+		   return true;
 	}
 	
 	
