@@ -1,7 +1,12 @@
 package com.bsep.tim11.bseptim11.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import com.bsep.tim11.bseptim11.dto.SubjectDTO;
 import com.bsep.tim11.bseptim11.model.Subject;
@@ -26,7 +31,7 @@ public class SubjectController {
 
 	@Autowired
 	private SubjectService subjectService;
-	
+	  
 	@GetMapping(value = "/all")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<SubjectDTO>> getAllSubjects(){
@@ -60,39 +65,59 @@ public class SubjectController {
 	)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<SubjectDTO> addSubject(@RequestBody SubjectDTO subjectDTO){
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		
-		System.out.println("subject: "+subjectDTO.toString());
+		//System.out.println("subject: "+subjectDTO.toString());
 		
+	//	logger.log(Level.SEVERE, "message 2");
+	//	logger.log(Level.FINE, "message 3");
 		
 		if (subjectDTO.getClass() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		
 		if(!checkForInvalidInput(subjectDTO.getCommonName())){
 			System.out.println(">>> getCommonName");
+			logger.log(Level.SEVERE, subjectDTO.getCommonName()+" for a commonName is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getCountry())){
 			System.out.println(">>> getCountry");
+			logger.log(Level.SEVERE, subjectDTO.getCountry()+" for a country is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getGivenName())){
 			System.out.println(">>> getGivenName");
+			logger.log(Level.SEVERE, subjectDTO.getGivenName()+" for a given name is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getOrganization())){
 			System.out.println(">>> getOrganization");
+			logger.log(Level.SEVERE, subjectDTO.getOrganization()+" for an organization is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getOrganizationUnit())){
 			System.out.println(">>> getOrganizationUnit");
+			logger.log(Level.SEVERE, subjectDTO.getOrganizationUnit()+" for an organization unit is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInput(subjectDTO.getSurname())){
 			System.out.println(">>> getSurname");
+			logger.log(Level.SEVERE, subjectDTO.getSurname()+" for a surname is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		else if(!checkForInvalidInputEmail(subjectDTO.getEmail())){
 			System.out.println(">>> getEmail");
+			logger.log(Level.SEVERE, subjectDTO.getEmail()+" for an email is not allowed");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		
@@ -108,8 +133,10 @@ public class SubjectController {
 			subjectService.save(subject);
 		}
 		else{
+			logger.log(Level.SEVERE, subjectDTO.getEmail()+" already in use");
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
+		logger.log(Level.INFO, "Subject was created with unique email: "+subjectDTO.getEmail());
 		return new ResponseEntity<>(subjectDTO, HttpStatus.CREATED);
 		
 	}

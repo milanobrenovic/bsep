@@ -11,6 +11,10 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -116,7 +120,17 @@ public class CertificateService {
 	
 	
 	public Boolean createCertificate(String alias, String pass, X509Certificate cert, PrivateKey pk, CertificateType ct,String keystorePassword) throws IOException {
-
+		final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
 		this.keyStoreWriter = new KeyStoreWriter(); 
 		
 		this.keyStore = keyStoreWriter.getKeyStore();
@@ -133,6 +147,8 @@ public class CertificateService {
 				// U else ulazi svaki sledeci put
 //				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
 				if(!keyStoreWriter.loadKeyStore("keystoreroot.p12", password)){
+			        logger.log(Level.SEVERE, "Failed attempt to read keystore with given password");
+
 					return false;
 				}
 			}
@@ -148,6 +164,9 @@ public class CertificateService {
 				// U else ulazi svaki sledeci put
 				System.out.println("ujferwujuioaewi??EWPEKQIJE*@(");
 				if(!keyStoreWriter.loadKeyStore("keystoreintermediate.p12", password)){
+			        logger.log(Level.SEVERE, "Failed attempt to read keystore with given password");
+
+					
 					return false;
 				}
 			}
@@ -176,6 +195,8 @@ public class CertificateService {
 			System.out.println("NKEMA GAAAAAAAAAAAAA+++++++++++++++++++++");
 		}
 		System.out.println("dodjes do kraja?");
+		logger.log(Level.INFO, "Success with creating a new certificate");
+
 		return true;
 	}
 	

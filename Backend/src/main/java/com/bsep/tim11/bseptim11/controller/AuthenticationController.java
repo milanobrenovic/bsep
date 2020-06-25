@@ -3,6 +3,13 @@ package com.bsep.tim11.bseptim11.controller;
 import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
+
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,21 +24,36 @@ public class AuthenticationController {
 
     @Autowired
     private AuthService authService;
-
+    
     @PostMapping(value = "/login")
-    public ResponseEntity<LoggedInUserDTO> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
+    public ResponseEntity<UserTokenState> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
+    	final Logger logger = Logger.getLogger("");
+	    FileHandler fh = null;
+		try {
+			fh=new FileHandler("loggerExample.log", true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Logger l = Logger.getLogger("");
+    	fh.setFormatter(new SimpleFormatter());
+    	l.addHandler(fh);
+		l.setLevel(Level.CONFIG);
         try {
             LoggedInUserDTO loggedInUserDTO = authService.login(authenticationRequest);
 
-            if (loggedInUserDTO == null) {
+            if (userTokenState == null) {
+    			logger.log(Level.SEVERE, "Failed login attempt");
+
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-                return new ResponseEntity<>(loggedInUserDTO, HttpStatus.OK);
+        		logger.log(Level.INFO, "User logged with username: "+authenticationRequest.getUsername());
+
+                return new ResponseEntity<>(userTokenState, HttpStatus.OK);
             }
         } catch (AuthenticationException e) {
             e.printStackTrace();
         }
-
+        logger.log(Level.SEVERE, "Failed login attempt");
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
