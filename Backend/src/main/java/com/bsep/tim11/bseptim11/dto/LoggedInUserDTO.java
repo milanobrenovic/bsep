@@ -1,15 +1,13 @@
 package com.bsep.tim11.bseptim11.dto;
 
-import com.bsep.tim11.bseptim11.model.UserTokenState;
-
 public class LoggedInUserDTO {
 
     private Long id;
     private String username;
     private String role;
-    private UserTokenState userTokenState;
+    private UserTokenStateDTO userTokenState;
 
-    public LoggedInUserDTO(Long id, String username, String role, UserTokenState userTokenState) {
+    public LoggedInUserDTO(Long id, String username, String role, UserTokenStateDTO userTokenState) {
         this.id = id;
         this.username = username;
         this.role = role;
@@ -40,11 +38,11 @@ public class LoggedInUserDTO {
         this.role = role;
     }
 
-    public UserTokenState getUserTokenState() {
+    public UserTokenStateDTO getUserTokenState() {
         return userTokenState;
     }
 
-    public void setUserTokenState(UserTokenState userTokenState) {
+    public void setUserTokenState(UserTokenStateDTO userTokenState) {
         this.userTokenState = userTokenState;
     }
 

@@ -46,7 +46,7 @@ const appRoutes: Routes = [
     {
         path        : 'pages/create-subject',
         component   : CreateSubjectComponent,
-        canActivate : [AdminGuard],
+        // canActivate : [AdminGuard],
     },
     {
         path        : 'pages/create-root-certificate',

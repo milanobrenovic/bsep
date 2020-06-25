@@ -65,4 +65,11 @@ public class Authority implements GrantedAuthority {
         return Objects.hashCode(id);
     }
 
+    @Override
+    public String toString() {
+        return "Authority{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

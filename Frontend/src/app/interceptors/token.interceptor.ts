@@ -8,25 +8,28 @@ import {
 import { Observable } from 'rxjs';
 import { UserTokenState } from '../models/userTokenState';
 import { UserService } from '../services/user.service';
+import { LoggedInUser } from 'app/models/loggedInUser';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   
-  userTokenState: UserTokenState;
+  public loggedInUser: LoggedInUser;
 
   constructor(
     public userService: UserService,
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.userTokenState = JSON.parse(localStorage.getItem("LoggedInUser"));
+    this.loggedInUser = this.userService.getLoggedInUser();
 
-    if (this.userTokenState) {
-      if (this.userTokenState.jwtAccessToken) {
+    console.log(this.loggedInUser);
+
+    if (this.loggedInUser) {
+      if (this.loggedInUser.userTokenState.jwtAccessToken) {
         request = request.clone(
           {
             setHeaders: {
-              Authorization: `Bearer ${this.userTokenState.jwtAccessToken}`
+              Authorization: `Bearer ${this.loggedInUser.userTokenState.jwtAccessToken}`
             }
           }
         );

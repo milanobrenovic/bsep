@@ -3,13 +3,14 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Rout
 import { Observable } from 'rxjs';
 import { UserTokenState } from '../models/userTokenState';
 import { UserService } from '../services/user.service';
+import { LoggedInUser } from 'app/models/loggedInUser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminGuard implements CanActivate {
 
-  loggedInUser: UserTokenState;
+  public loggedInUser: LoggedInUser;
 
   constructor(
     private router: Router,
@@ -23,7 +24,7 @@ export class AdminGuard implements CanActivate {
     this.loggedInUser = this.userService.getLoggedInUser();
 
     if (this.loggedInUser) {
-      if (this.loggedInUser) {
+      if (this.loggedInUser.role == "ROLE_ADMIN") {
         return true;
       } else {
         this.router.navigate(['/errors/unauthorized']);

@@ -83,4 +83,13 @@ public class Admin implements UserDetails {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "Admin{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities.toString() +
+                '}';
+    }
 }

@@ -3,7 +3,7 @@ package com.bsep.tim11.bseptim11.serviceImpl;
 import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
 import com.bsep.tim11.bseptim11.model.Admin;
 import com.bsep.tim11.bseptim11.model.Authority;
-import com.bsep.tim11.bseptim11.model.UserTokenState;
+import com.bsep.tim11.bseptim11.dto.UserTokenStateDTO;
 import com.bsep.tim11.bseptim11.repository.AuthRepository;
 import com.bsep.tim11.bseptim11.security.TokenUtils;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
         return returnLoggedInUser(
                 authentication.getPrincipal(),
-                new UserTokenState(jwtToken, expiresIn)
+                new UserTokenStateDTO(jwtToken, expiresIn)
         );
     }
 
@@ -78,14 +78,14 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
-    private LoggedInUserDTO returnLoggedInUser(Object object, UserTokenState userTokenState) {
+    private LoggedInUserDTO returnLoggedInUser(Object object, UserTokenStateDTO userTokenStateDTO) {
         if (object instanceof Admin) {
             Admin admin = (Admin) object;
             return new LoggedInUserDTO(
                 admin.getId(),
                 admin.getUsername(),
                 "ROLE_ADMIN",
-                userTokenState
+                    userTokenStateDTO
             );
         }
         return null;

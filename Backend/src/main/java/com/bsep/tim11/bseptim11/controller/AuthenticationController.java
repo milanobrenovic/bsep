@@ -1,7 +1,6 @@
 package com.bsep.tim11.bseptim11.controller;
 
 import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
-import com.bsep.tim11.bseptim11.model.UserTokenState;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
