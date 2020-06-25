@@ -22,8 +22,6 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.loggedInUser = this.userService.getLoggedInUser();
 
-    console.log(this.loggedInUser);
-
     if (this.loggedInUser) {
       if (this.loggedInUser.userTokenState.jwtAccessToken) {
         request = request.clone(

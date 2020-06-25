@@ -1,6 +1,7 @@
 package com.bsep.tim11.bseptim11.controller;
 
 import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
+import com.bsep.tim11.bseptim11.dto.UserTokenStateDTO;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
 
@@ -18,7 +19,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = { "https://localhost:4200"})
 @RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(value = "https://localhost:4200")
 public class AuthenticationController {
@@ -27,11 +27,11 @@ public class AuthenticationController {
     private AuthService authService;
     
     @PostMapping(value = "/login")
-    public ResponseEntity<UserTokenState> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
+    public ResponseEntity<LoggedInUserDTO> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
     	final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerAuthentication.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -42,14 +42,14 @@ public class AuthenticationController {
         try {
             LoggedInUserDTO loggedInUserDTO = authService.login(authenticationRequest);
 
-            if (userTokenState == null) {
+            if (loggedInUserDTO == null) {
     			logger.log(Level.SEVERE, "Failed login attempt");
 
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
         		logger.log(Level.INFO, "User logged with username: "+authenticationRequest.getUsername());
 
-                return new ResponseEntity<>(userTokenState, HttpStatus.OK);
+                return new ResponseEntity<>(loggedInUserDTO, HttpStatus.OK);
             }
         } catch (AuthenticationException e) {
             e.printStackTrace();
