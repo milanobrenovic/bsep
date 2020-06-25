@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +50,7 @@ import com.bsep.tim11.bseptim11.service.CertificateService;
 import com.bsep.tim11.bseptim11.service.SubjectService;
 
 @RestController
+@CrossOrigin(origins = { "https://localhost:4200"})
 @RequestMapping(value = "/api/certificate")
 public class CertificateController {
 	
@@ -466,7 +468,8 @@ public class CertificateController {
 					x509cert.getNotBefore(),
 					x509cert.getNotAfter(),
 					alias,
-					CertificateType.ROOT
+					CertificateType.ROOT,
+					password
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -498,7 +501,8 @@ public class CertificateController {
 						x509cert.getNotBefore(),
 						x509cert.getNotAfter(),
 						alias,
-						CertificateType.INTERMEDIATE
+						CertificateType.INTERMEDIATE,
+						password
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
 			}
@@ -518,11 +522,11 @@ public class CertificateController {
 		X509Certificate certificate;
 		
 		if (certificateDetails.getType().equals(CertificateType.ROOT)) {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreroot.p12", certificateDetails.getKeyStorePassword(), alias);
 		} else if(certificateDetails.getType().equals(CertificateType.INTERMEDIATE)) {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreintermediate.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreintermediate.p12", certificateDetails.getKeyStorePassword(), alias);
 		} else {
-			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreendentity.p12", "123", alias);
+			certificate = (X509Certificate)keyStoreReader.readCertificate("keystoreendentity.p12", certificateDetails.getKeyStorePassword(), alias);
 		}
 		
 		StringWriter sw = new StringWriter();
