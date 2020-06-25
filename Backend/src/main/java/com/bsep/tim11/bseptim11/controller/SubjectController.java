@@ -223,7 +223,12 @@ public class SubjectController {
 			}
 		}
 		
-		if(text.toUpperCase().contains("DROP") || text.toUpperCase().contains("INTO") || text.toUpperCase().contains("DELETE") || text.toUpperCase().contains("INSERT") || text.toUpperCase().contains("SELECT")){
+		if(text.toUpperCase().contains("DROP") ||
+			text.toUpperCase().contains("UPDATE") ||
+			text.toUpperCase().contains("INTO") ||
+			text.toUpperCase().contains("DELETE") ||
+			text.toUpperCase().contains("INSERT") ||
+			text.toUpperCase().contains("SELECT")){
 			isValid = false;
 		}
 		return isValid;
