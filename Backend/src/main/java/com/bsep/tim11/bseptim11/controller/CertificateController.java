@@ -90,7 +90,7 @@ public class CertificateController {
 		System.out.println("Password::: "+password);
 		
 		//List<SubjectDTO> issuersDTO = new ArrayList<>();
-		if(!checkForInvalidInput(password)){
+		if(!checkForInvalidInputPassword(password)){
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 		List<Subject> issuers = new ArrayList<>();
@@ -200,12 +200,12 @@ public class CertificateController {
     	fh.setFormatter(new SimpleFormatter());
     	l.addHandler(fh);
 		l.setLevel(Level.CONFIG);
-		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+		if(!checkForInvalidInputPassword(certificateDTO.getKeyStorePassword())){
 			logger.log(Level.SEVERE,"Incorrect keyStore password was used");
 
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+		else if(!checkForInvalidInputPassword(certificateDTO.getPassword())){
 			logger.log(Level.SEVERE,"Given certificate password is not acceptable");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -213,6 +213,9 @@ public class CertificateController {
 			logger.log(Level.SEVERE,"Given certificate alias is not acceptable");
 
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+		else if(!checkForInvalidInputPassword(certificateDTO.getKeyStorePassword())){
+			logger.log(Level.SEVERE,"Given keystore password is not acceptable");
 		}
 		if(aliasDataService.findByAlias(certificateDTO.getAlias())!=null){
 			logger.log(Level.SEVERE,"Certificate with given alias already exists");
@@ -310,12 +313,12 @@ public class CertificateController {
     	fh.setFormatter(new SimpleFormatter());
     	l.addHandler(fh);
 		l.setLevel(Level.CONFIG);
-		if(!checkForInvalidInput(certificateDTO.getKeyStorePassword())){
+		if(!checkForInvalidInputPassword(certificateDTO.getKeyStorePassword())){
 			logger.log(Level.SEVERE,"Incorrect keyStore password was used");
 
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
-		else if(!checkForInvalidInput(certificateDTO.getPassword())){
+		else if(!checkForInvalidInputPassword(certificateDTO.getPassword())){
 			logger.log(Level.SEVERE,"Given certificate password is not acceptable");
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
@@ -733,7 +736,48 @@ public class CertificateController {
 		   }
 		   return true;
 	}
-	
+	public Boolean checkForInvalidInputPassword(String text){
+		Boolean isValid = true;
+		for(char c:text.toCharArray()){
+			int asciiC = (c);
+			//System.out.println(asciiC);
+			if(asciiC>=0 && asciiC<=31){
+				isValid = false;
+				break;
+			}
+		/*	else if(asciiC >= 33 && asciiC <=45){
+				isValid = false;
+				break;
+			}*/
+		/*	else if(asciiC == 47){
+				isValid = false;
+				break;
+			}*/
+			/*else if(asciiC >= 58 && asciiC <=63){
+				isValid = false;
+				break;
+			}*/
+		/*	else if(asciiC >= 91 && asciiC <=96){
+				isValid = false;
+				break
+			}*/else if(asciiC == 127){
+				isValid = false;
+				break;
+			}
+		}
+		
+		if(text.toUpperCase().contains("DROP") ||
+			text.toUpperCase().contains("UPDATE") ||
+			text.toUpperCase().contains("INTO") ||
+			text.toUpperCase().contains("DELETE") ||
+			text.toUpperCase().contains("INSERT") ||
+			text.toUpperCase().contains("SELECT")){
+			isValid = false;
+		}
+		return isValid;
+		
+		
+	}
 	
 	
 }
