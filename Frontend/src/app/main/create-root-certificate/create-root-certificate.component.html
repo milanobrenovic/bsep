@@ -354,8 +354,16 @@
 								<mat-label>Password</mat-label>
 								<input matInput type="password" formControlName="password" required>
 								<mat-error
-									*ngIf="createRootCertificateAccessInformationForm.get('password').errors && createRootCertificateAccessInformationForm.get('password').errors['required']">
+									*ngIf="createRootCertificateAccessInformationForm.get('password').invalid && createRootCertificateAccessInformationForm.get('password').errors['required']">
 									Password is required.
+								</mat-error>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('password').invalid && createRootCertificateAccessInformationForm.get('password').errors.minlength">
+									Password must be at least 8 characters.
+								</mat-error>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('password').invalid && createRootCertificateAccessInformationForm.get('password').invalid">
+									{{createRootCertificateAccessInformationForm.get('password').errors['passwordStrength']}}
 								</mat-error>
 							</mat-form-field>
 						</td>
@@ -366,8 +374,16 @@
 								<mat-label>Key store password</mat-label>
 								<input matInput type="password" formControlName="keyStorePassword" required>
 								<mat-error
-									*ngIf="createRootCertificateAccessInformationForm.get('keyStorePassword').errors && createRootCertificateAccessInformationForm.get('keyStorePassword').errors['required']">
+									*ngIf="createRootCertificateAccessInformationForm.get('keyStorePassword').invalid && createRootCertificateAccessInformationForm.get('keyStorePassword').errors['required']">
 									Key store password is required.
+								</mat-error>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('keyStorePassword').invalid && createRootCertificateAccessInformationForm.get('keyStorePassword').errors.minlength">
+									Key store password must be at least 8 characters.
+								</mat-error>
+								<mat-error
+									*ngIf="createRootCertificateAccessInformationForm.get('keyStorePassword').invalid && createRootCertificateAccessInformationForm.get('keyStorePassword').invalid">
+									{{createRootCertificateAccessInformationForm.get('keyStorePassword').errors['passwordStrength']}}
 								</mat-error>
 							</mat-form-field>
 						</td>

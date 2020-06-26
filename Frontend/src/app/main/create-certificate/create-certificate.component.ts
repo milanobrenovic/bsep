@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Entity } from 'app/models/entity';
 import { Certificate } from 'app/models/certificate';
 import { ToastrService } from 'ngx-toastr';
@@ -25,6 +25,44 @@ const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
   }
 
   return { validError: true };
+}
+
+const PasswordStrengthValidator = function (control: AbstractControl): ValidationErrors | null {
+  let value: string = control.value || '';
+  let msg = "";
+
+  if (!value) {
+    return null
+  }
+
+  let upperCaseCharacters = /[A-Z]+/g;
+  let lowerCaseCharacters = /[a-z]+/g;
+  let numberCharacters = /[0-9]+/g;
+  let specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  if (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false || specialCharacters.test(value) === false) {
+    return {
+      passwordStrength: "Password must contain at least two of the following: numbers, lowercase letters, uppercase letters, or special characters.",
+    }
+  }
+}
+
+const KeyStorePasswordStrengthValidator = function (control: AbstractControl): ValidationErrors | null {
+  let value: string = control.value || '';
+  let msg = "";
+
+  if (!value) {
+    return null
+  }
+
+  let upperCaseCharacters = /[A-Z]+/g;
+  let lowerCaseCharacters = /[a-z]+/g;
+  let numberCharacters = /[0-9]+/g;
+  let specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  if (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false || specialCharacters.test(value) === false) {
+    return {
+      passwordStrength: "Key store password must contain at least two of the following: numbers, lowercase letters, uppercase letters, or special characters.",
+    }
+  }
 }
 
 @Component({
@@ -77,7 +115,11 @@ export class CreateCertificateComponent implements OnInit {
 
   private initExistingIssuerForm() {
     this.createCertificateExistingIssuerForm = this.formBuilder.group({
-      keyStorePassword: new FormControl(null, [Validators.required]),
+      keyStorePassword:  new FormControl(null, [Validators.compose([
+        Validators.required,
+        Validators.minLength(8),
+        PasswordStrengthValidator,
+      ])]),
       selectedIssuerCertificate: new FormControl(null, Validators.required),
     });
   }
@@ -129,8 +171,16 @@ export class CreateCertificateComponent implements OnInit {
   private initAccessInformationForm() {
     this.createCertificateAccessInformationForm = this.formBuilder.group({
       alias: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required]),
-      keyStorePassword: new FormControl(null, [Validators.required]),
+      password:  new FormControl(null, [Validators.compose([
+        Validators.required,
+        Validators.minLength(8),
+        PasswordStrengthValidator,
+      ])]),
+      keyStorePassword:  new FormControl(null, [Validators.compose([
+        Validators.required,
+        Validators.minLength(8),
+        KeyStorePasswordStrengthValidator,
+      ])]),
     });
   }
   
@@ -145,48 +195,6 @@ export class CreateCertificateComponent implements OnInit {
     );
   }
   
-  getKeyUsages(issuerCertificate: Certificate): string {
-    if (!issuerCertificate.keyUsageDTO) {
-      return " (certS, crlS, dataE, decO, digS, encO, keyAgr, keyE, nonRep)";
-    }
-    var keyUsages = '(';
-    if (issuerCertificate.keyUsageDTO.certificateSigning) {
-      keyUsages += 'certS, ';
-    }
-    if (issuerCertificate.keyUsageDTO.crlSign) {
-      keyUsages += 'crlS, ';
-    }
-    if (issuerCertificate.keyUsageDTO.dataEncipherment) {
-      keyUsages += 'dataE, ';
-    }
-    if (issuerCertificate.keyUsageDTO.decipherOnly) {
-      keyUsages += 'decO, ';
-    }
-    if (issuerCertificate.keyUsageDTO.digitalSignature) {
-      keyUsages += 'digS, ';
-    }
-    if (issuerCertificate.keyUsageDTO.encipherOnly) {
-      keyUsages += 'encO, ';
-    }
-    if (issuerCertificate.keyUsageDTO.keyAgreement) {
-      keyUsages += 'keyAgr, ';
-    }
-    if (issuerCertificate.keyUsageDTO.keyEncipherment) {
-      keyUsages += 'keyE, ';
-    }
-    if (issuerCertificate.keyUsageDTO.nonRepudiation) {
-      keyUsages += 'nonRep, ';
-    }
-    if (keyUsages.length == 1) {
-      return '';
-    }
-
-    keyUsages = keyUsages.substring(0, keyUsages.length - 2);
-    keyUsages += ')';
-
-    return keyUsages;
-  }
-
   public getSelectedSubject() {
     return this.createCertificateSubjectForm.value.selectedSubject;
   }

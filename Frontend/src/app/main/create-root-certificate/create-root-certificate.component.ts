@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Entity } from 'app/models/entity';
 import { ToastrService } from 'ngx-toastr';
 import { SubjectService } from 'app/services/subject.service';
@@ -26,6 +26,44 @@ const TimeValidator: ValidatorFn = (formGroup: FormGroup) => {
   return { validError: true };
 }
 
+const PasswordStrengthValidator = function (control: AbstractControl): ValidationErrors | null {
+  let value: string = control.value || '';
+  let msg = "";
+
+  if (!value) {
+    return null
+  }
+
+  let upperCaseCharacters = /[A-Z]+/g;
+  let lowerCaseCharacters = /[a-z]+/g;
+  let numberCharacters = /[0-9]+/g;
+  let specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  if (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false || specialCharacters.test(value) === false) {
+    return {
+      passwordStrength: "Password must contain at least two of the following: numbers, lowercase letters, uppercase letters, or special characters.",
+    }
+  }
+}
+
+const KeyStorePasswordStrengthValidator = function (control: AbstractControl): ValidationErrors | null {
+  let value: string = control.value || '';
+  let msg = "";
+
+  if (!value) {
+    return null
+  }
+
+  let upperCaseCharacters = /[A-Z]+/g;
+  let lowerCaseCharacters = /[a-z]+/g;
+  let numberCharacters = /[0-9]+/g;
+  let specialCharacters = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+  if (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false || specialCharacters.test(value) === false) {
+    return {
+      passwordStrength: "Key store password must contain at least two of the following: numbers, lowercase letters, uppercase letters, or special characters.",
+    }
+  }
+}
+
 @Component({
   selector: 'app-create-root-certificate',
   templateUrl: './create-root-certificate.component.html',
@@ -41,6 +79,8 @@ export class CreateRootCertificateComponent implements OnInit {
 
   public minDate = new Date();
   public subjects: Entity[] = [];
+
+  public myForms: FormGroup;
 
   constructor(
     private certificateService: CertificateService,
@@ -107,8 +147,21 @@ export class CreateRootCertificateComponent implements OnInit {
   private initAccessInformationForm() {
     this.createRootCertificateAccessInformationForm = this.formBuilder.group({
       alias: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required]),
-      keyStorePassword: new FormControl(null, [Validators.required]),
+      password: new FormControl(null, [Validators.compose([
+        Validators.required,
+        Validators.minLength(8),
+        PasswordStrengthValidator,
+      ])]),
+      keyStorePassword: new FormControl(null, [Validators.compose([
+        Validators.required,
+        Validators.minLength(8),
+        KeyStorePasswordStrengthValidator,
+      ])]),
+    });
+
+    this.myForms = this.formBuilder.group({
+      password: [null, Validators.compose([
+        Validators.required, Validators.minLength(8), PasswordStrengthValidator])]
     });
   }
   
@@ -180,6 +233,8 @@ export class CreateRootCertificateComponent implements OnInit {
       keyUsage,
       extendedKeyUsage,
     );
+
+    console.log(certificate);
 
     this.toastrService.info("Creating root certificate...", "Please wait");
     this.certificateService.createNewRootCertificate(certificate).subscribe(
