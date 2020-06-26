@@ -179,6 +179,7 @@ export class CreateRootCertificateComponent implements OnInit {
       this.createRootCertificateAccessInformationForm.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
+      true
     );
 
     this.toastrService.info("Creating root certificate...", "Please wait");

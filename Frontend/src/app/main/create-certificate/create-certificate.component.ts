@@ -241,6 +241,7 @@ export class CreateCertificateComponent implements OnInit {
     const validFrom = formatDate(this.createCertificateValidityForm.value.validFrom, 'yyyy-MM-dd', 'en-US');
     const validTo = formatDate(this.createCertificateValidityForm.value.validTo, 'yyyy-MM-dd', 'en-US');
 
+    console.log(this.createCertificateExtensionsForm.value);
     const certificate = new Certificate(
       this.createCertificateSubjectForm.value.selectedSubject.id,
       this.createCertificateExistingIssuerForm.value.selectedIssuerCertificate.id,
@@ -251,6 +252,7 @@ export class CreateCertificateComponent implements OnInit {
       this.createCertificateAccessInformationForm.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
+      this.createCertificateExtensionsForm.value.subjectIsCa
     );
 
     this.toastrService.info("Creating certificate...", "Please wait");

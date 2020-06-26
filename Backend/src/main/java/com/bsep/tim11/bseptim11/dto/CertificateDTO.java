@@ -15,11 +15,12 @@ public class CertificateDTO {
 	private KeyUsageDTO keyUsageDTO;
 	private ExtendedKeyUsageDTO extendedKeyUsageDTO;
 	private String keyStorePassword;
+	private boolean isCA;
 	
 	public CertificateDTO() {}
 	
 	public CertificateDTO(Long subjectId, Long issuerId, Date startDate, Date endDate, String alias, String password,
-			KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO, String keyStorePassword) {
+			KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO, String keyStorePassword, boolean isCA) {
 		super();
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
@@ -30,9 +31,10 @@ public class CertificateDTO {
 		this.keyUsageDTO = keyUsageDTO;
 		this.extendedKeyUsageDTO = extendedKeyUsageDTO;
 		this.keyStorePassword = keyStorePassword;
+		this.isCA = isCA;
 	}
 
-	public CertificateDTO(Long subjectId, Long issuerId, String startDate, String endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO) {
+	public CertificateDTO(Long subjectId, Long issuerId, String startDate, String endDate, String alias, String password, KeyUsageDTO keyUsageDTO, ExtendedKeyUsageDTO extendedKeyUsageDTO, boolean isCA) {
 		super();
 		this.subjectId = subjectId;
 		this.issuerId = issuerId;
@@ -40,6 +42,7 @@ public class CertificateDTO {
 		this.password = password;
 		this.keyUsageDTO = new KeyUsageDTO(keyUsageDTO);
 		this.extendedKeyUsageDTO = new ExtendedKeyUsageDTO(extendedKeyUsageDTO);
+		this.isCA = isCA;
 		
 		//Datumi od kad do kad vazi sertifikat
 		SimpleDateFormat iso8601Formater = new SimpleDateFormat("yyyy-MM-dd");
@@ -125,6 +128,14 @@ public class CertificateDTO {
 		this.keyStorePassword = keyStorePassword;
 	}
 
+	public boolean getIsCA() {
+		return this.isCA;
+	}
+
+	public void setIsCA(boolean isCA) {
+		this.isCA = isCA;
+	}
+
 	@Override
 	public String toString() {
 		return "CertificateDTO{" +
@@ -134,8 +145,8 @@ public class CertificateDTO {
 				", endDate=" + endDate +
 				", alias='" + alias + '\'' +
 				", password='" + password + '\'' +
-			//	", keyUsage=" + keyUsageDTO.toString() +
-			//	", extendedKeyUsage=" + extendedKeyUsageDTO.toString() +
+				", keyUsage=" + keyUsageDTO.toString() +
+				", extendedKeyUsage=" + extendedKeyUsageDTO.toString() +
 				'}';
 	}
 }
