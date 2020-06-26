@@ -38,6 +38,8 @@ export class ListCertificatesComponent implements OnInit {
       this.fetchRootCertificates(keyStorePassword);
     } else if (this.listCertificatesForm.value.certRole === "intermediate") {
       this.fetchIntermediateCertificates(keyStorePassword);
+    } else if (this.listCertificatesForm.value.certRole === "end-entity"){
+      this.fetchEndEntityCertificates(keyStorePassword);
     }
   }
 
@@ -59,6 +61,22 @@ export class ListCertificatesComponent implements OnInit {
 
   private fetchIntermediateCertificates(keyStorePassword: string) {
     this.certificateService.getAllIntermediateCertificates(keyStorePassword).subscribe(
+      (data: CertificateDetails[]) => {
+        this.certificatesDataSource = new MatTableDataSource(data)
+        if (data.length == 0) {
+          this.toastr.info('No certificates in the specified KeyStore.', 'Show certificates');
+        }
+      },
+      (e: HttpErrorResponse) => {
+        const data: CertificateDetails[] = []
+        this.certificatesDataSource = new MatTableDataSource(data)
+        this.toastr.error(e.error.message, 'Failed to show certificates');
+      }
+    );
+  }
+
+  private fetchEndEntityCertificates(keyStorePassword: string) {
+    this.certificateService.getAllEndEntityCertificates(keyStorePassword).subscribe(
       (data: CertificateDetails[]) => {
         this.certificatesDataSource = new MatTableDataSource(data)
         if (data.length == 0) {

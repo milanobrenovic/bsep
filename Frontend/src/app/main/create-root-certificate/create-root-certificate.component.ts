@@ -232,6 +232,7 @@ export class CreateRootCertificateComponent implements OnInit {
       this.createRootCertificateAccessInformationForm.value.keyStorePassword,
       keyUsage,
       extendedKeyUsage,
+      true
     );
 
     console.log(certificate);
