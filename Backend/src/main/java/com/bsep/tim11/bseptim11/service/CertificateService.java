@@ -178,7 +178,12 @@ public class CertificateService {
 			if(!f.isFile()) {
 				keyStoreWriter.loadKeyStore(null, password);
 			} else {
-				keyStoreWriter.loadKeyStore("keystoreendentity.p12", password);
+				if(!keyStoreWriter.loadKeyStore("keystoreendentity.p12", password)){
+			        logger.log(Level.SEVERE, "Failed attempt to read keystore with given password");
+
+					
+					return false;
+				}
 			}
 			keyStoreWriter.write(alias, pk, pass.toCharArray(), cert);
 			keyStoreWriter.saveKeyStore("keystoreendentity.p12", password);

@@ -192,7 +192,7 @@ public class CertificateController {
 		final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerCertificate.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -305,7 +305,7 @@ public class CertificateController {
 		final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerCertificate.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -438,9 +438,11 @@ public class CertificateController {
 				}
 			}
 			}
-			if(nasao = true)
+			if(nasao = true){
 			ad2.getAliases().add(ad);
+			}
 		}
+		
 		//aliasDataService.save(ad);
 		certificateService.save(c);
 		logger.log(Level.INFO, "Successfully created intermediate certificate");
@@ -454,7 +456,7 @@ public class CertificateController {
 		final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerRevokation.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -652,7 +654,7 @@ public class CertificateController {
 		final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerDownload.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

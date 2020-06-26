@@ -68,7 +68,7 @@ public class SubjectController {
 		final Logger logger = Logger.getLogger("");
 	    FileHandler fh = null;
 		try {
-			fh=new FileHandler("loggerExample.log", true);
+			fh=new FileHandler("loggerSubject.log", true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
