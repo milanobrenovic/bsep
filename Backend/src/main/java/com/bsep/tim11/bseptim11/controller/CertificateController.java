@@ -413,12 +413,13 @@ public class CertificateController {
 		ad.setAlias(certificateDTO.getAlias());
 		
 		this.keyStoreReader = new KeyStoreReader();
-		
+		Boolean nasao = false;
 		List<AliasData> aliasDatas = aliasDataService.findAll();
 		for (AliasData ad2 : aliasDatas){
 			if(ad2.getId() == certificateDTO.getIssuerId()){
-			cert = (X509Certificate) keyStoreReader.readCertificate("keystoreroot.p12", "123", ad2.getAlias());
+			cert = (X509Certificate) keyStoreReader.readCertificate("keystoreroot.p12", certificateDTO.getKeyStorePassword(), ad2.getAlias());
 			if (cert != null) {
+				nasao = true;
 				System.out.println("Udjes u root?");
 				
 				ad.setAliasData(ad2);
@@ -427,14 +428,17 @@ public class CertificateController {
 			}
 			else{
 				System.out.println("Udjes u else?");
-				cert = (X509Certificate) keyStoreReader.readCertificate("keystoreintermediate.p12", "123", ad2.getAlias());
+				cert = (X509Certificate) keyStoreReader.readCertificate("keystoreintermediate.p12", certificateDTO.getKeyStorePassword(), ad2.getAlias());
 				if (cert != null) {
+					nasao = true;
+
 					ad.setAliasData(ad2);
 					aliasDataService.save(ad);
 					break;
 				}
 			}
 			}
+			if(nasao = true)
 			ad2.getAliases().add(ad);
 		}
 		//aliasDataService.save(ad);
