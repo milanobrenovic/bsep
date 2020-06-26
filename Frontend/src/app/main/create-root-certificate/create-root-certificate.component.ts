@@ -235,8 +235,6 @@ export class CreateRootCertificateComponent implements OnInit {
       true
     );
 
-    console.log(certificate);
-
     this.toastrService.info("Creating root certificate...", "Please wait");
     this.certificateService.createNewRootCertificate(certificate).subscribe(
       () => {

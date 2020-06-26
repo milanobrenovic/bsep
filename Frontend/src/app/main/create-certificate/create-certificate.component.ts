@@ -115,7 +115,7 @@ export class CreateCertificateComponent implements OnInit {
 
   private initExistingIssuerForm() {
     this.createCertificateExistingIssuerForm = this.formBuilder.group({
-      keyStorePassword:  new FormControl(null, [Validators.compose([
+      keyStorePassword: new FormControl(null, [Validators.compose([
         Validators.required,
         Validators.minLength(8),
         PasswordStrengthValidator,
@@ -171,12 +171,12 @@ export class CreateCertificateComponent implements OnInit {
   private initAccessInformationForm() {
     this.createCertificateAccessInformationForm = this.formBuilder.group({
       alias: new FormControl(null, [Validators.required]),
-      password:  new FormControl(null, [Validators.compose([
+      password: new FormControl(null, [Validators.compose([
         Validators.required,
         Validators.minLength(8),
         PasswordStrengthValidator,
       ])]),
-      keyStorePassword:  new FormControl(null, [Validators.compose([
+      keyStorePassword: new FormControl(null, [Validators.compose([
         Validators.required,
         Validators.minLength(8),
         KeyStorePasswordStrengthValidator,
@@ -249,7 +249,6 @@ export class CreateCertificateComponent implements OnInit {
     const validFrom = formatDate(this.createCertificateValidityForm.value.validFrom, 'yyyy-MM-dd', 'en-US');
     const validTo = formatDate(this.createCertificateValidityForm.value.validTo, 'yyyy-MM-dd', 'en-US');
 
-    console.log(this.createCertificateExtensionsForm.value);
     const certificate = new Certificate(
       this.createCertificateSubjectForm.value.selectedSubject.id,
       this.createCertificateExistingIssuerForm.value.selectedIssuerCertificate.id,

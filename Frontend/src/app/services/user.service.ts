@@ -1,5 +1,4 @@
 import { map } from 'rxjs/operators';
-import { UserTokenState } from './../models/userTokenState';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserLoginRequest } from './../models/userLoginRequest';
 import { environment } from '../../environments/environment';

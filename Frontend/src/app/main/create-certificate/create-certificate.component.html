@@ -92,8 +92,16 @@
 								<mat-label>Key store password</mat-label>
 								<input matInput type="password" formControlName="keyStorePassword" required>
 								<mat-error
-									*ngIf="createCertificateExistingIssuerForm.get('keyStorePassword').errors && createCertificateExistingIssuerForm.get('keyStorePassword').errors['required']">
+									*ngIf="createCertificateExistingIssuerForm.get('keyStorePassword').invalid && createCertificateExistingIssuerForm.get('keyStorePassword').errors['required']">
 									Key store password is required.
+								</mat-error>
+								<mat-error
+									*ngIf="createCertificateExistingIssuerForm.get('keyStorePassword').invalid && createCertificateExistingIssuerForm.get('keyStorePassword').errors.minlength">
+									Key store password must be at least 8 characters.
+								</mat-error>
+								<mat-error
+									*ngIf="createCertificateExistingIssuerForm.get('keyStorePassword').invalid && createCertificateExistingIssuerForm.get('keyStorePassword').invalid">
+									{{createCertificateExistingIssuerForm.get('keyStorePassword').errors['passwordStrength']}}
 								</mat-error>
 							</mat-form-field>
 						</td>
