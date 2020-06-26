@@ -38,6 +38,10 @@ export class CertificateService {
     return this.httpClient.get(this.url + "/get-all-intermediate-certificates/" + keyStorePassword);
   }
 
+  public getAllEndEntityCertificates(keyStorePassword: string) {
+    return this.httpClient.get(this.url + "/get-all-end-entity-certificates/" + keyStorePassword);
+  }
+
   public download(certificate: Certificate) {
     return this.httpClient.post(this.url + "/downloadCertificate", certificate );
   }

@@ -350,11 +350,19 @@ public class CertificateController {
 		}
 		Security.addProvider(new BouncyCastleProvider());
 		
-		// Za sad hardkovano da su svi intermediate
-		CertificateType ct = CertificateType.INTERMEDIATE;
-		
 		if(certificateDTO.getClass() == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		
+		// U zavisnosti od toga da li je CA gledamo da li je intermediate ili end-entity
+		System.out.println(certificateDTO.getIsCA());
+		CertificateType ct;
+		if(certificateDTO.getIsCA()) {
+			System.out.println("JESTE CA USAO U IF");
+			ct = CertificateType.INTERMEDIATE;
+		} else {
+			System.out.println("USAO U ELSE NIJE CA");
+			ct = CertificateType.ENDENTITY;
+		}
 		
 		Subject subject = subjectService.findOne((Long)certificateDTO.getSubjectId());
 		
@@ -560,6 +568,7 @@ public class CertificateController {
 
 		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
 	}
+	
 	@GetMapping(value = "/get-all-intermediate-certificates/{password}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<List<CertificateDetailsDTO>> getAllIntermediateCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
@@ -586,6 +595,40 @@ public class CertificateController {
 						x509cert.getNotAfter(),
 						alias,
 						CertificateType.INTERMEDIATE,
+						password
+				);
+				certificateDetailsDTOS.add(certificateDetailsDTO);
+			}
+		}
+
+		return new ResponseEntity<>(certificateDetailsDTOS, HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/get-all-end-entity-certificates/{password}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<List<CertificateDetailsDTO>> getAllEndEntityCertificates(@PathVariable (value="password")String password ) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException{
+
+		List<CertificateDetailsDTO> certificateDetailsDTOS = new ArrayList<>();
+		FileInputStream is = new FileInputStream("keystoreendentity.p12");
+
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keystore.load(is, password.toCharArray());
+		Enumeration e = keystore.aliases();
+		for (; e.hasMoreElements();) {
+			String alias = (String) e.nextElement();
+
+			java.security.cert.Certificate cert = keystore.getCertificate(alias);
+			if (cert instanceof X509Certificate) {
+				X509Certificate x509cert = (X509Certificate) cert;
+
+				CertificateDetailsDTO certificateDetailsDTO = new CertificateDetailsDTO(
+						x509cert.getIssuerDN().getName(),
+						x509cert.getSubjectDN().getName(),
+						x509cert.getSerialNumber(),
+						x509cert.getNotBefore(),
+						x509cert.getNotAfter(),
+						alias,
+						CertificateType.ENDENTITY,
 						password
 				);
 				certificateDetailsDTOS.add(certificateDetailsDTO);
