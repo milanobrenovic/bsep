@@ -12,6 +12,7 @@ import { CreateCertificateComponent } from './main/create-certificate/create-cer
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
 import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
 import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
+import { RegisterComponent } from './main/register/register.component';
 
 const appRoutes: Routes = [
 
@@ -39,6 +40,10 @@ const appRoutes: Routes = [
     // PAGES
     //==============================================================================//
     {
+        path        : 'pages/register',
+        component   : RegisterComponent,
+    },
+    {
         path        : 'pages/home',
         component   : HomeComponent,
         canActivate : [AdminGuard],
@@ -46,7 +51,7 @@ const appRoutes: Routes = [
     {
         path        : 'pages/create-subject',
         component   : CreateSubjectComponent,
-        // canActivate : [AdminGuard],
+        canActivate : [AdminGuard],
     },
     {
         path        : 'pages/create-root-certificate',

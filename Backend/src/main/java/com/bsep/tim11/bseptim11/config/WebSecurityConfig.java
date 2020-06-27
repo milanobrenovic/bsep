@@ -4,6 +4,7 @@ import com.bsep.tim11.bseptim11.security.TokenUtils;
 import com.bsep.tim11.bseptim11.security.auth.RestAuthenticationEntryPoint;
 import com.bsep.tim11.bseptim11.security.auth.TokenAuthenticationFilter;
 import com.bsep.tim11.bseptim11.serviceImpl.AdminServiceImpl;
+import com.bsep.tim11.bseptim11.serviceImpl.NormalUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AdminServiceImpl jwtAdminDetailsService;
 
     @Autowired
+    private NormalUserServiceImpl jwtNormalUserDetailsService;
+
+    @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     @Autowired
@@ -48,6 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtAdminDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(jwtNormalUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -69,6 +74,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(
                         new TokenAuthenticationFilter(tokenUtils, jwtAdminDetailsService),
+                        BasicAuthenticationFilter.class
+                )
+                .addFilterBefore(
+                        new TokenAuthenticationFilter(tokenUtils, jwtNormalUserDetailsService),
                         BasicAuthenticationFilter.class
                 );
 

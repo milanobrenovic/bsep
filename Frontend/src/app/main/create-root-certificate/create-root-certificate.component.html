@@ -89,7 +89,7 @@
 						<td>
 							<mat-form-field appearance="outline" fxFlex="50">
 								<mat-label>Start date</mat-label>
-								<input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required [min]="minDate">
+								<input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" required>
 								<mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
 								<mat-datepicker #pickerFrom disabled="false"></mat-datepicker>
 								<mat-error
@@ -103,7 +103,7 @@
 						<td>
 							<mat-form-field appearance="outline" fxFlex="50">
 								<mat-label>End date</mat-label>
-								<input matInput [matDatepicker]="pickerTo" formControlName="validTo" required [min]="minDate">
+								<input matInput [matDatepicker]="pickerTo" formControlName="validTo" required>
 								<mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
 								<mat-datepicker #pickerTo disabled="false"></mat-datepicker>
 								<mat-error

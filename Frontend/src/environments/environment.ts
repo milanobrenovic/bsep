@@ -7,7 +7,8 @@ export const environment = {
     hmr             : false,
     itemsPerPage    : 5,
     baseUrl         : "https://localhost:443/api",
-    auth            : "/auth/login",
+    login           : "/auth/login",
+    register        : "/auth/register",
     subject         : '/subject',
     certificate     : '/certificate',
 };

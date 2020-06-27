@@ -4,6 +4,7 @@ import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
 import com.bsep.tim11.bseptim11.model.Admin;
 import com.bsep.tim11.bseptim11.model.Authority;
 import com.bsep.tim11.bseptim11.dto.UserTokenStateDTO;
+import com.bsep.tim11.bseptim11.model.NormalUser;
 import com.bsep.tim11.bseptim11.repository.AuthRepository;
 import com.bsep.tim11.bseptim11.security.TokenUtils;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
@@ -48,6 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoggedInUserDTO login(JwtAuthenticationRequest jwtAuthenticationRequest) {
+        System.out.println(jwtAuthenticationRequest.toString());
         final Authentication authentication = authManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 jwtAuthenticationRequest.getUsername(),
@@ -74,6 +76,8 @@ public class AuthServiceImpl implements AuthService {
     private String returnUsername(Object object) {
         if (object instanceof Admin) {
             return ((Admin) object).getUsername();
+        } else if (object instanceof NormalUser) {
+            return ((NormalUser) object).getUsername();
         }
         return null;
     }
@@ -85,6 +89,14 @@ public class AuthServiceImpl implements AuthService {
                 admin.getId(),
                 admin.getUsername(),
                 "ROLE_ADMIN",
+                    userTokenStateDTO
+            );
+        } else if (object instanceof NormalUser) {
+            NormalUser normalUser = (NormalUser) object;
+            return new LoggedInUserDTO(
+                    normalUser.getId(),
+                    normalUser.getUsername(),
+                    "ROLE_NORMAL_USER",
                     userTokenStateDTO
             );
         }

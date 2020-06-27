@@ -12,7 +12,11 @@ import { LoggedInUser } from 'app/models/loggedInUser';
 })
 export class UserService {
   
-  public url = environment.baseUrl + environment.auth;
+  // public url = environment.baseUrl;
+  public _loginUrl = environment.baseUrl + environment.login;
+  public _registerUrl = environment.baseUrl + environment.register;
+
+  // public url = environment.baseUrl + environment.auth;
   public jwtAccessToken = null;
   public req: LoggedInUser;
   public loggedInUserSubject: BehaviorSubject<LoggedInUser>;
@@ -31,7 +35,7 @@ export class UserService {
   }
 
   public login(user: UserLoginRequest) {
-    return this.httpClient.post(this.url, user).pipe(map((res: LoggedInUser) => {
+    return this.httpClient.post(this._loginUrl, user).pipe(map((res: LoggedInUser) => {
       this.jwtAccessToken = res.userTokenState.jwtAccessToken;
       localStorage.setItem('LoggedInUser', JSON.stringify(res));
       this.loggedInUserSubject.next(res);
@@ -50,6 +54,10 @@ export class UserService {
 
   public isLoggedIn() {
     return localStorage.getItem('LoggedInUser') !== null;
+  }
+  
+  public register(user: UserLoginRequest) {
+    return this.httpClient.post(this._registerUrl, user);
   }
   
 }

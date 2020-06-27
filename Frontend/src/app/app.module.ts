@@ -74,6 +74,7 @@ import { CreateCertificateComponent } from './main/create-certificate/create-cer
 import { ListCertificatesComponent } from './main/list-certificates/list-certificates.component';
 import { CreateSubjectComponent } from './main/create-subject/create-subject.component';
 import { CreateRootCertificateComponent } from './main/create-root-certificate/create-root-certificate.component';
+import { RegisterComponent } from './main/register/register.component';
 
 @NgModule({
 	declarations: [
@@ -89,6 +90,7 @@ import { CreateRootCertificateComponent } from './main/create-root-certificate/c
 		ListCertificatesComponent,
 		CreateSubjectComponent,
 		CreateRootCertificateComponent,
+		RegisterComponent,
 	],
 	imports: [
 		BrowserModule,

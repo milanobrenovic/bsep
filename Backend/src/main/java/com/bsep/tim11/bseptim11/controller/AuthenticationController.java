@@ -1,7 +1,7 @@
 package com.bsep.tim11.bseptim11.controller;
 
 import com.bsep.tim11.bseptim11.dto.LoggedInUserDTO;
-import com.bsep.tim11.bseptim11.dto.UserTokenStateDTO;
+import com.bsep.tim11.bseptim11.dto.NormalUserDTO;
 import com.bsep.tim11.bseptim11.security.auth.JwtAuthenticationRequest;
 import com.bsep.tim11.bseptim11.service.AuthService;
 
@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.bsep.tim11.bseptim11.service.NormalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,9 @@ public class AuthenticationController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private NormalUserService normalUserService;
     
     @PostMapping(value = "/login")
     public ResponseEntity<LoggedInUserDTO> login(@RequestBody JwtAuthenticationRequest authenticationRequest) {
@@ -55,6 +59,20 @@ public class AuthenticationController {
             e.printStackTrace();
         }
         logger.log(Level.SEVERE, "Failed login attempt");
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "/register")
+    public ResponseEntity<NormalUserDTO> register(@RequestBody NormalUserDTO normalUser) {
+        try {
+            NormalUserDTO normalUserDTO = normalUserService.createNormalUser(normalUser);
+            if (normalUserDTO == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            return new ResponseEntity<>(normalUserDTO, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
